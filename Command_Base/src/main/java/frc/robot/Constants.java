@@ -3,6 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+import edu.wpi.first.wpilibj.SPI;
+//not quite how SPI ports work yet, may be able to set this a constant but will likely have to be done in robot init
+
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -12,4 +15,13 @@ package frc.robot;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
-public final class Constants {}
+public final class Constants {
+    public static final double DEADZONE = 0.1;
+    public static final double DEFAULT_SPEED = 0.5;
+    public static final int FRONTLEFT_PORT = 0;
+    public static final int FRONTRIGHT_PORT = 1;
+    public static final int BACKTLEFT_PORT = 2;
+    public static final int BACKRIGHT_PORT = 3;
+    public static final int ARM_PNEUMATIC_PORT = 4;
+    public static final double CORRECTION_SPEED = 0.1;
+}
