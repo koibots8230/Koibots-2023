@@ -52,6 +52,7 @@ public class RobotContainer {
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final ClawSubsytem m_clawSubsytemBase = new ClawSubsytem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
+  public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem();
 
 // Joysticks
   private final CommandGenericHID driverHID = new CommandGenericHID(0);
