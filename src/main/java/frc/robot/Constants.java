@@ -20,13 +20,16 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public class Constants {
-   /**
-    * public static final class DriveConstants {
-    *   public static final int kLeftMotor1Port = 0;
-    *   public static final int kLeftMotor2Port = 1;
-    *   public static final int kRightMotor1Port = 2;
-    *   public static final int kRightMotor2Port = 3; 
-    * }
-    */ 
+    public static final int kLeftMotor1Port = 15;
+    public static final int kLeftMotor2Port = 14;
+    public static final int kRightMotor1Port = 12;
+    public static final int kRightMotor2Port = 13;
+    public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
+    //PID constants for PIDCommand Setmotor:
+    public static final double kp = 1;
+    public static final double ki = 0.1;
+    public static final double kd = 0.01;
+    //Slowmotion, deadzone, etc:
+    public static final double slowMoFactor = 0.5;
 }
 
