@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.math.MathUtil;
+import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
@@ -29,7 +30,6 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax secondaryLeftMotor;
     private Encoder quadratureEncoder1;
 
-    // Subsystem constructor
     public TankDriveSubsystem() {
         final CANSparkMax primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
         addChild("PrimaryRightMotor",(Sendable) primaryRightMotor);
