@@ -11,6 +11,7 @@
 package frc.robot.subsystems;
 
 import frc.robot.commands.*;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -20,6 +21,9 @@ import frc.robot.Constants;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
 
@@ -31,42 +35,33 @@ public class TankDriveSubsystem extends SubsystemBase {
     private Encoder quadratureEncoder1;
 
     public TankDriveSubsystem() {
-        final CANSparkMax primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor",(Sendable) primaryRightMotor);
+        primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
 
-        final CANSparkMax secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryRightMotor", (Sendable) secondaryRightMotor);
+        secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
 
-        final CANSparkMax primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor", (Sendable) primaryLeftMotor);
+        primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
 
-        final CANSparkMax secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryLeftMotor",(Sendable) secondaryLeftMotor);
+        secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
         quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        addChild("Quadrature Encoder 1",quadratureEncoder1);
         quadratureEncoder1.setDistancePerPulse(1.0);
     }
 
-    public TankDriveSubsystem(boolean invertRight) { //optional inversion of motors
-        final CANSparkMax primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor",(Sendable) primaryRightMotor);
+    public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { //optional inversion of motors
+        primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
         primaryRightMotor.setInverted(invertRight);
 
-        final CANSparkMax secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryRightMotor", (Sendable) secondaryRightMotor);
+        secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
         secondaryRightMotor.setInverted(invertRight);
+        secondaryRightMotor.follow(primaryRightMotor);
 
-        final CANSparkMax primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor", (Sendable) primaryLeftMotor);
+        primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
 
-        final CANSparkMax secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryLeftMotor",(Sendable) secondaryLeftMotor);
+        secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
 
         quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        addChild("Quadrature Encoder 1",quadratureEncoder1);
         quadratureEncoder1.setDistancePerPulse(1.0);
     }
 
@@ -82,24 +77,34 @@ public class TankDriveSubsystem extends SubsystemBase {
     }
 
     public double getMotorSpeed(String LR) {
-        if (LR == "LEFT") {
-            return this.primaryLeftMotor.get();
+        if (LR.equals("LEFT")) {
+            return primaryLeftMotor.get();
         }
-        if (LR == "RIGHT") {
-            return this.primaryRightMotor.get();
+        if (LR.equals("RIGHT")) {
+            return primaryRightMotor.get();
         }
         return 0.0;
     }
 
-    public void setMotor(String LR, double speed) {
-        if (LR == "LEFT") {
-            this.primaryLeftMotor.set(speed);
-            return;
+    public void setMotor(double rightSpeed, double leftSpeed) {
+        primaryLeftMotor.set(leftSpeed);
+        primaryRightMotor.set(rightSpeed);
+    }
+    
+    public class driveMotorCommand extends CommandBase {
+        private DoubleSupplier m_rightSpeed;
+        private DoubleSupplier m_leftSpeed;
+    
+        public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed, TankDriveSubsystem subsystem) {
+            m_rightSpeed = rightSpeed;
+            m_leftSpeed = leftSpeed;
+            addRequirements(subsystem);
         }
-        if (LR == "RIGHT") {
-            this.primaryRightMotor.set(speed);
-            return;
+        
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            setMotor(m_rightSpeed.getAsDouble(), m_leftSpeed.getAsDouble());
         }
-        return;
     }
 }

@@ -39,7 +39,7 @@ public class PIDSetMotor extends PIDCommand {
                 } else {
                     adjOutput = output;
                 }
-                drive.setMotor(LR, adjOutput);
+                //drive.setMotor(LR, adjOutput);
             },
             // Require the drive
             drive);
