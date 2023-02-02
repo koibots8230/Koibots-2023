@@ -90,6 +90,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
     }
+
+    public void setMotor(double setSpeed, String side) {
+        if (side.equals("LEFT")) {
+            primaryLeftMotor.set(setSpeed);
+        } else if (side.equals("RIGHT")) {
+            primaryRightMotor.set(setSpeed);
+        }
+    }
     
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;

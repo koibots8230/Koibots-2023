@@ -22,7 +22,7 @@ import frc.robot.Constants;
 
 public class PIDSetMotor extends PIDCommand {
 
-    public PIDSetMotor(double targetMotorSpeed, TankDriveSubsystem drive, String LR, XboxController xbox, int m_controlAxis) {
+    public PIDSetMotor(double targetMotorSpeed, TankDriveSubsystem drive, String LR, int m_controlAxis) {
         super(
             // Controller used by the loop
             new PIDController(Constants.kp, Constants.ki, Constants.kd),
@@ -32,14 +32,7 @@ public class PIDSetMotor extends PIDCommand {
             targetMotorSpeed,
             // Pipe output to change robot speed
             output -> {
-                boolean slowMo = xbox.getRightBumperPressed();
-                double adjOutput;
-                if (slowMo) {
-                    adjOutput = output * Constants.slowMoFactor;
-                } else {
-                    adjOutput = output;
-                }
-                //drive.setMotor(LR, adjOutput);
+                drive.setMotor(output, LR);
             },
             // Require the drive
             drive);
