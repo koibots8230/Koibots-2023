@@ -10,12 +10,8 @@
 
 package frc.robot.subsystems;
 
-import frc.robot.commands.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import edu.wpi.first.math.MathUtil;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -25,7 +21,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
-import frc.robot.Constants;
+import com.revrobotics.ControlType;
+import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax primaryRightMotor;
@@ -54,10 +51,10 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryRightMotor.setInverted(invertRight);
 
         secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
-        secondaryRightMotor.setInverted(invertRight);
         secondaryRightMotor.follow(primaryRightMotor);
 
         primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
+        // primaryLeftMotor.set
 
         secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
 
@@ -94,6 +91,8 @@ public class TankDriveSubsystem extends SubsystemBase {
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
+        private SparkMaxPIDController m_rightPID;
+        private SparkMaxPIDController m_leftPID;
     
         public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed, TankDriveSubsystem subsystem) {
             m_rightSpeed = rightSpeed;
@@ -101,10 +100,36 @@ public class TankDriveSubsystem extends SubsystemBase {
             addRequirements(subsystem);
         }
         
+        @Override
+        public void initialize() {
+            m_rightPID = primaryRightMotor.getPIDController();
+            m_leftPID = primaryLeftMotor.getPIDController();
+
+            m_rightPID.setOutputRange(-1, 1);
+            m_leftPID.setOutputRange(-1, 1);
+            
+            m_rightPID.setP(Constants.kp);
+            m_leftPID.setP(Constants.kp);
+
+            m_rightPID.setI(Constants.ki);
+            m_leftPID.setI(Constants.ki);
+
+            m_rightPID.setD(Constants.kd);
+            m_leftPID.setD(Constants.kd);
+        }
+
         // Called every time the scheduler runs while the command is scheduled.
         @Override
         public void execute() {
-            setMotor(m_rightSpeed.getAsDouble(), m_leftSpeed.getAsDouble());
+            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
         }
+
+        private double adjustForDeadzone(double in) {
+            if (Math.abs(in) < Constants.DEADZONE) {
+              return 0;
+            }
+            return in;
+          }
     }
 }
