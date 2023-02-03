@@ -31,6 +31,6 @@ public class Constants {
     public static final double kd = 0;
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
-    public static final double DEADZONE = 0.05;
+    public static final double DEADZONE = 0.15;
 }
 
