@@ -69,9 +69,17 @@ private boolean state = false;//cone = false, box = cube.
             }
         } else {
             for (var i = 0; i < buffer.getLength(); i++) {
-                // Sets the specified LED to the RGB values for red
+                // Sets the specified LED to the RGB values for green
                 buffer.setRGB(i, 255, 255, 0);
             }
+        }
+        strip1.setData(buffer);
+        strip2.setData(buffer);
+    }
+    public void turnOff(){
+        for (var i = 0; i < buffer.getLength(); i++) {
+            // Sets the specified LED to the RGB values for green
+            buffer.setRGB(i, 255, 255, 0);
         }
         strip1.setData(buffer);
         strip2.setData(buffer);
