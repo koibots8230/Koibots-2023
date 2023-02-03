@@ -49,12 +49,12 @@ public class toggleLedColor extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        sys.toggleColor();
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
+        sys.toggleColor();
     }
 
     // Called once the command ends or is interrupted.
