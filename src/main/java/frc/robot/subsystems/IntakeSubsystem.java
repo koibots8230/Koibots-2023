@@ -13,44 +13,49 @@
 package frc.robot.subsystems;
 
 
-import frc.robot.commands.*;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
+    private final RelativeEncoder intakeEncoder;
+    private final double RUNNING_SPEED = .7;
+
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.kIntakeMotorPort, MotorType.kBrushless);
         addChild("IntakeMotor", (Sendable) intakeMotor);
         intakeMotor.setInverted(false);
+        intakeEncoder = intakeMotor.getEncoder();
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-
+        double velocity = 10.0; // TODO: Get velocity from encoder
+        double current = 11.0; // TODO
+        SmartDashboard.putNumber("Intake Speed (RPM)", velocity);
+        SmartDashboard.putNumber("Motor Current (A)", current);
     }
 
     @Override
     public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
-
-    }
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-    public double getIntakeSpeed() {
-        return this.intakeMotor.get();
     }
 
-    public void setIntakeSpeed(double speed) {
-        this.intakeMotor.set(speed);
+    public void turnOn() {
+        intakeMotor.set(RUNNING_SPEED);
+    }
+
+    public void turnOff() {
+        intakeMotor.set(0);
     }
 }
 
