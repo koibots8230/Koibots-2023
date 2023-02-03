@@ -40,8 +40,8 @@ public class IntakeSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        double velocity = 10.0; // TODO: Get velocity from encoder
-        double current = 11.0; // TODO
+        double velocity = intakeEncoder.getVelocity();
+        double current = intakeMotor.getOutputCurrent(); 
         SmartDashboard.putNumber("Intake Speed (RPM)", velocity);
         SmartDashboard.putNumber("Motor Current (A)", current);
     }

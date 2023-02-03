@@ -45,22 +45,6 @@ public class PIDSetMotor extends PIDCommand {
             drive);
     }
 
-    //It's time for parameter overloading! PIDSetMotor with the intake:
-    public PIDSetMotor(double targetMotorSpeed, IntakeSubsystem intake, XboxController xbox, int m_controlAxis) {
-        super(
-            //Controller used:
-            new PIDController(Constants.kp, Constants.ki, Constants.kd),
-            //Method of measurement:
-            () -> intake.getIntakeSpeed(),
-            // The setPoint:
-            targetMotorSpeed,
-            //Change the intake speed accordingly:
-            output -> {
-                intake.setIntakeSpeed(targetMotorSpeed);
-            },
-        intake
-        );
-    }
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
