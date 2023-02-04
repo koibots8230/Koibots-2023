@@ -14,8 +14,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import java.util.function.DoubleSupplier;
@@ -28,7 +26,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
-    private Encoder quadratureEncoder1;
+    
 
     public TankDriveSubsystem() {
         primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
@@ -41,24 +39,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
-        quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        quadratureEncoder1.setDistancePerPulse(1.0);
+        
     }
 
-    public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { //optional inversion of motors
-        primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
+    public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
+        this();
+
         primaryRightMotor.setInverted(invertRight);
-
-        secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
-        secondaryRightMotor.follow(primaryRightMotor);
-
-        primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
-        // primaryLeftMotor.set
-
-        secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
-
-        quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        quadratureEncoder1.setDistancePerPulse(1.0);
+        primaryLeftMotor.setInverted(invertLeft);
     }
 
     @Override
@@ -72,41 +60,41 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     }
 
-    public double getMotorSpeed(String LR) {
-        if (LR.equals("LEFT")) {
-            return primaryLeftMotor.get();
-        }
-        if (LR.equals("RIGHT")) {
-            return primaryRightMotor.get();
-        }
-        return 0.0;
+    public SparkMaxPIDController getLeftPID() {
+        return primaryLeftMotor.getPIDController();
+    }
+
+    public SparkMaxPIDController getRightPID() {
+        return primaryRightMotor.getPIDController();
     }
 
     public void setMotor(double rightSpeed, double leftSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
     }
-    
+
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
         private SparkMaxPIDController m_rightPID;
         private SparkMaxPIDController m_leftPID;
-    
+        private TankDriveSubsystem m_DriveSubsystem;
+
         public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed, TankDriveSubsystem subsystem) {
             m_rightSpeed = rightSpeed;
             m_leftSpeed = leftSpeed;
+            m_DriveSubsystem = subsystem;
             addRequirements(subsystem);
         }
-        
+
         @Override
         public void initialize() {
-            m_rightPID = primaryRightMotor.getPIDController();
-            m_leftPID = primaryLeftMotor.getPIDController();
+            m_rightPID = m_DriveSubsystem.getRightPID();
+            m_leftPID = m_DriveSubsystem.getLeftPID();
 
             m_rightPID.setOutputRange(-1, 1);
             m_leftPID.setOutputRange(-1, 1);
-            
+
             m_rightPID.setP(Constants.kp);
             m_leftPID.setP(Constants.kp);
 
@@ -126,13 +114,13 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         private double adjustForDeadzone(double in) {
             if (Math.abs(in) < Constants.DEADZONE) {
-              return 0;
+                return 0;
             }
-            double sign = (int)Math.signum(in);
+            double sign = (int) Math.signum(in);
             double out = Math.abs(sign);
             out *= (1 / 1 - Constants.DEADZONE);
             out *= sign * out;
             return out;
-          }
+        }
     }
 }
