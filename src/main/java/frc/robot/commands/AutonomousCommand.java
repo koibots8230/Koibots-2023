@@ -53,11 +53,6 @@ public class AutonomousCommand extends CommandBase {
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        PathPlannerTrajectory Path = PathPlanner.generatePath(
-            new PathConstraints(4, 3), 
-            new PathPoint(new Translation2d(1.0, 1.0), Rotation2d.fromDegrees(0)), // position, heading
-            new PathPoint(new Translation2d(3.0, 3.0), Rotation2d.fromDegrees(45)) // position, heading
-        );
     }
 
     // Called every time the scheduler runs while the command is scheduled.
