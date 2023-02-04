@@ -21,7 +21,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
@@ -129,7 +128,11 @@ public class TankDriveSubsystem extends SubsystemBase {
             if (Math.abs(in) < Constants.DEADZONE) {
               return 0;
             }
-            return in;
+            double sign = (int)Math.signum(in);
+            double out = Math.abs(sign);
+            out *= (1 / 1 - Constants.DEADZONE);
+            out *= sign * out;
+            return out;
           }
     }
 }
