@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import edu.wpi.first.util.sendable.Sendable;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkMax;
@@ -52,6 +51,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void turnOn() {
         intakeMotor.set(RUNNING_SPEED);
+    }
+
+    public void turnOn(Boolean Forwards) {
+        if (Forwards){
+            intakeMotor.set(RUNNING_SPEED);
+        } else {
+            intakeMotor.set(-RUNNING_SPEED);
+        }
     }
 
     public void turnOff() {
