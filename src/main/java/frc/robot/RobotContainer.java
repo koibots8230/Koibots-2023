@@ -56,7 +56,7 @@ public class RobotContainer {
 // Commands
   
   private final TankDriveSubsystem.driveMotorCommand m_driveCommand = m_tankDriveSubsystem. new driveMotorCommand(
-    () -> m_driverHID.getRawAxis(0), 
+    () -> m_driverHID.getRawAxis(1), 
     () -> m_driverHID.getRawAxis(5),
     m_tankDriveSubsystem
     );

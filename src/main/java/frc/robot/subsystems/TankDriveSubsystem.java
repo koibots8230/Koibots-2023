@@ -47,22 +47,16 @@ public class TankDriveSubsystem extends SubsystemBase {
     // private RelativeEncoder m_rightEncoder2;
     private Gyro m_Gyro;
     private DifferentialDriveOdometry m_Odometry;
-    
 
     public TankDriveSubsystem() {
-        this(false, false);
-    }
-
-    public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { //optional inversion of motors
         primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
-        primaryRightMotor.setInverted(invertRight);
         secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
-
         primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
+
         secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
-        primaryLeftMotor.setInverted(invertLeft);
         secondaryLeftMotor.follow(primaryLeftMotor);
+
 
         m_leftEncoder1 = primaryLeftMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
         m_leftEncoder1.setPosition(0);
@@ -71,6 +65,14 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         m_leftEncoder1.setPositionConversionFactor(Constants.WHEEL_DIAMETER * Constants.GEAR_RATIO);
         m_rightEncoder1.setPositionConversionFactor(Constants.WHEEL_DIAMETER * Constants.GEAR_RATIO);
+
+        
+    }
+
+    public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
+        this();
+        primaryRightMotor.setInverted(invertRight);
+        primaryLeftMotor.setInverted(invertLeft);
     }
 
     @Override
@@ -86,41 +88,41 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     }
 
-    public double getMotorSpeed(String LR) {
-        if (LR.equals("LEFT")) {
-            return primaryLeftMotor.get();
-        }
-        if (LR.equals("RIGHT")) {
-            return primaryRightMotor.get();
-        }
-        return 0.0;
+    public SparkMaxPIDController getLeftPID() {
+        return primaryLeftMotor.getPIDController();
+    }
+
+    public SparkMaxPIDController getRightPID() {
+        return primaryRightMotor.getPIDController();
     }
 
     public void setMotor(double rightSpeed, double leftSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
     }
-    
+
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
         private SparkMaxPIDController m_rightPID;
         private SparkMaxPIDController m_leftPID;
-    
+        private TankDriveSubsystem m_DriveSubsystem;
+
         public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed, TankDriveSubsystem subsystem) {
             m_rightSpeed = rightSpeed;
             m_leftSpeed = leftSpeed;
+            m_DriveSubsystem = subsystem;
             addRequirements(subsystem);
         }
-        
+
         @Override
         public void initialize() {
-            m_rightPID = primaryRightMotor.getPIDController();
-            m_leftPID = primaryLeftMotor.getPIDController();
+            m_rightPID = m_DriveSubsystem.getRightPID();
+            m_leftPID = m_DriveSubsystem.getLeftPID();
 
             m_rightPID.setOutputRange(-1, 1);
             m_leftPID.setOutputRange(-1, 1);
-            
+
             m_rightPID.setP(Constants.kp);
             m_leftPID.setP(Constants.kp);
 
@@ -140,9 +142,13 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         private double adjustForDeadzone(double in) {
             if (Math.abs(in) < Constants.DEADZONE) {
-              return 0;
+                return 0;
             }
-            return in;
-          }
+            double sign = (int) Math.signum(in);
+            double out = Math.abs(sign);
+            out *= (1 / 1 - Constants.DEADZONE);
+            out *= sign * out;
+            return out;
+        }
     }
 }
