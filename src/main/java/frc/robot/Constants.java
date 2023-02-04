@@ -11,10 +11,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller;
-import edu.wpi.first.wpilibj.XboxController;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -30,10 +26,11 @@ public class Constants {
     public static final int kRightMotor2Port = 13;
     public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
     //PID constants for PIDCommand Setmotor:
-    public static final double kp = 1;
-    public static final double ki = 0.1;
-    public static final double kd = 0.01;
+    public static final double kp = 6e-5;
+    public static final double ki = 0;
+    public static final double kd = 0;
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
+    public static final double DEADZONE = 0.15;
 }
 
