@@ -32,5 +32,8 @@ public class Constants {
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
     public static final double DEADZONE = 0.15;
+    public static final double WHEEL_DIAMETER = 0.1524;
+    public static final double GEAR_RATIO = 30/68;
+    // public static final double ENCODER_DISTANCE_PER_PULSE = 0.25;
 }
 

@@ -15,56 +15,69 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
+import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
+
+import edu.wpi.first.wpilibj.simulation.EncoderSim;
+import edu.wpi.first.wpilibj.simulation.SimDeviceSim;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+
 import com.revrobotics.ControlType;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkMaxRelativeEncoder;
 
 public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax primaryRightMotor;
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
-    private Encoder quadratureEncoder1;
+    private RelativeEncoder m_leftEncoder1;
+    private Field2d m_Field2d;
+    private EncoderSim m_SimLeftEncoder1;
+    private EncoderSim m_SimRightEncoder1;
+    // private RelativeEncoder m_leftEncoder2;
+    private RelativeEncoder m_rightEncoder1;
+    // private RelativeEncoder m_rightEncoder2;
+    private Gyro m_Gyro;
+    private DifferentialDriveOdometry m_Odometry;
+    
 
     public TankDriveSubsystem() {
-        primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
-
-        secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
-        secondaryRightMotor.follow(primaryRightMotor);
-
-        primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
-
-        secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
-        secondaryLeftMotor.follow(primaryLeftMotor);
-
-        quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        quadratureEncoder1.setDistancePerPulse(1.0);
+        this(false, false);
     }
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { //optional inversion of motors
         primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
         primaryRightMotor.setInverted(invertRight);
-
         secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
 
         primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
-        // primaryLeftMotor.set
-
         secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
+        primaryLeftMotor.setInverted(invertLeft);
+        secondaryLeftMotor.follow(primaryLeftMotor);
 
-        quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        quadratureEncoder1.setDistancePerPulse(1.0);
+        m_leftEncoder1 = primaryLeftMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
+        m_leftEncoder1.setPosition(0);
+        m_rightEncoder1 = primaryRightMotor.getEncoder(SparkMaxRelativeEncoder.Type.kQuadrature, 4096);
+        m_rightEncoder1.setPosition(0);
+
+        m_leftEncoder1.setPositionConversionFactor(Constants.WHEEL_DIAMETER * Constants.GEAR_RATIO);
+        m_rightEncoder1.setPositionConversionFactor(Constants.WHEEL_DIAMETER * Constants.GEAR_RATIO);
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        
+        m_Odometry.update(m_Gyro.getRotation2d(), m_leftEncoder1.getPosition(), m_rightEncoder1.getPosition());
     }
 
     @Override
