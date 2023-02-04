@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import frc.robot.Constants;
 
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
@@ -70,6 +71,20 @@ public class TankDriveSubsystem extends SubsystemBase {
         quadratureEncoder1.setDistancePerPulse(1.0);
     }
 
+    // The left-side drive encoder
+    private final Encoder m_leftEncoder =
+    new Encoder(
+      Constants.kLeftMotor1Port,
+      Constants.kLeftMotor2Port);
+    // The right-side drive encoder
+    private final Encoder m_rightEncoder =
+    new Encoder(
+      Constants.kRightMotor1Port,
+      Constants.kRightMotor2Port);
+    
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+    }
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -102,4 +117,6 @@ public class TankDriveSubsystem extends SubsystemBase {
         }
         return;
     }
+
+    
 }

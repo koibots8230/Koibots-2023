@@ -11,6 +11,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
@@ -35,5 +36,17 @@ public class Constants {
     public static final double kd = 0.01;
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
+    //All drivetrain bits below are not set
+    //Drivetrain feedforward gains
+    public static final double KS = 0;
+    public static final double KV = 0;
+    public static final double KA = 0;
+    //Drivetrain kinmetatics
+    public static final double kTrackwidthMeters = 0;
+    public static final DifferentialDriveKinematics KDRIVEKINEMATICS =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+    //Drivetrain feedback gains
+    public static final double KPDRIVEVEL = 0;
 }
+
 
