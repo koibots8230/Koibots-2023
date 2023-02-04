@@ -1,9 +1,4 @@
-
-
-
-* Format Example
-* ExampleCommand | Controller
-a0
-
-a is axis
-b is button
+Left drive
+1
+Right drive
+5
