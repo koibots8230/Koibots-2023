@@ -14,17 +14,21 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj.Filesystem;
+
 import java.io.File;
 import java.util.Map;
 import java.util.Scanner;
-import edu.wpi.first.wpilibj.Filesystem;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -39,13 +43,13 @@ import edu.wpi.first.wpilibj.Filesystem;
 public class RobotContainer {
 
   private static RobotContainer m_robotContainer = new RobotContainer();
-  // private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
-
+  private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
+  // private static MiscDashboardSubsystem m_miscDashboardSubsystem = new
+  // MiscDashboardSubsystem();
 
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
-  // public final ClawSubsytem m_clawSubsytemBase = new ClawSubsytem(); | Not on
-  // robot
+  // public final ClawSubsytem m_clawSubsytemBase = new ClawSubsytem(); | Not on robot
   // public final IntakeSubsystem m_intake = new IntakeSubsystem(); | Not on robot
   // public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem();
 
@@ -53,12 +57,11 @@ public class RobotContainer {
   private final CommandGenericHID m_driverHID = new CommandGenericHID(0);
 
   // Commands
-
   private final TankDriveSubsystem.driveMotorCommand m_driveCommand = m_tankDriveSubsystem.new driveMotorCommand(
       () -> m_driverHID.getRawAxis(0),
       () -> m_driverHID.getRawAxis(5),
       m_tankDriveSubsystem);
-  
+
   SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   SendableChooser<String> m_driverChooser = new SendableChooser<>();
 
@@ -86,8 +89,7 @@ public class RobotContainer {
     if (hidType.equals("")) { // Xbox Controller | Name Unknown
       m_controllerType = 1;
       pairButton = 7;
-    } else if (hidType.equals("Wireless Controller")) { // PS5 | Is still called "Wireless Controller" if plugged in
-                                                        // with a wire.
+    } else if (hidType.equals("Wireless Controller")) { // PS5 | Is still called "Wireless Controller" if plugged in with a wire.
       m_controllerType = 2;
       pairButton = 7;
     } else {
@@ -135,13 +137,11 @@ public class RobotContainer {
   }
 
   public void buildDriverTab() {
-    ShuffleboardTab battery = Shuffleboard.getTab("SmartDashboard");
-    battery.add("Battery Voltage", MiscDashboardSubsystem.getBatteryVoltage())
-    .withPosition(0, 0).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 10, "max", 16));
+    Shuffleboard.getTab("SmartDashboard").add("Battery Voltage", MiscDashboardSubsystem.getBatteryVoltage())
+        .withPosition(0, 0).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("min", 10, "max", 14));
 
-    ShuffleboardTab batteryAlert = Shuffleboard.getTab("SmartDashboard");
-    batteryAlert.add("Battery Alert", MiscDashboardSubsystem.getBatteryVoltageAlert())
-    .withPosition(1, 0).withWidget(BuiltInWidgets.kBooleanBox);
+    Shuffleboard.getTab("SmartDashboard").add("Battery Alert", MiscDashboardSubsystem.getBatteryVoltageAlert())
+        .withPosition(2, 0).withWidget(BuiltInWidgets.kBooleanBox);
   }
 
   private void buildShuffleboard() {
