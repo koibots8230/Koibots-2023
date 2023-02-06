@@ -2,7 +2,7 @@
 # If you remove items from this file, intellisense might break.
 
 #sometimes this is created from some reason.
-simgui*
+simgui*.json
 
 # Prerequisites
 *.d
