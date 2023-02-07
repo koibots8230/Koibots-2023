@@ -15,18 +15,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-
-import edu.wpi.first.wpilibj.Solenoid;
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.Compressor;
 
@@ -43,7 +38,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeEncoder = intakeMotor.getEncoder();
         intakeComp = new Compressor(PneumaticsModuleType.CTREPCM);
         intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-        intakeComp.disable();
     }
 
     @Override
@@ -83,50 +77,23 @@ public class IntakeSubsystem extends SubsystemBase {
         return intakeComp;
     }
 
-    public class RaiseIntake extends CommandBase {
+    public class FlipIntake extends CommandBase {
         IntakeSubsystem m_intake;
 
-        public RaiseIntake(IntakeSubsystem subsystem) {
+        public FlipIntake(IntakeSubsystem subsystem) {
             m_intake = subsystem;
             addRequirements(m_intake);
         }
 
         @Override
         public void initialize() {
-            if (!m_intake.getComp().isEnabled()) {
-                m_intake.getComp().enableDigital();
-            }
+            m_intake.getComp().enableDigital();
+            m_intake.getComp().enableAnalog(0, 120);
         }
 
         @Override
         public void execute() {
-            m_intake.getSolenoid().set(DoubleSolenoid.Value.kForward);
-        }
-
-        @Override
-        public boolean isFinished() {
-            return true;
-        }
-    }
-
-    public class LowerIntake extends CommandBase {
-        IntakeSubsystem m_intake;
-
-        public LowerIntake(IntakeSubsystem subsystem) {
-            m_intake = subsystem;
-            addRequirements(m_intake);
-        }
-
-        @Override
-        public void initialize() {
-            if (!m_intake.getComp().isEnabled()) {
-                m_intake.getComp().enableDigital();
-            }
-        }
-
-        @Override
-        public void execute() {
-            m_intake.getSolenoid().set(DoubleSolenoid.Value.kReverse);
+            m_intake.getSolenoid().toggle();
         }
 
         @Override
