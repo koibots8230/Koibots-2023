@@ -137,12 +137,14 @@ public class RobotContainer {
   }
 
   public void buildDriverTab() {
-    Shuffleboard.getTab("SmartDashboard").add("Battery Voltage", MiscDashboardSubsystem.getBatteryVoltage())
+    /* Shuffleboard.getTab("SmartDashboard").add("Battery Voltage", MiscDashboardSubsystem.getBatteryVoltage())
         .withPosition(0, 0).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("min", 10, "max", 14));
 
     Shuffleboard.getTab("SmartDashboard").add("Battery Alert", MiscDashboardSubsystem.getBatteryVoltageAlert())
-        .withPosition(2, 0).withWidget(BuiltInWidgets.kBooleanBox);
-  }
+        .withPosition(2, 0).withWidget(BuiltInWidgets.kBooleanBox); */
+
+    
+}
 
   private void buildShuffleboard() {
     buildDriverTab();
