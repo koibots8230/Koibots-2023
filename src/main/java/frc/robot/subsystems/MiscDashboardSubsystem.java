@@ -11,19 +11,25 @@ import java.util.Map;
 public class MiscDashboardSubsystem extends SubsystemBase {
 
     // private int periodic_loop_counter = 0;
-    private boolean voltage_alert = false;
+    private boolean voltage_alert = true;
     private double voltage = 11;
+    private boolean current_alert = true;
+    private double current = 0;
     public boolean is_cube = true;
     private String is_cube_text = "Cube";
     
     public MiscDashboardSubsystem() {
         ShuffleboardTab main_tab = Shuffleboard.getTab("Main");
+        
         main_tab.addBoolean("Voltage Alert", () -> voltage_alert).withPosition(2, 0);
 
         main_tab.addNumber("Voltage", () -> voltage).withPosition(0, 0).
         withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("min", 10, "max", 14));
 
-        main_tab.addString("Cube or Cone", () -> is_cube_text).withPosition(3, 0)
+        main_tab.addNumber("Current", () -> current).withPosition(4, 0).
+        withWidget(BuiltInWidgets.kDial);
+
+        main_tab.addString("Cube or Cone", () -> is_cube_text).withPosition(0, 1)
         .withWidget(BuiltInWidgets.kTextView);
     }
 
