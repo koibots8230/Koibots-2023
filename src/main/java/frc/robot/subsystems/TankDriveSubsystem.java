@@ -26,6 +26,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
+    private double speedCoefficient = 1;
     
 
     public TankDriveSubsystem() {
@@ -71,6 +72,19 @@ public class TankDriveSubsystem extends SubsystemBase {
     public void setMotor(double rightSpeed, double leftSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
+    }
+    
+    public void setSpeed(Boolean Increase){
+        if (Increase) {
+            //Only need increase - if it's called and Increase is false than decrease is pressed instead
+            if (speedCoefficient < 1) {
+                speedCoefficient += 0.5;
+            }
+        } else {
+            if (speedCoefficient > 0){
+                speedCoefficient -= 0.5;
+            }
+        }
     }
 
     public class driveMotorCommand extends CommandBase {
@@ -121,6 +135,24 @@ public class TankDriveSubsystem extends SubsystemBase {
             out *= (1 / 1 - Constants.DEADZONE);
             out *= sign * out;
             return out;
+        }
+    }
+
+    public class setSpeedCommand extends CommandBase {
+        private Boolean m_speedIncrease;
+        private TankDriveSubsystem m_DriveSubsystem;
+
+        public setSpeedCommand(Boolean Up, TankDriveSubsystem subsystem){
+            m_speedIncrease = Up;
+            addRequirements(m_DriveSubsystem);
+        }
+        @Override 
+        public void execute() {
+            setSpeed(m_speedIncrease);
+        }
+        @Override
+        public boolean isFinished(){
+            return true;
         }
     }
 }

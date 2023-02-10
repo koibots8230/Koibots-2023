@@ -65,6 +65,7 @@ public class RobotContainer {
     m_tankDriveSubsystem
   );
 
+
   SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   SendableChooser<String> m_driverChooser = new SendableChooser<>();
   
@@ -99,9 +100,14 @@ public class RobotContainer {
       pairButton = 7;
     }
 
-    Trigger operatorDriveTrigger = m_driverHID.axisGreaterThan(1, 0.1);
+    Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, 0.1);
     operatorDriveTrigger.onTrue(m_operatorDrive);
 
+    Trigger operatorSpeedUp = m_operatorHID.button(2);
+    Trigger operatorSpeedDown = m_operatorHID.button(3);
+    operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
+    operatorSpeedUp.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+    
     Trigger resetControls = m_driverHID.button(pairButton)
       .whileTrue(new setupControls());
 
