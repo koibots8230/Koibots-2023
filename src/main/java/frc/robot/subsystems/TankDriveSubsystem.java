@@ -138,21 +138,4 @@ public class TankDriveSubsystem extends SubsystemBase {
         }
     }
 
-    public class setSpeedCommand extends CommandBase {
-        private Boolean m_speedIncrease;
-        private TankDriveSubsystem m_DriveSubsystem;
-
-        public setSpeedCommand(Boolean Up, TankDriveSubsystem subsystem){
-            m_speedIncrease = Up;
-            addRequirements(m_DriveSubsystem);
-        }
-        @Override 
-        public void execute() {
-            setSpeed(m_speedIncrease);
-        }
-        @Override
-        public boolean isFinished(){
-            return true;
-        }
-    }
 }
