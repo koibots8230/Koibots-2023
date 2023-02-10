@@ -28,25 +28,36 @@ import edu.wpi.first.wpilibj.Compressor;
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
     private final RelativeEncoder intakeEncoder;
+    private final CANSparkMax midtakeMotor;
+    private final RelativeEncoder midtakeEncoder;
     private final double RUNNING_SPEED = .7;
 
     private final DoubleSolenoid intakeSolenoid;
     private final Compressor intakeComp;
+
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.kIntakeMotorPort, MotorType.kBrushless);
         intakeMotor.setInverted(false);
         intakeEncoder = intakeMotor.getEncoder();
         intakeComp = new Compressor(PneumaticsModuleType.CTREPCM);
         intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+        midtakeMotor = new CANSparkMax(Constants.kMidtakeMotorPort, MotorType.kBrushless); 
+        midtakeMotor.setInverted(false);
+        midtakeEncoder = midtakeMotor.getEncoder();
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        double velocity = intakeEncoder.getVelocity();
-        double current = intakeMotor.getOutputCurrent(); 
-        SmartDashboard.putNumber("Intake Speed (RPM)", velocity);
-        SmartDashboard.putNumber("Motor Current (A)", current);
+        double inVelocity = intakeEncoder.getVelocity();
+        double InCurrent = intakeMotor.getOutputCurrent(); 
+        SmartDashboard.putNumber("Intake Motor Speed (RPM)", inVelocity);
+        SmartDashboard.putNumber("Main Battery Current (A)", InCurrent);
+        double midVelocity = midtakeEncoder.getVelocity();
+        double midCurrent = midtakeMotor.getOutputCurrent();
+        SmartDashboard.putNumber("Midtake Motor Current (A)", midCurrent);
+        SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
+
     }
 
     @Override
@@ -55,18 +66,22 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void turnOn() {
         intakeMotor.set(RUNNING_SPEED);
+        midtakeMotor.set(RUNNING_SPEED);
     }
 
     public void turnOn(Boolean Forwards) {
         if (Forwards){
             intakeMotor.set(RUNNING_SPEED);
+            midtakeMotor.set(RUNNING_SPEED);
         } else {
             intakeMotor.set(-RUNNING_SPEED);
+            midtakeMotor.set(-RUNNING_SPEED);
         }
     }
 
     public void turnOff() {
         intakeMotor.set(0);
+        midtakeMotor.set(0);
     }
 
     public DoubleSolenoid getSolenoid() {

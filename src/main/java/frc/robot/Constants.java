@@ -95,7 +95,7 @@ public class Constants {
     public static final int kRightMotor2Port = 13;
     public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
     public static final double AUTO_SPEED = 0.15;
-
+    public static final int kMidtakeMotorPort = 1; // To be changed when we have an actual intake
     //PID constants for PIDCommand Setmotor:
     public static final double kp = 6e-5;
     public static final double ki = 0;
