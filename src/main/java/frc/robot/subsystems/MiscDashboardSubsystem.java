@@ -26,7 +26,7 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("min", 10, "max", 14));
 
         main_tab.addNumber("Current", () -> current).withPosition(4, 0).
-        withWidget(BuiltInWidgets.kDial);
+        withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 600));
 
         main_tab.addString("Cube or Cone", () -> is_cube_text).withPosition(0, 1)
         .withWidget(BuiltInWidgets.kTextView);
