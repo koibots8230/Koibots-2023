@@ -13,7 +13,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     // private int periodic_loop_counter = 0;
     private boolean voltage_alert = true;
     private double voltage = 11;
-    private boolean current_alert = true;
     private double current = 0;
     public boolean is_cube = true;
     private String is_cube_text = "Cube";
@@ -62,6 +61,7 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
         voltage_alert = getBatteryVoltageAlert();
         voltage = getBatteryVoltage();
+        current = getBatteryCurrent();
 
         if (is_cube) {
             is_cube_text = "Cube";
