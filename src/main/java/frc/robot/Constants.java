@@ -11,6 +11,11 @@
 
 package frc.robot;
 
+import java.util.Arrays;
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Translation3d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -103,5 +108,39 @@ public class Constants {
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
     public static final double DEADZONE = 0.15;
-}
+    //Shooting constants
+    public static final int SHOOTER_ANGLE = 45; //To be changed
+    public static final double GRAVITY = 9.8; //If you can figure out a way to change this one, that's impressive
+    public static final double SHOOTER_FROM_GROUND = 1; //To be changed
+
+    public static final double MIDDLE_HEIGHT = 23.5*0.0254;
+    public static final double MIDDLE_Y = 23.75*0.0254;
+    //Blue Side
+    public static final double BLUE1_X = 43.125*0.0254;
+    public static final double BLUE2_X = 108.5*0.0254;
+    public static final double BLUE3_X = 174.625*0.0254;
+    public static final Translation3d MC1_B = new Translation3d(BLUE1_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC2_B = new Translation3d(BLUE2_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC3_B = new Translation3d(BLUE3_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    //Red side
+    public static final double RED1_X = 272.375*0.0254;
+    public static final double RED2_X = 207*0.0254;
+    public static final double RED3_X = 140.875*0.0254;
+    public static final Translation3d MC1_R = new Translation3d(RED1_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC2_R = new Translation3d(RED2_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC3_R = new Translation3d(RED3_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1_B, MC2_B, MC3_B, MC1_R, MC2_R, MC3_R);
+
+    public static final double HIGH_HEIGHT = 35.5*0.0254;
+    public static final double HIGH_Y = 40.375*0.0254;
+    //Blue Side
+    public static final Translation3d HC1_B = new Translation3d(BLUE1_X, HIGH_Y, HIGH_HEIGHT);
+    public static final Translation3d HC2_B = new Translation3d(BLUE2_X, HIGH_Y, HIGH_HEIGHT);
+    public static final Translation3d HC3_B = new Translation3d(BLUE3_X, HIGH_Y, HIGH_HEIGHT);
+    //Red Side
+    public static final Translation3d HC1_R = new Translation3d(RED1_X, HIGH_Y, HIGH_HEIGHT);
+    public static final Translation3d HC2_R = new Translation3d(RED2_X, HIGH_Y, HIGH_HEIGHT);
+    public static final Translation3d HC3_R = new Translation3d(RED3_X, HIGH_Y, HIGH_HEIGHT);
+    public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1_B, HC2_B, HC3_B, HC1_R, HC2_R, HC3_R);
+  }
 
