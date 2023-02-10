@@ -49,7 +49,7 @@ public class RobotContainer {
 
 // Joysticks
   private final CommandGenericHID m_driverHID = new CommandGenericHID(0);
-  
+  private final CommandGenericHID m_operatorHID = new CommandGenericHID(1);
 
 // Commands
   
@@ -58,6 +58,12 @@ public class RobotContainer {
     () -> m_driverHID.getRawAxis(5),
     m_tankDriveSubsystem
     );
+  
+  private final TankDriveSubsystem.driveMotorCommand m_operatorDrive = m_tankDriveSubsystem. new driveMotorCommand(
+    () -> m_operatorHID.getRawAxis(1),
+    () -> m_operatorHID.getRawAxis(5),
+    m_tankDriveSubsystem
+  );
 
   SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   SendableChooser<String> m_driverChooser = new SendableChooser<>();
@@ -92,6 +98,9 @@ public class RobotContainer {
       m_controllerType = 0;
       pairButton = 7;
     }
+
+    Trigger operatorDriveTrigger = m_driverHID.axisGreaterThan(1, 0.1);
+    operatorDriveTrigger.onTrue(m_operatorDrive);
 
     Trigger resetControls = m_driverHID.button(pairButton)
       .whileTrue(new setupControls());
