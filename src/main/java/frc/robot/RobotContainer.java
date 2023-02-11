@@ -105,7 +105,7 @@ public class RobotContainer {
       Scanner driverProfile = new Scanner(profile);
       // Create Triggers here | Triggers should be named t_CommandName
       Trigger t_startButton = driverHID.button(-1);//temp value.
-      t_startButton.whileTrue(new toggleLedColor(LEDstrips));
+      t_startButton.whileTrue(new setLedColor(LEDstrips));
       //BooleanSupplier exampleSupplier = () -> true;
       //Trigger t_exampleCommand = new Trigger(exampleSupplier);
 

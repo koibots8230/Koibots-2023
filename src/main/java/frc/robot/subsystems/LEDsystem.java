@@ -60,12 +60,14 @@ private boolean state = false;//cone = false, box = cube.
         // This method will be called once per scheduler run
 
     }
-    public void toggleColor(){
-        state=!state;
-        if(state){
+    public void setColor(boolean color){//cone = false, box = cube.
+        if(color==state){
+            return;
+        }
+        if(color){
             for (var i = 0; i < buffer.getLength(); i++) {
-            // Sets the specified LED to the RGB values for purple
-            buffer.setRGB(i, 255, 0, 255);
+                // Sets the specified LED to the RGB values for purple
+                buffer.setRGB(i, 255, 0, 255);
             }
         } else {
             for (var i = 0; i < buffer.getLength(); i++) {
@@ -73,6 +75,7 @@ private boolean state = false;//cone = false, box = cube.
                 buffer.setRGB(i, 255, 255, 0);
             }
         }
+        state=color;
         strip1.setData(buffer);
         strip2.setData(buffer);
     }
