@@ -48,6 +48,7 @@ public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
+
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
 
@@ -106,9 +107,11 @@ public class RobotContainer {
     BooleanSupplier m_supplyForwards = m_driverHID.axisGreaterThan(5, 0.1);
     BooleanSupplier m_supplyBackwards = m_driverHID.axisGreaterThan(6, 0.1);
     IntakeCommand m_intakeCommand = new IntakeCommand(m_intake, m_supplyForwards, m_supplyBackwards);
+
     //Intake is toggled when right bumper is pressed
-    Trigger raiseTrigger = m_driverHID.button(6);
+    Trigger raiseTrigger = m_driverHID.button(5);
     raiseTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+
     //Intake runs when A button is pressed on the controller
     Trigger runIntakeTrigger = m_driverHID.button(1);
     runIntakeTrigger.onTrue(m_intakeCommand);

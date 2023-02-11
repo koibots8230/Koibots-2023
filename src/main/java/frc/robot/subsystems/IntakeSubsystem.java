@@ -30,10 +30,17 @@ public class IntakeSubsystem extends SubsystemBase {
     private final RelativeEncoder intakeEncoder;
     private final CANSparkMax midtakeMotor;
     private final RelativeEncoder midtakeEncoder;
-    private final double RUNNING_SPEED = .7;
+    private final double RUNNING_SPEED = 0.7;
+    private final double RAISE_SPEED = 0.1;
 
     private final DoubleSolenoid intakeSolenoid;
     private final Compressor intakeComp;
+
+    // This motor raises and lowers the intake:
+    private final CANSparkMax raiseIntakeMotor;
+    private final RelativeEncoder raiseIntakeEncoder;
+
+    private double intakePosition; // This variable refers to the incline of the intake IN DEGREES
 
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.kIntakeMotorPort, MotorType.kBrushless);
@@ -44,6 +51,13 @@ public class IntakeSubsystem extends SubsystemBase {
         midtakeMotor = new CANSparkMax(Constants.kMidtakeMotorPort, MotorType.kBrushless); 
         midtakeMotor.setInverted(false);
         midtakeEncoder = midtakeMotor.getEncoder();
+
+        // raiseIntakeMotor:
+        raiseIntakeMotor = new CANSparkMax(Constants.kRaiseIntakeMotorPort, MotorType.kBrushless);
+        raiseIntakeMotor.setInverted(false);
+        raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
+        raiseIntakeEncoder.setPosition(0);
+        intakePosition = 0;
     }
 
     @Override
@@ -88,8 +102,24 @@ public class IntakeSubsystem extends SubsystemBase {
         return intakeSolenoid;
     }
 
+    public double getIntakePosition() {
+        return intakePosition;
+    }
+
+    public void setIntakePosition(double newPos){
+        intakePosition = newPos;
+    }
+
     public Compressor getComp() {
         return intakeComp;
+    }
+
+    public RelativeEncoder getRaiseEncoder() {
+        return raiseIntakeEncoder;
+    }
+
+    public CANSparkMax getIntakeRaiseMotor() {
+        return raiseIntakeMotor;
     }
 
     public class FlipIntake extends CommandBase {
@@ -108,12 +138,24 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
+            if (m_intake.getIntakePosition() == 0) {
+                m_intake.getIntakeRaiseMotor().set(RAISE_SPEED);
+                if (m_intake.getRaiseEncoder().getPosition() > 0.5) {
+                    m_intake.getIntakeRaiseMotor().stopMotor();
+                    m_intake.setIntakePosition(90.0);
+                    end(false);
+                }
+            } else if (m_intake.getIntakePosition() == 90) {
+                m_intake.getIntakeRaiseMotor().set(-RAISE_SPEED);
+                if (m_intake.getIntakePosition() == 0) {
+                    m_intake.getIntakeRaiseMotor().stopMotor();
+                    m_intake.setIntakePosition(0.0);
+                    end(false);
+                }
+            } else {
+                return;
+            }
             m_intake.getSolenoid().toggle();
-        }
-
-        @Override
-        public boolean isFinished() {
-            return true;
         }
     }
 }
