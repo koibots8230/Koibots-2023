@@ -99,6 +99,7 @@ public class Constants {
     public static final int kRightMotor1Port = 12;
     public static final int kRightMotor2Port = 13;
     public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
+    public static final int kSHOOTER_MOTOR_PORT = 0; //To be changed
     public static final double AUTO_SPEED = 0.15;
 
     //PID constants for PIDCommand Setmotor:
@@ -108,39 +109,43 @@ public class Constants {
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
     public static final double DEADZONE = 0.15;
+    
     //Shooting constants
-    public static final int SHOOTER_ANGLE = 45; //To be changed
+    public static final double SHOOTER_ANGLE = 45; //To be changed
     public static final double GRAVITY = 9.8; //If you can figure out a way to change this one, that's impressive
     public static final double SHOOTER_FROM_GROUND = 1; //To be changed
-
+    public static final double MOTOR_SPEED_TO_VELOCITY = 0; //To be changed
     public static final double MIDDLE_HEIGHT = 23.5*0.0254;
-    public static final double MIDDLE_Y = 23.75*0.0254;
+    public static final double BLUE_MIDDLE_X = 24.25*0.0254;
     //Blue Side
-    public static final double BLUE1_X = 43.125*0.0254;
-    public static final double BLUE2_X = 108.5*0.0254;
-    public static final double BLUE3_X = 174.625*0.0254;
-    public static final Translation3d MC1_B = new Translation3d(BLUE1_X, MIDDLE_Y, MIDDLE_HEIGHT);
-    public static final Translation3d MC2_B = new Translation3d(BLUE2_X, MIDDLE_Y, MIDDLE_HEIGHT);
-    public static final Translation3d MC3_B = new Translation3d(BLUE3_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    public static final double BLUE1_Y = 43.125*0.0254;
+    public static final double BLUE2_Y = 108.5*0.0254;
+    public static final double BLUE3_Y = 174.625*0.0254;
+    public static final Translation3d MC1_B = new Translation3d(BLUE_MIDDLE_X, BLUE1_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC2_B = new Translation3d(BLUE_MIDDLE_X, BLUE2_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC3_B = new Translation3d(BLUE_MIDDLE_X, BLUE3_Y, MIDDLE_HEIGHT);
     //Red side
-    public static final double RED1_X = 272.375*0.0254;
-    public static final double RED2_X = 207*0.0254;
-    public static final double RED3_X = 140.875*0.0254;
-    public static final Translation3d MC1_R = new Translation3d(RED1_X, MIDDLE_Y, MIDDLE_HEIGHT);
-    public static final Translation3d MC2_R = new Translation3d(RED2_X, MIDDLE_Y, MIDDLE_HEIGHT);
-    public static final Translation3d MC3_R = new Translation3d(RED3_X, MIDDLE_Y, MIDDLE_HEIGHT);
+    public static final double RED1_Y = 272.375*0.0254;
+    public static final double RED2_Y = 207*0.0254;
+    public static final double RED3_Y = 140.875*0.0254;
+    public static final double RED_MIDDLE_X = 617.75*0.0254;
+    public static final Translation3d MC1_R = new Translation3d(RED_MIDDLE_X, RED1_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC2_R = new Translation3d(RED_MIDDLE_X, RED2_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC3_R = new Translation3d(RED_MIDDLE_X, RED3_Y, MIDDLE_HEIGHT);
     public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1_B, MC2_B, MC3_B, MC1_R, MC2_R, MC3_R);
 
     public static final double HIGH_HEIGHT = 35.5*0.0254;
-    public static final double HIGH_Y = 40.375*0.0254;
+    public static final double BLUE_HIGH_X = 12.25*0.0254;
     //Blue Side
-    public static final Translation3d HC1_B = new Translation3d(BLUE1_X, HIGH_Y, HIGH_HEIGHT);
-    public static final Translation3d HC2_B = new Translation3d(BLUE2_X, HIGH_Y, HIGH_HEIGHT);
-    public static final Translation3d HC3_B = new Translation3d(BLUE3_X, HIGH_Y, HIGH_HEIGHT);
+    public static final Translation3d HC1_B = new Translation3d(BLUE_HIGH_X, BLUE1_Y, HIGH_HEIGHT);
+    public static final Translation3d HC2_B = new Translation3d(BLUE_HIGH_X, BLUE2_Y, HIGH_HEIGHT);
+    public static final Translation3d HC3_B = new Translation3d(BLUE_HIGH_X, BLUE3_Y, HIGH_HEIGHT);
+
+    public static final double RED_HIGH_X = 635.125*0.0254;
     //Red Side
-    public static final Translation3d HC1_R = new Translation3d(RED1_X, HIGH_Y, HIGH_HEIGHT);
-    public static final Translation3d HC2_R = new Translation3d(RED2_X, HIGH_Y, HIGH_HEIGHT);
-    public static final Translation3d HC3_R = new Translation3d(RED3_X, HIGH_Y, HIGH_HEIGHT);
+    public static final Translation3d HC1_R = new Translation3d(RED_HIGH_X, RED1_Y, HIGH_HEIGHT);
+    public static final Translation3d HC2_R = new Translation3d(RED_HIGH_X, RED2_Y, HIGH_HEIGHT);
+    public static final Translation3d HC3_R = new Translation3d(RED_HIGH_X, RED3_Y, HIGH_HEIGHT);
     public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1_B, HC2_B, HC3_B, HC1_R, HC2_R, HC3_R);
   }
 
