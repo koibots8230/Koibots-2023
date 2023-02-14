@@ -103,5 +103,9 @@ public class Constants {
     public static final double kd = 0;
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
+    //for LED system
+    public static final int stripLength=60;//the number of LEDs on each of the LED strips.
+    // public static final int LEDPort1=0;
+    // public static final int LEDPort2=0;//neither of these are known currently, but they can be uncommented once we know the port numbers.
     public static final double DEADZONE = 0.15;
 }

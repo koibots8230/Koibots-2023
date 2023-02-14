@@ -15,15 +15,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.Compressor;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
@@ -33,8 +29,8 @@ public class IntakeSubsystem extends SubsystemBase {
     private final double RUNNING_SPEED = 0.7;
     private final double RAISE_SPEED = 0.1;
 
-    private final DoubleSolenoid intakeSolenoid;
-    private final Compressor intakeComp;
+    // Boolean for the way that the intake runs. True means forward, false means backwards:
+    private boolean runsForward;
 
     // This motor raises and lowers the intake:
     private final CANSparkMax raiseIntakeMotor;
@@ -46,8 +42,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor = new CANSparkMax(Constants.kIntakeMotorPort, MotorType.kBrushless);
         intakeMotor.setInverted(false);
         intakeEncoder = intakeMotor.getEncoder();
-        intakeComp = new Compressor(PneumaticsModuleType.CTREPCM);
-        intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
         midtakeMotor = new CANSparkMax(Constants.kMidtakeMotorPort, MotorType.kBrushless); 
         midtakeMotor.setInverted(false);
         midtakeEncoder = midtakeMotor.getEncoder();
@@ -58,6 +52,9 @@ public class IntakeSubsystem extends SubsystemBase {
         raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
         raiseIntakeEncoder.setPosition(0);
         intakePosition = 0;
+
+        // Intake starts off going forward:
+        runsForward = true;
     }
 
     @Override
@@ -98,20 +95,12 @@ public class IntakeSubsystem extends SubsystemBase {
         midtakeMotor.set(0);
     }
 
-    public DoubleSolenoid getSolenoid() {
-        return intakeSolenoid;
-    }
-
     public double getIntakePosition() {
         return intakePosition;
     }
 
     public void setIntakePosition(double newPos){
         intakePosition = newPos;
-    }
-
-    public Compressor getComp() {
-        return intakeComp;
     }
 
     public RelativeEncoder getRaiseEncoder() {
@@ -122,18 +111,20 @@ public class IntakeSubsystem extends SubsystemBase {
         return raiseIntakeMotor;
     }
 
+    public boolean getForward() {
+        return runsForward;
+    }
+
+    public void setForward(boolean forward) {
+        runsForward = forward;
+    }
+
     public class FlipIntake extends CommandBase {
         IntakeSubsystem m_intake;
 
         public FlipIntake(IntakeSubsystem subsystem) {
             m_intake = subsystem;
             addRequirements(m_intake);
-        }
-
-        @Override
-        public void initialize() {
-            m_intake.getComp().enableDigital();
-            m_intake.getComp().enableAnalog(0, 120);
         }
 
         @Override
@@ -155,7 +146,20 @@ public class IntakeSubsystem extends SubsystemBase {
             } else {
                 return;
             }
-            m_intake.getSolenoid().toggle();
+        }
+    }
+
+    public class SwitchIntakeDirection extends CommandBase {
+        private final IntakeSubsystem m_IntakeSubsystem;
+        public SwitchIntakeDirection(IntakeSubsystem subsystem) {
+            m_IntakeSubsystem = subsystem;
+            addRequirements(m_IntakeSubsystem); 
+        }
+
+        @Override
+        public void execute() {
+            m_IntakeSubsystem.setForward(!getForward());
+            SmartDashboard.putBoolean("Is intake reversed?", m_IntakeSubsystem.getForward());
         }
     }
 }

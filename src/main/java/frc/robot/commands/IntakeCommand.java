@@ -7,23 +7,19 @@ import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeCommand extends CommandBase {
     private final IntakeSubsystem m_intake;
-    private final BooleanSupplier m_is_forwards;
-    private final BooleanSupplier m_is_backwards;
+    private final BooleanSupplier m_runOrNot;
 
-    public IntakeCommand(IntakeSubsystem subsystem, BooleanSupplier is_forwards, BooleanSupplier is_backwards) {
+    public IntakeCommand(IntakeSubsystem subsystem, BooleanSupplier run) {
         m_intake = subsystem;
-        m_is_forwards = is_forwards;
-        m_is_backwards = is_backwards;
+        m_runOrNot = run;
         addRequirements(m_intake);
     }
     
     @Override
     public void execute() {
-        if (m_is_forwards.getAsBoolean() ^ m_is_backwards.getAsBoolean()){
-            m_intake.turnOn(m_is_forwards.getAsBoolean());
-        } 
-        else {
-            // Turn off the intake
+        if (m_runOrNot.getAsBoolean()) {
+            m_intake.turnOn(m_intake.getForward());
+        } else {
             m_intake.turnOff();
         }
     }

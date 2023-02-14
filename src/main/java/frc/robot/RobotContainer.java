@@ -14,26 +14,32 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.Constants;
+// import frc.robot.Constants;
 import java.util.function.BooleanSupplier;
+// import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+// import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+// import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem.SwitchIntakeDirection;
+import frc.robot.subsystems.TankDriveSubsystem.SwitchDrivetrainInvert;
 import frc.robot.commands.IntakeCommand;
-import edu.wpi.first.wpilibj.shuffleboard.*;
+// import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj.Filesystem;
+// import edu.wpi.first.wpilibj.Joystick;
+// import edu.wpi.first.wpilibj.XboxController;
 
 import java.io.File;
-import java.util.Map;
+// import java.util.Map;
 import java.util.Scanner;
 
-import edu.wpi.first.wpilibj.Filesystem;
+// import edu.wpi.first.wpilibj.Filesystem;
 /**
  * This class is where the bulk of the robot should be declared. Since
  * Command-based is a
@@ -51,20 +57,37 @@ public class RobotContainer {
 
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
-
   // Joysticks
+  private final CommandGenericHID driverHID = new CommandGenericHID(0);
+  //LED system 
+  private final LEDsystem LEDstrips = new LEDsystem(-1,-2);//temp values.
+  //other stuff
   private final CommandGenericHID m_driverHID = new CommandGenericHID(0);
+  private final CommandGenericHID m_operatorHID = new CommandGenericHID(1);
 
   // Commands
-  private final TankDriveSubsystem.driveMotorCommand m_driveCommand = m_tankDriveSubsystem.new driveMotorCommand(
-      () -> m_driverHID.getRawAxis(0),
-      () -> m_driverHID.getRawAxis(5),
-      m_tankDriveSubsystem);
+  
+  private final TankDriveSubsystem.driveMotorCommand m_driveCommand = m_tankDriveSubsystem. new driveMotorCommand( 
+    () -> m_driverHID.getRawAxis(1), 
+    () -> m_driverHID.getRawAxis(5),
+    m_tankDriveSubsystem
+    );
+  
+  private final TankDriveSubsystem.driveMotorCommand m_operatorDrive = m_tankDriveSubsystem. new driveMotorCommand(
+    () -> m_operatorHID.getRawAxis(1),
+    () -> m_operatorHID.getRawAxis(5),
+    m_tankDriveSubsystem
+  );
+
+  // Drivetrain is reversed when button A is pressed on the controller:
+  SwitchDrivetrainInvert m_SwitchDrivetrainInvertCommand = m_tankDriveSubsystem.new SwitchDrivetrainInvert(m_tankDriveSubsystem);
+  Trigger invertDrivetrainTrigger = m_driverHID.button(1)
+    .onTrue(m_tankDriveSubsystem.new SwitchDrivetrainInvert(m_tankDriveSubsystem));
 
   SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   SendableChooser<String> m_driverChooser = new SendableChooser<>();
 
-  private IntakeCommand m_intakeCommand;
+  // private IntakeCommand m_intakeCommand;
 
   // m_controllerType 0 -> Unrecognized
   // m_controllerType 1 -> Xbox Controller
@@ -77,7 +100,6 @@ public class RobotContainer {
   private RobotContainer() {
     // m_driverChooser.setDefaultOption("DEFAULT", null);
     // m_driverChooser.addOption("Caleb", null);
-    buildShuffleboard();
     configureButtonBindings();
 
     int pairButton;
@@ -94,27 +116,57 @@ public class RobotContainer {
       pairButton = 7;
     }
 
-    Trigger resetControls = m_driverHID.button(pairButton)
-        .whileTrue(new setupControls());
+    File profile = new File(Filesystem.getDeployDirectory(), m_driverChooser.getSelected() + ".txt");
+    
+    try {
+    Scanner driverProfile = new Scanner(profile);
 
-    // m_intakeCommand = new IntakeCommand(
-    //     m_intake,
-    //     m_driverHID.axisGreaterThan(3, 0));
+    //==================OPERATOR CONTROLS:======================================================
 
-    //create commands
-    //5 = left bumper
-    //6 = right bumper
-    BooleanSupplier m_supplyForwards = m_driverHID.axisGreaterThan(5, 0.1);
-    BooleanSupplier m_supplyBackwards = m_driverHID.axisGreaterThan(6, 0.1);
-    IntakeCommand m_intakeCommand = new IntakeCommand(m_intake, m_supplyForwards, m_supplyBackwards);
+      // Create Triggers here | Triggers should be named t_CommandName
+    Trigger leftTrigger = m_operatorHID.axisGreaterThan(3,Constants.DEADZONE);
+    Trigger rightTrigger = m_operatorHID.axisGreaterThan(4,Constants.DEADZONE);
+    rightTrigger.whileTrue(new setLedColor(LEDstrips,true));
+    leftTrigger.whileTrue(new setLedColor(LEDstrips,false));
+    //BooleanSupplier exampleSupplier = () -> true;
 
-    //Intake is toggled when right bumper is pressed
-    Trigger raiseTrigger = m_driverHID.button(5);
-    raiseTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+    //Trigger t_exampleCommand = new Trigger(exampleSupplier);
+    Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, 0.1);
+    operatorDriveTrigger.onTrue(m_operatorDrive);
 
-    //Intake runs when A button is pressed on the controller
-    Trigger runIntakeTrigger = m_driverHID.button(1);
-    runIntakeTrigger.onTrue(m_intakeCommand);
+    Trigger operatorSpeedUp = m_operatorHID.button(2);
+    Trigger operatorSpeedDown = m_operatorHID.button(3);
+    operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
+    operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+
+    //================DRIVER CONTROLS==============================================================
+    // create commands
+    // 5 = left bumper
+    // 6 = right bumper
+
+    //Intake is toggled when left bumper is pressed
+    Trigger flipTrigger = m_driverHID.button(5);
+    flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+
+    //Intake runs when right trigger is pressed
+    BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, 0.1);
+    IntakeCommand m_IntakeCommand = new IntakeCommand(m_intake, m_turnOnIntake);
+    Trigger runIntakeTrigger = m_driverHID.button(3);
+    runIntakeTrigger.onTrue(m_IntakeCommand);
+
+    // Intake is reversed when right bumper is pressed
+    SwitchIntakeDirection m_switchIntake = m_intake.new SwitchIntakeDirection(m_intake);
+    Trigger switchIntakeTrigger = m_driverHID.button(6);
+    switchIntakeTrigger.onTrue(m_switchIntake);
+    
+    // Trigger to reset the controls
+    Trigger resetControls = m_driverHID.button(pairButton);
+    resetControls.whileTrue(new setupControls());
+
+    driverProfile.close();
+    } catch(Exception primaryError) {
+      System.out.print(primaryError);
+    }
   }
 
   
@@ -152,19 +204,4 @@ public class RobotContainer {
     // The selected command will be run in autonomous
     return m_autoChooser.getSelected();
   }
-
-  public void buildDriverTab() {
-    /* Shuffleboard.getTab("SmartDashboard").add("Battery Voltage", MiscDashboardSubsystem.getBatteryVoltage())
-        .withPosition(0, 0).withWidget(BuiltInWidgets.kVoltageView).withProperties(Map.of("min", 10, "max", 14));
-
-    Shuffleboard.getTab("SmartDashboard").add("Battery Alert", MiscDashboardSubsystem.getBatteryVoltageAlert())
-        .withPosition(2, 0).withWidget(BuiltInWidgets.kBooleanBox); */
-
-    
-}
-
-  private void buildShuffleboard() {
-    buildDriverTab();
-  }
-
 }

@@ -15,14 +15,16 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
     // private int periodic_loop_counter = 0;
     private boolean voltage_alert = true;
-    private double voltage = 11;
-    private double batteryCurrent = 0;
-    private double inSpeed = 10;
-    private double inCurrent = 0;
-    public boolean is_cube = false;
-    private String is_cube_text = "Cone";
-    private double midCurrent = 0;
-    private double midSpeed = 10;
+    private double voltage = 11; // Voltage of the battery
+    private double batteryCurrent = 0; // Current of the batter
+    private double inSpeed = 10; // Speed of the intake motor
+    private double inCurrent = 0; // Current of the intake motor
+    public boolean is_cube = false; // Boolean to determine whether retreived object is a cube or cone
+    private String is_cube_text = "Cone"; // Text version of boolean above
+    private double midCurrent = 0; // Current of the midtake motor
+    private double midSpeed = 10; // Speed of the midtake motor
+    private boolean intakeReverse = false; // Boolean determining whether or not the intake motor is reversed
+    private boolean drivetrainInvert = false; // Boolean determining whether or not the drivetrain is inverted
     
     public MiscDashboardSubsystem() {
         ShuffleboardTab main_tab = Shuffleboard.getTab("Main");
@@ -53,7 +55,11 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
         withSize(3,1).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#880088", "Color when false", "#FFEE00"));
 
-        GenericEntry ItemSelection = Shuffleboard.getTab("Cube or Cone").add("Cube Or Cone", true).withWidget("Toggle Button").getEntry();
+        // Displaying drivetrain invert and intake reverse:
+        main_tab.addBoolean("Is drivetrain inverted?", () -> drivetrainInvert).withWidget(BuiltInWidgets.kBooleanBox)
+        .withPosition(0, 4).withSize(3, 1);
+        main_tab.addBoolean("Is intake reversed?", () -> intakeReverse).withWidget(BuiltInWidgets.kBooleanBox)
+        .withPosition(3, 4).withSize(3, 1);
     }
 
     @Override
