@@ -11,6 +11,11 @@
 
 package frc.robot;
 
+import java.util.Arrays;
+import java.util.List;
+
+import edu.wpi.first.math.geometry.Translation3d;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -94,6 +99,7 @@ public class Constants {
     public static final int kRightMotor1Port = 12;
     public static final int kRightMotor2Port = 13;
     public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
+    public static final int kSHOOTER_MOTOR_PORT = 0; //To be changed
     public static final double AUTO_SPEED = 0.15;
 
     //PID constants for PIDCommand Setmotor:
@@ -107,5 +113,43 @@ public class Constants {
     // public static final int LEDPort1=0;
     // public static final int LEDPort2=0;//neither of these are known currently, but they can be uncommented once we know the port numbers.
     public static final double DEADZONE = 0.15;
-}
+    
+    //Shooting constants
+    public static final double SHOOTER_ANGLE = 45; //To be changed
+    public static final double GRAVITY = 9.8; //If you can figure out a way to change this one, that's impressive
+    public static final double SHOOTER_FROM_GROUND = 1; //To be changed
+    public static final double MOTOR_SPEED_TO_VELOCITY = 0; //To be changed
+    public static final double MIDDLE_HEIGHT = 23.5*0.0254;
+    public static final double BLUE_MIDDLE_X = 24.25*0.0254;
+    //Blue Side
+    public static final double BLUE1_Y = 43.125*0.0254;
+    public static final double BLUE2_Y = 108.5*0.0254;
+    public static final double BLUE3_Y = 174.625*0.0254;
+    public static final Translation3d MC1_B = new Translation3d(BLUE_MIDDLE_X, BLUE1_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC2_B = new Translation3d(BLUE_MIDDLE_X, BLUE2_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC3_B = new Translation3d(BLUE_MIDDLE_X, BLUE3_Y, MIDDLE_HEIGHT);
+    //Red side
+    public static final double RED1_Y = 272.375*0.0254;
+    public static final double RED2_Y = 207*0.0254;
+    public static final double RED3_Y = 140.875*0.0254;
+    public static final double RED_MIDDLE_X = 617.75*0.0254;
+    public static final Translation3d MC1_R = new Translation3d(RED_MIDDLE_X, RED1_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC2_R = new Translation3d(RED_MIDDLE_X, RED2_Y, MIDDLE_HEIGHT);
+    public static final Translation3d MC3_R = new Translation3d(RED_MIDDLE_X, RED3_Y, MIDDLE_HEIGHT);
+    public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1_B, MC2_B, MC3_B, MC1_R, MC2_R, MC3_R);
+
+    public static final double HIGH_HEIGHT = 35.5*0.0254;
+    public static final double BLUE_HIGH_X = 12.25*0.0254;
+    //Blue Side
+    public static final Translation3d HC1_B = new Translation3d(BLUE_HIGH_X, BLUE1_Y, HIGH_HEIGHT);
+    public static final Translation3d HC2_B = new Translation3d(BLUE_HIGH_X, BLUE2_Y, HIGH_HEIGHT);
+    public static final Translation3d HC3_B = new Translation3d(BLUE_HIGH_X, BLUE3_Y, HIGH_HEIGHT);
+
+    public static final double RED_HIGH_X = 635.125*0.0254;
+    //Red Side
+    public static final Translation3d HC1_R = new Translation3d(RED_HIGH_X, RED1_Y, HIGH_HEIGHT);
+    public static final Translation3d HC2_R = new Translation3d(RED_HIGH_X, RED2_Y, HIGH_HEIGHT);
+    public static final Translation3d HC3_R = new Translation3d(RED_HIGH_X, RED3_Y, HIGH_HEIGHT);
+    public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1_B, HC2_B, HC3_B, HC1_R, HC2_R, HC3_R);
+  }
 

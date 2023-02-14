@@ -22,9 +22,9 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
-    private CANSparkMax primaryRightMotor;
+    private static CANSparkMax primaryRightMotor;
     private CANSparkMax secondaryRightMotor;
-    private CANSparkMax primaryLeftMotor;
+    private static CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
     private double speedCoefficient = 1;
     
@@ -69,7 +69,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         return primaryRightMotor.getPIDController();
     }
 
-    public void setMotor(double rightSpeed, double leftSpeed) {
+    public static void setMotor(double leftSpeed, double rightSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
     }
