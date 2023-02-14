@@ -126,7 +126,7 @@ public class RobotContainer {
     Trigger operatorSpeedUp = m_operatorHID.button(2);
     Trigger operatorSpeedDown = m_operatorHID.button(3);
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-    operatorSpeedUp.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+    operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
     
     Trigger resetControls = m_driverHID.button(pairButton)
       .whileTrue(new setupControls());
