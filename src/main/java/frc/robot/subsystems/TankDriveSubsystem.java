@@ -78,11 +78,11 @@ public class TankDriveSubsystem extends SubsystemBase {
         if (Increase) {
             //Only need increase - if it's called and Increase is false than decrease is pressed instead
             if (speedCoefficient < 1) {
-                speedCoefficient += 0.5;
+                speedCoefficient += 0.05;
             }
         } else {
             if (speedCoefficient > 0){
-                speedCoefficient -= 0.5;
+                speedCoefficient -= 0.05;
             }
         }
     }
