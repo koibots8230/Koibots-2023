@@ -24,6 +24,10 @@ public class ShooterSubsystem extends SubsystemBase {
   public static double ClosestDistance = 0;
   private int count = 0;
   private int ShootLevel = 2;
+  private double xDistance;
+  private double yDistance;
+  private double distance;
+  private Translation2d Spot = new Translation2d(0, 0);
 
   private static CANSparkMax shooterMotor = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT, MotorType.kBrushless);
   
@@ -35,14 +39,10 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     if (count == 10) {
       count = 0;
-      final Optional<EstimatedRobotPose> BotThing = VisionSubsystem.photonPoseEstimator.update();
+      Optional<EstimatedRobotPose> BotThing = VisionSubsystem.photonPoseEstimator.update();
       if (BotThing.isPresent()) {
         Bot3d = BotThing.get().estimatedPose;
         VariablesDefined = true;
-        double xDistance = 0;
-        double yDistance = 0;
-        double distance = 0;
-        Translation2d Spot = new Translation2d(0, 0);
         for (int a = 0; a < 6; a++) {
           if (ShootLevel == 2) {
             Spot = Constants.MIDDLE_SPOTS.get(a).toTranslation2d();
