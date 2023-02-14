@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -10,17 +12,25 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class AutoShootCommand extends CommandBase {
   /** Creates a new ShootyCommand. */
   private boolean end = false;
-  public double Velocity;
+  private double Velocity;
+  private int ShootLevel = 2;
+
+  public void getShooterLevel(BooleanSupplier L2, BooleanSupplier L3) {
+    if (L2.getAsBoolean()) {
+      ShootLevel = 2;
+    } else if (L3.getAsBoolean()) {
+      ShootLevel = 3;
+    }
+  }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    int ShootLevel = 2;
     Velocity = 0;
     if (ShooterSubsystem.VariablesDefined) {
       double ShootingHeight = 0;
       if (ShootLevel == 2) {
         ShootingHeight = Constants.MIDDLE_HEIGHT - ShooterSubsystem.Bot3d.getZ();
-      } else {
+      } else if (ShootLevel == 3) {
         ShootingHeight = Constants.HIGH_HEIGHT - ShooterSubsystem.Bot3d.getZ() - Constants.SHOOTER_FROM_GROUND;
       }
       Velocity = Math.sqrt((-Constants.GRAVITY*(ShooterSubsystem.ClosestDistance*ShooterSubsystem.ClosestDistance))/(2*((Math.cos(Constants.SHOOTER_ANGLE))*(Math.cos(Constants.SHOOTER_ANGLE)))*(ShootingHeight - (ShooterSubsystem.ClosestDistance*Math.tan(Constants.SHOOTER_ANGLE)))));
