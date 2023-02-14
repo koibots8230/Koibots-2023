@@ -1,13 +1,19 @@
 package frc.robot.subsystems;
 
 import java.util.Optional;
+import java.util.function.DoubleSupplier;
 
 import org.ejml.equation.Variable;
 import org.photonvision.EstimatedRobotPose;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -18,6 +24,12 @@ public class ShooterSubsystem extends SubsystemBase {
   public static double ClosestDistance = 0;
   private int count = 0;
   private int ShootLevel = 2;
+
+  private static CANSparkMax shooterMotor = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT, MotorType.kBrushless);
+  
+  public static void SetShooter(double Speed){
+    shooterMotor.set(Speed);
+  }
 
   @Override
   public void periodic() {
@@ -52,6 +64,20 @@ public class ShooterSubsystem extends SubsystemBase {
       count ++;
     }
   }
+
+  public class CommunityShotCommand extends CommandBase {
+    private DoubleSupplier m_Trigger;
+    public CommunityShotCommand(DoubleSupplier Trigger, ShooterSubsystem m_ShooterSubsystem) {
+      m_Trigger = Trigger;
+    }
+
+    @Override
+    public void execute() {
+      if (m_Trigger.getAsDouble() > Constants.DEADZONE) {
+        SetShooter(.75);
+      }
+    }
+}
 
   @Override
   public void simulationPeriodic() {

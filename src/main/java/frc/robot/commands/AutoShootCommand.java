@@ -10,13 +10,12 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class AutoShootCommand extends CommandBase {
   /** Creates a new ShootyCommand. */
   private boolean end = false;
-  private CANSparkMax shooterMotor;
+  public double Velocity;
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     int ShootLevel = 2;
-    double Velocity = 0;
-    shooterMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
+    Velocity = 0;
     if (ShooterSubsystem.VariablesDefined) {
       double ShootingHeight = 0;
       if (ShootLevel == 2) {
@@ -26,11 +25,10 @@ public class AutoShootCommand extends CommandBase {
       }
       Velocity = Math.sqrt((-Constants.GRAVITY*(ShooterSubsystem.ClosestDistance*ShooterSubsystem.ClosestDistance))/(2*((Math.cos(Constants.SHOOTER_ANGLE))*(Math.cos(Constants.SHOOTER_ANGLE)))*(ShootingHeight - (ShooterSubsystem.ClosestDistance*Math.tan(Constants.SHOOTER_ANGLE)))));
     } else {
-
-    }
-    if (Velocity == 0) {
-      shooterMotor.set(Velocity*Constants.MOTOR_SPEED_TO_VELOCITY);
       end = true;
+    }
+    if (Velocity != 0) {
+      ShooterSubsystem.SetShooter(Constants.MOTOR_SPEED_TO_VELOCITY*Velocity);
     }
   }
   // Called every time the scheduler runs while the command is scheduled.
