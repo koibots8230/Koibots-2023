@@ -11,11 +11,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PS4Controller;
-import edu.wpi.first.wpilibj.XboxController;
-
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -107,18 +102,6 @@ public class Constants {
     public static final double kd = 0;
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
-    //All drivetrain bits below are not set
-    //Drivetrain feedforward gains
-    public static final double KS = 0;
-    public static final double KV = 0;
-    public static final double KA = 0;
-    //Drivetrain kinmetatics
-    public static final double kTrackwidthMeters = 0;
-    public static final DifferentialDriveKinematics KDRIVEKINEMATICS =
-        new DifferentialDriveKinematics(kTrackwidthMeters);
-    //Drivetrain feedback gains
-    public static final double KPDRIVEVEL = 0;
     public static final double DEADZONE = 0.15;
 }
-
 
