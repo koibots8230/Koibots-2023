@@ -10,77 +10,45 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import frc.robot.Constants;
 
-import edu.wpi.first.wpilibj.CounterBase.EncodingType;
-import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import java.util.function.DoubleSupplier;
+
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax primaryRightMotor;
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
-    private Encoder quadratureEncoder1;
+    
 
     public TankDriveSubsystem() {
-        final CANSparkMax primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor",(Sendable) primaryRightMotor);
+        primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
 
-        final CANSparkMax secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryRightMotor", (Sendable) secondaryRightMotor);
+        secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
 
-        final CANSparkMax primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor", (Sendable) primaryLeftMotor);
+        primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
 
-        final CANSparkMax secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryLeftMotor",(Sendable) secondaryLeftMotor);
+        secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
-        quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        addChild("Quadrature Encoder 1",quadratureEncoder1);
-        quadratureEncoder1.setDistancePerPulse(1.0);
+        
     }
 
-    public TankDriveSubsystem(boolean invertRight) { //optional inversion of motors
-        final CANSparkMax primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor",(Sendable) primaryRightMotor);
+    public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
+        this();
+
         primaryRightMotor.setInverted(invertRight);
-
-        final CANSparkMax secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryRightMotor", (Sendable) secondaryRightMotor);
-        secondaryRightMotor.setInverted(invertRight);
-
-        final CANSparkMax primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
-        addChild("PrimaryRightMotor", (Sendable) primaryLeftMotor);
-
-        final CANSparkMax secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
-        addChild("SecondaryLeftMotor",(Sendable) secondaryLeftMotor);
-
-        quadratureEncoder1 = new Encoder(0, 1, false, EncodingType.k4X);
-        addChild("Quadrature Encoder 1",quadratureEncoder1);
-        quadratureEncoder1.setDistancePerPulse(1.0);
+        primaryLeftMotor.setInverted(invertLeft);
     }
 
-    // The left-side drive encoder
-    private final Encoder m_leftEncoder =
-    new Encoder(
-      Constants.kLeftMotor1Port,
-      Constants.kLeftMotor2Port);
-    // The right-side drive encoder
-    private final Encoder m_rightEncoder =
-    new Encoder(
-      Constants.kRightMotor1Port,
-      Constants.kRightMotor2Port);
-    
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
-    }
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -92,27 +60,67 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     }
 
-    public double getMotorSpeed(String LR) {
-        if (LR == "LEFT") {
-            return this.primaryLeftMotor.get();
-        }
-        if (LR == "RIGHT") {
-            return this.primaryRightMotor.get();
-        }
-        return 0.0;
+    public SparkMaxPIDController getLeftPID() {
+        return primaryLeftMotor.getPIDController();
     }
 
-    public void setMotor(String LR, double speed) {
-        if (LR == "LEFT") {
-            this.primaryLeftMotor.set(speed);
-            return;
-        }
-        if (LR == "RIGHT") {
-            this.primaryRightMotor.set(speed);
-            return;
-        }
-        return;
+    public SparkMaxPIDController getRightPID() {
+        return primaryRightMotor.getPIDController();
     }
 
-    
+    public void setMotor(double rightSpeed, double leftSpeed) {
+        primaryLeftMotor.set(leftSpeed);
+        primaryRightMotor.set(rightSpeed);
+    }
+
+    public class driveMotorCommand extends CommandBase {
+        private DoubleSupplier m_rightSpeed;
+        private DoubleSupplier m_leftSpeed;
+        private SparkMaxPIDController m_rightPID;
+        private SparkMaxPIDController m_leftPID;
+        private TankDriveSubsystem m_DriveSubsystem;
+
+        public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed, TankDriveSubsystem subsystem) {
+            m_rightSpeed = rightSpeed;
+            m_leftSpeed = leftSpeed;
+            m_DriveSubsystem = subsystem;
+            addRequirements(subsystem);
+        }
+
+        @Override
+        public void initialize() {
+            m_rightPID = m_DriveSubsystem.getRightPID();
+            m_leftPID = m_DriveSubsystem.getLeftPID();
+
+            m_rightPID.setOutputRange(-1, 1);
+            m_leftPID.setOutputRange(-1, 1);
+
+            m_rightPID.setP(Constants.kp);
+            m_leftPID.setP(Constants.kp);
+
+            m_rightPID.setI(Constants.ki);
+            m_leftPID.setI(Constants.ki);
+
+            m_rightPID.setD(Constants.kd);
+            m_leftPID.setD(Constants.kd);
+        }
+
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+        }
+
+        private double adjustForDeadzone(double in) {
+            if (Math.abs(in) < Constants.DEADZONE) {
+                return 0;
+            }
+            double sign = (int) Math.signum(in);
+            double out = Math.abs(sign);
+            out *= (1 / 1 - Constants.DEADZONE);
+            out *= sign * out;
+            return out;
+        }
+    }
 }
