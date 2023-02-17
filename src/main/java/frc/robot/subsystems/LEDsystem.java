@@ -59,7 +59,7 @@ private Constants.Shape currentShape = Constants.Shape.NONE;
         // This method will be called once per scheduler run
 
     }
-    public void setColor(Constants.Shape shape){//cone = false, box = cube.
+    public void setColor(Constants.Shape shape){
         if(shape==currentShape){
             return;
         }
