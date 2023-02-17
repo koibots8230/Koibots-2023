@@ -11,6 +11,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -103,5 +105,21 @@ public class Constants {
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
     public static final double DEADZONE = 0.15;
+
+    //Encoder Values
+    public static final double RIGHT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
+    public static final double LEFT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
+
+    //Path Folowing Values TO BE CHANGED
+    public static final double ksVolts = 0;
+    public static final double kvVoltSecondsPerMeter = 0;
+    public static final double kaVoltSecondsSquaredPerMeter = 0;
+    public static final double kPDriveVel = 0;
+    public static final double kMaxSpeedMetersPerSecond = 0;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0;
+    
+    public static final double kTrackwidthMeters = 0;
+    public static final DifferentialDriveKinematics kDriveKinematics =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
 }
 
