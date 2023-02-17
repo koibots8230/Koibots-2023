@@ -96,6 +96,12 @@ public class TankDriveSubsystem extends SubsystemBase {
     public Pose2d getOdometryPose() {
         return OdometryPose;
     }
+    public void resetOdometry(Pose2d pose) {
+        primaryLeftEncoder.setPosition(0);
+        primaryRightEncoder.setPosition(0);
+        m_Odometry.resetPosition(
+            gyro.getRotation2d(), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition(), pose);
+      }
 
     @Override
     public void simulationPeriodic() {

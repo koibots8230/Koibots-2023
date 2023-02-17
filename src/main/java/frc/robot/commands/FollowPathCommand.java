@@ -20,22 +20,7 @@ public class FollowPathCommand extends CommandBase{
     }
 
     public void execute() {
-        RamseteCommand ramseteCommand =
-        new RamseteCommand(
-            exampleTrajectory,
-            m_DriveSubsystem::getOdometryPose,
-            new RamseteController(),
-            new SimpleMotorFeedforward(
-                Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,
-            m_DriveSubsystem::getWheelSpeeds,
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            // RamseteCommand passes volts to the callback
-            m_DriveSubsystem::setMotorVoltage,
-            m_DriveSubsystem);
+        
     }
 
 }
