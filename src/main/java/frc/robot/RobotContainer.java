@@ -109,14 +109,13 @@ public class RobotContainer {
 
     
     File profile = new File(Filesystem.getDeployDirectory(), m_driverChooser.getSelected() + ".txt");
-    
     try {
     Scanner driverProfile = new Scanner(profile);
       // Create Triggers here | Triggers should be named t_CommandName
     Trigger leftTrigger = m_operatorHID.axisGreaterThan(3,Constants.DEADZONE);
     Trigger rightTrigger = m_operatorHID.axisGreaterThan(4,Constants.DEADZONE);
-    rightTrigger.whileTrue(new setLedColor(LEDstrips,true));
-    leftTrigger.whileTrue(new setLedColor(LEDstrips,false));
+    rightTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
+    leftTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
     //BooleanSupplier exampleSupplier = () -> true;
 
     //Trigger t_exampleCommand = new Trigger(exampleSupplier);

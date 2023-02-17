@@ -88,6 +88,11 @@ public class Constants {
           value = index;
         }
     }
+    public enum Shape{
+      CUBE,
+      CONE,
+      NONE
+    }
 
     public static final int kLeftMotor1Port = 15;
     public static final int kLeftMotor2Port = 14;
