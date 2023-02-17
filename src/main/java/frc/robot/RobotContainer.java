@@ -167,16 +167,20 @@ public class RobotContainer {
     private void invertDrivetrain(boolean invert) {
       if (invert) {
         m_tankDriveSubsystem.setInverted(true, true, true);
+        System.out.println("Invert On");
       } else {
         m_tankDriveSubsystem.setInverted(false, false, false);
+        System.out.println("Invert Off");
       }
     }
 
     private void invertDrivetrain() {
       if (m_tankDriveSubsystem.getInverted()) {
         m_tankDriveSubsystem.setInverted(false, false, false);
+        System.out.println("Invert Off");
       } else {
         m_tankDriveSubsystem.setInverted(true, true, true);
+        System.out.println("Invert On");
       }
     }
 
