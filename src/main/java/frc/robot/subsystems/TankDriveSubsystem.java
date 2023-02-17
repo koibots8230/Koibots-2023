@@ -45,9 +45,18 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
         this();
-
         primaryRightMotor.setInverted(invertRight);
         primaryLeftMotor.setInverted(invertLeft);
+    }
+
+    private boolean isInverted = false;
+
+    public void setInverted(boolean invertRight, boolean invertLeft, boolean invertJS) {
+        isInverted = invertJS;
+    }
+
+    public boolean getInverted() {
+        return isInverted;
     }
 
     @Override
