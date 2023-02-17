@@ -13,44 +13,153 @@
 package frc.robot.subsystems;
 
 
-import frc.robot.commands.*;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.wpilibj.Encoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
+    private final RelativeEncoder intakeEncoder;
+    private final CANSparkMax midtakeMotor;
+    private final RelativeEncoder midtakeEncoder;
+    private final double RUNNING_SPEED = 0.7;
+    private final double RAISE_SPEED = 0.1;
+
+    // Boolean for the way that the intake runs. True means forward, false means backwards:
+    private boolean runsForward;
+
+    // This motor raises and lowers the intake:
+    private final CANSparkMax raiseIntakeMotor;
+    private final RelativeEncoder raiseIntakeEncoder;
+
+    private double intakePosition; // This variable refers to the incline of the intake IN DEGREES
+
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.kIntakeMotorPort, MotorType.kBrushless);
-        addChild("IntakeMotor", (Sendable) intakeMotor);
         intakeMotor.setInverted(false);
+        intakeEncoder = intakeMotor.getEncoder();
+        midtakeMotor = new CANSparkMax(Constants.kMidtakeMotorPort, MotorType.kBrushless); 
+        midtakeMotor.setInverted(false);
+        midtakeEncoder = midtakeMotor.getEncoder();
+
+        // raiseIntakeMotor:
+        raiseIntakeMotor = new CANSparkMax(Constants.kRaiseIntakeMotorPort, MotorType.kBrushless);
+        raiseIntakeMotor.setInverted(false);
+        raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
+        raiseIntakeEncoder.setPosition(0);
+        intakePosition = 0;
+
+        // Intake starts off going forward:
+        runsForward = true;
     }
 
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
+        double inVelocity = intakeEncoder.getVelocity();
+        double InCurrent = intakeMotor.getOutputCurrent(); 
+        SmartDashboard.putNumber("Intake Motor Speed (RPM)", inVelocity);
+        SmartDashboard.putNumber("Main Battery Current (A)", InCurrent);
+        double midVelocity = midtakeEncoder.getVelocity();
+        double midCurrent = midtakeMotor.getOutputCurrent();
+        SmartDashboard.putNumber("Midtake Motor Current (A)", midCurrent);
+        SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
 
     }
 
     @Override
     public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
-
-    }
-    // Put methods for controlling this subsystem
-    // here. Call these from Commands.
-    public double getIntakeSpeed() {
-        return this.intakeMotor.get();
     }
 
-    public void setIntakeSpeed(double speed) {
-        this.intakeMotor.set(speed);
+    public void turnOn() {
+        intakeMotor.set(RUNNING_SPEED);
+        midtakeMotor.set(RUNNING_SPEED);
+    }
+
+    public void turnOn(Boolean Forwards) {
+        if (Forwards){
+            intakeMotor.set(RUNNING_SPEED);
+            midtakeMotor.set(RUNNING_SPEED);
+        } else {
+            intakeMotor.set(-RUNNING_SPEED);
+            midtakeMotor.set(-RUNNING_SPEED);
+        }
+    }
+
+    public void turnOff() {
+        intakeMotor.set(0);
+        midtakeMotor.set(0);
+    }
+
+    public double getIntakePosition() {
+        return intakePosition;
+    }
+
+    public void setIntakePosition(double newPos){
+        intakePosition = newPos;
+    }
+
+    public RelativeEncoder getRaiseEncoder() {
+        return raiseIntakeEncoder;
+    }
+
+    public CANSparkMax getIntakeRaiseMotor() {
+        return raiseIntakeMotor;
+    }
+
+    public boolean getForward() {
+        return runsForward;
+    }
+
+    public void setForward(boolean forward) {
+        runsForward = forward;
+    }
+
+    public class FlipIntake extends CommandBase {
+        IntakeSubsystem m_intake;
+
+        public FlipIntake(IntakeSubsystem subsystem) {
+            m_intake = subsystem;
+            addRequirements(m_intake);
+        }
+
+        @Override
+        public void execute() {
+            if (m_intake.getIntakePosition() == 0) {
+                m_intake.getIntakeRaiseMotor().set(RAISE_SPEED);
+                if (m_intake.getRaiseEncoder().getPosition() > 0.5) {
+                    m_intake.getIntakeRaiseMotor().stopMotor();
+                    m_intake.setIntakePosition(90.0);
+                    end(false);
+                }
+            } else if (m_intake.getIntakePosition() == 90) {
+                m_intake.getIntakeRaiseMotor().set(-RAISE_SPEED);
+                if (m_intake.getIntakePosition() == 0) {
+                    m_intake.getIntakeRaiseMotor().stopMotor();
+                    m_intake.setIntakePosition(0.0);
+                    end(false);
+                }
+            } else {
+                return;
+            }
+        }
+    }
+
+    public class SwitchIntakeDirection extends CommandBase {
+        private final IntakeSubsystem m_IntakeSubsystem;
+        public SwitchIntakeDirection(IntakeSubsystem subsystem) {
+            m_IntakeSubsystem = subsystem;
+            addRequirements(m_IntakeSubsystem); 
+        }
+
+        @Override
+        public void execute() {
+            m_IntakeSubsystem.setForward(!getForward());
+            SmartDashboard.putBoolean("Is intake reversed?", m_IntakeSubsystem.getForward());
+        }
     }
 }
-

@@ -10,12 +10,14 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
@@ -27,6 +29,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
     private double speedCoefficient = 1;
+    private boolean m_inverted; // This boolean determines if the drivetrain is inverted.
     
 
     public TankDriveSubsystem() {
@@ -39,13 +42,12 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
-
         
+        m_inverted = false;
     }
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
         this();
-
         primaryRightMotor.setInverted(invertRight);
         primaryLeftMotor.setInverted(invertLeft);
     }
@@ -63,6 +65,14 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public SparkMaxPIDController getLeftPID() {
         return primaryLeftMotor.getPIDController();
+    }
+
+    public boolean getInverted() {
+        return m_inverted;
+    }
+
+    public void setInverted(boolean invert) {
+        m_inverted = invert;
     }
 
     public SparkMaxPIDController getRightPID() {
@@ -122,8 +132,15 @@ public class TankDriveSubsystem extends SubsystemBase {
         // Called every time the scheduler runs while the command is scheduled.
         @Override
         public void execute() {
-            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            // Here's the invert drivetrain invert feature:
+            if (m_inverted) {
+                m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+                m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            } else {
+                // Basically, It takes the negative of the desired speed as the setpoint and runs the PID loop:
+                m_leftPID.setReference(-adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+                m_rightPID.setReference(-adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            }
         }
 
         private double adjustForDeadzone(double in) {
@@ -135,6 +152,21 @@ public class TankDriveSubsystem extends SubsystemBase {
             out *= (1 / 1 - Constants.DEADZONE);
             out *= sign * out;
             return out;
+        }
+    }
+
+    public class SwitchDrivetrainInvert extends CommandBase { // Switches the drivetrain between inverted and NOT inverted:
+        private TankDriveSubsystem m_TankDriveSubsystem;
+        public SwitchDrivetrainInvert(TankDriveSubsystem subsystem) {
+            m_TankDriveSubsystem = subsystem;
+            addRequirements(m_TankDriveSubsystem);
+        }
+
+        @Override
+        public void execute() {
+            // If drivetrain is inverted, it will become not inverted. if it isn't inverted, it'll be inverted:
+            m_TankDriveSubsystem.setInverted(!m_TankDriveSubsystem.getInverted());
+            SmartDashboard.putBoolean("Is drivetrain inverted?", m_TankDriveSubsystem.getInverted());
         }
     }
 
