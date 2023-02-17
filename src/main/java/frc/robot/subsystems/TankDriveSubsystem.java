@@ -10,6 +10,14 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.I2C.Port;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -18,7 +26,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import java.util.function.DoubleSupplier;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
@@ -26,6 +37,15 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
+    private AHRS gyro = new AHRS(SPI.Port.kMXP);
+    final DifferentialDrive drivetrain;
+
+    //Encoders:
+    private final RelativeEncoder primaryRightEncoder;
+    private final RelativeEncoder primaryLeftEncoder;
+    private DifferentialDriveOdometry m_Odometry;
+    private Pose2d OdometryPose;
+    
     
 
     public TankDriveSubsystem() {
@@ -39,7 +59,23 @@ public class TankDriveSubsystem extends SubsystemBase {
         secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
+        drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
+
+        primaryRightEncoder = primaryRightMotor.getEncoder();
+        primaryLeftEncoder = primaryLeftMotor.getEncoder();
+
+        primaryLeftEncoder.setPositionConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
+        primaryRightEncoder.setPositionConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
         
+        primaryLeftEncoder.setVelocityConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
+        primaryRightEncoder.setVelocityConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
+
+        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw()+180), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
+
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+        return new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
     }
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
@@ -51,7 +87,14 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        OdometryPose = m_Odometry.update(
+            new Rotation2d(gyro.getYaw()+180),
+            primaryLeftEncoder.getPosition(),
+            primaryRightEncoder.getPosition());
         // This method will be called once per scheduler run
+    }
+    public Pose2d getOdometryPose() {
+        return OdometryPose;
     }
 
     @Override
@@ -71,6 +114,12 @@ public class TankDriveSubsystem extends SubsystemBase {
     public void setMotor(double rightSpeed, double leftSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
+    }
+
+    public void setMotorVoltage(double leftVoltage, double rightVoltage) {
+        primaryRightMotor.setVoltage(rightVoltage);
+        primaryLeftMotor.setVoltage(leftVoltage);
+        drivetrain.feed();
     }
 
     public class driveMotorCommand extends CommandBase {
