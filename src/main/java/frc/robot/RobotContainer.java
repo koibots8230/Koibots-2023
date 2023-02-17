@@ -52,7 +52,7 @@ public class RobotContainer {
   // Joysticks
   private final CommandGenericHID driverHID = new CommandGenericHID(0);
   //LED system 
-  private final LEDsystem LEDstrips = new LEDsystem(0,-2);//temp values.
+  private final LEDsystem LEDstrips = new LEDsystem(0);//temp values.
   //other stuff
   private final CommandGenericHID m_driverHID = new CommandGenericHID(0);
   private final CommandGenericHID m_operatorHID = new CommandGenericHID(1);
