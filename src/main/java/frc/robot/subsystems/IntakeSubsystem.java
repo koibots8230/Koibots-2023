@@ -26,8 +26,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private final RelativeEncoder intakeEncoder;
     private final CANSparkMax midtakeMotor;
     private final RelativeEncoder midtakeEncoder;
-    private final double RUNNING_SPEED = 0.7;
-    private final double RAISE_SPEED = 0.1;
 
     // Boolean for the way that the intake runs. True means forward, false means backwards:
     private boolean runsForward;
@@ -76,17 +74,17 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void turnOn() {
-        intakeMotor.set(RUNNING_SPEED);
-        midtakeMotor.set(RUNNING_SPEED);
+        intakeMotor.set(Constants.RUNNING_SPEED);
+        midtakeMotor.set(Constants.RUNNING_SPEED);
     }
 
     public void turnOn(Boolean Forwards) {
         if (Forwards){
-            intakeMotor.set(RUNNING_SPEED);
-            midtakeMotor.set(RUNNING_SPEED);
+            intakeMotor.set(Constants.RUNNING_SPEED);
+            midtakeMotor.set(Constants.RUNNING_SPEED);
         } else {
-            intakeMotor.set(-RUNNING_SPEED);
-            midtakeMotor.set(-RUNNING_SPEED);
+            intakeMotor.set(-Constants.RUNNING_SPEED);
+            midtakeMotor.set(-Constants.RUNNING_SPEED);
         }
     }
 
@@ -95,12 +93,16 @@ public class IntakeSubsystem extends SubsystemBase {
         midtakeMotor.set(0);
     }
 
+    public double getRaiseMotorCurrent() {
+        return raiseIntakeMotor.getOutputCurrent();
+    }
+
     public double getIntakePosition() {
         return intakePosition;
     }
 
-    public void setIntakePosition(double newPos){
-        intakePosition = newPos;
+    public void setRaiseIntakeSpeed(double speed){
+        raiseIntakeMotor.set(speed);
     }
 
     public RelativeEncoder getRaiseEncoder() {
@@ -121,33 +123,37 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public class FlipIntake extends CommandBase {
         IntakeSubsystem m_intake;
+        boolean end = false;
+        int direction = 1;
 
         public FlipIntake(IntakeSubsystem subsystem) {
             m_intake = subsystem;
             addRequirements(m_intake);
+            direction *= -1;
+            m_intake.setRaiseIntakeSpeed(direction * Constants.RAISE_SPEED);
         }
 
         @Override
         public void execute() {
-            if (m_intake.getIntakePosition() == 0) {
-                m_intake.getIntakeRaiseMotor().set(RAISE_SPEED);
-                if (m_intake.getRaiseEncoder().getPosition() > 0.5) {
-                    m_intake.getIntakeRaiseMotor().stopMotor();
-                    m_intake.setIntakePosition(90.0);
-                    end(false);
-                }
-            } else if (m_intake.getIntakePosition() == 90) {
-                m_intake.getIntakeRaiseMotor().set(-RAISE_SPEED);
-                if (m_intake.getIntakePosition() == 0) {
-                    m_intake.getIntakeRaiseMotor().stopMotor();
-                    m_intake.setIntakePosition(0.0);
-                    end(false);
-                }
-            } else {
-                return;
-            }
+            if (-Constants.CURRENT_ZONE_AMPS < m_intake.getRaiseMotorCurrent() && m_intake.getRaiseMotorCurrent() < Constants.CURRENT_ZONE_AMPS) {
+                if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION)
+                end = true;
+            } 
+            end = true;
+        }
+
+        @Override
+        public boolean isFinished() {
+            return end;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            m_intake.setRaiseIntakeSpeed(0);
         }
     }
+
+   
 
     public class SwitchIntakeDirection extends CommandBase {
         private final IntakeSubsystem m_IntakeSubsystem;

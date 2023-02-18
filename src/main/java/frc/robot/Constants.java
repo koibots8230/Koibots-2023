@@ -95,8 +95,7 @@ public class Constants {
     public static final int kRightMotor2Port = 13;
     public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
     public static final double AUTO_SPEED = 0.15;
-    public static final int kRaiseIntakeMotorPort = 2; //To be changed when we know the port of raiseIntakeMotor
-    public static final int kMidtakeMotorPort = 1; // To be changed when we have an actual intake
+
     //PID constants for PIDCommand Setmotor:
     public static final double kp = 6e-5;
     public static final double ki = 0;
@@ -106,6 +105,14 @@ public class Constants {
     //for LED system
     public static final int stripLength=60;//the number of LEDs on each of the LED strips.
     // public static final int LEDPort1=0;
+    //Intake Constants
+    public static final int kRaiseIntakeMotorPort = 2; //To be changed when we know the port of raiseIntakeMotor
+    public static final int kMidtakeMotorPort = 1; // To be changed when we have an actual intake
+    public static final double RUNNING_SPEED = 0.7;
+    public static final double RAISE_SPEED = 0.1; 
+    public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
+    public static final double INTAKE_UP_POSITION =1; // To be changed when we have an actual intake
+    public static final double INTAKE_DOWN_POSITION = 1; // To be changed when we have an actual intake
     // public static final int LEDPort2=0;//neither of these are known currently, but they can be uncommented once we know the port numbers.
     public static final double DEADZONE = 0.15;
 }
