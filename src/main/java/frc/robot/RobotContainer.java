@@ -21,11 +21,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.SwitchIntakeDirection;
 import frc.robot.subsystems.TankDriveSubsystem.SwitchDrivetrainInvert;
 import frc.robot.commands.IntakeCommand;
 import edu.wpi.first.wpilibj.Filesystem;
+
 
 import java.io.File;
 import java.util.Scanner;
@@ -88,8 +90,7 @@ public class RobotContainer {
         if (hidType.equals("")) { // Xbox Controller | Name Unknown
             m_controllerType = 1;
             pairButton = 7;
-        } else if (hidType.equals("Wireless Controller")) { // PS5 | Is still called "Wireless Controller" if plugged in
-                                                            // with a wire.
+        } else if (hidType.equals("Wireless Controller")) { // PS5 | Is still called "Wireless Controller" if plugged in with a wire.
             m_controllerType = 2;
             pairButton = 7;
         } else {
@@ -115,6 +116,13 @@ public class RobotContainer {
             Trigger operatorSpeedDown = m_operatorHID.button(3);
             operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
             operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+
+            Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, 0.1);
+            Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -0.1);
+            intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
+            intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
+            intakeMoveUp.onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
+            intakeMoveDown.onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
 
             // ================DRIVER CONTROLS==========================================
             // create commands
