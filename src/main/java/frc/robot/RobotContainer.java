@@ -61,6 +61,7 @@ public class RobotContainer {
 
   SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   SendableChooser<String> m_driverChooser = new SendableChooser<>();
+  SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
   
   // m_controllerType 0 -> Unrecognized
   // m_controllerType 1 -> Xbox Controller

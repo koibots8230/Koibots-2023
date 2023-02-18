@@ -24,13 +24,17 @@ public class VisionSubsystem extends SubsystemBase{
     final Transform3d robotToCam;
     AprilTagFieldLayout aprilTagFieldLayout;
 
-    public VisionSubsystem() {
+    public VisionSubsystem(Boolean side) {
         camera = new PhotonCamera("camera");
         robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
         aprilTagFieldLayout = null;
-        try { 
-            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-        }
+        try {
+            if (side) {
+                aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/BlueAprilTagLayout.json");
+            } else {
+                aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/RedAprilTagLayout.json");
+            }
+            }
         catch (IOException ioexcept) {
             System.err.println("File did not exist! Try fixing your settings");  
         }
