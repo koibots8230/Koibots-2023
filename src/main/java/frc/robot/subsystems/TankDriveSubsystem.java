@@ -10,6 +10,9 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
@@ -18,15 +21,22 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import java.util.function.BiConsumer;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAlternateEncoder;
@@ -39,7 +49,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax secondaryLeftMotor;
     private AHRS gyro = new AHRS(SPI.Port.kMXP);
     final DifferentialDrive drivetrain;
-
+    DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
     //Encoders:
     private final RelativeEncoder primaryRightEncoder;
     private final RelativeEncoder primaryLeftEncoder;
@@ -75,7 +85,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds(){
-        return new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
+        return wheelSpeeds;
     }
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
@@ -87,6 +97,7 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
         OdometryPose = m_Odometry.update(
             new Rotation2d(gyro.getYaw()+180),
             primaryLeftEncoder.getPosition(),
@@ -128,6 +139,31 @@ public class TankDriveSubsystem extends SubsystemBase {
         drivetrain.feed();
     }
 
+    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> {
+                if (isFirstPath) {
+                    this.resetOdometry(traj.getInitialPose());
+                }
+            }),
+
+
+            new PPRamseteCommand(
+                traj, 
+                this::getOdometryPose, 
+                new RamseteController(), 
+                new SimpleMotorFeedforward(Constants.ksVolts, Constants.kvVoltSecondsPerMeter, Constants.kaVoltSecondsSquaredPerMeter),
+                Constants.kDriveKinematics, 
+                this::getWheelSpeeds, 
+                new PIDController(Constants.kPDriveVel, 0, 0),
+                new PIDController(Constants.kPDriveVel, 0, 0),
+                this::setMotorVoltage,
+                true,
+                this
+                )
+        );
+    }
+    
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
