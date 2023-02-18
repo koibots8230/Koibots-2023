@@ -14,6 +14,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -23,14 +24,19 @@ public class VisionSubsystem extends SubsystemBase{
     final PhotonCamera camera;
     final Transform3d robotToCam;
     AprilTagFieldLayout aprilTagFieldLayout;
+    SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
 
     public VisionSubsystem() {
         camera = new PhotonCamera("camera");
         robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
         aprilTagFieldLayout = null;
-        try { 
-            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-        }
+        try {
+            if (m_sideChooser.getSelected()) {
+                aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/BlueAprilTagLayout.json");
+            } else {
+                aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/RedAprilTagLayout.json");
+            }
+            }
         catch (IOException ioexcept) {
             System.err.println("File did not exist! Try fixing your settings");  
         }
