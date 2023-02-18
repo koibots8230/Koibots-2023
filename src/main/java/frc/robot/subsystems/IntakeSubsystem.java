@@ -55,6 +55,12 @@ public class IntakeSubsystem extends SubsystemBase {
         runsForward = true;
     }
 
+
+
+
+
+
+
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
@@ -129,6 +135,10 @@ public class IntakeSubsystem extends SubsystemBase {
         public FlipIntake(IntakeSubsystem subsystem) {
             m_intake = subsystem;
             addRequirements(m_intake);
+        }
+
+        @Override
+        public void initialize() {
             direction *= -1;
             m_intake.setRaiseIntakeSpeed(direction * Constants.RAISE_SPEED);
         }
@@ -136,8 +146,11 @@ public class IntakeSubsystem extends SubsystemBase {
         @Override
         public void execute() {
             if (-Constants.CURRENT_ZONE_AMPS < m_intake.getRaiseMotorCurrent() && m_intake.getRaiseMotorCurrent() < Constants.CURRENT_ZONE_AMPS) {
-                if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION)
+                if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
                 end = true;
+                } else {
+                    return;
+                }
             } 
             end = true;
         }
