@@ -13,6 +13,12 @@ public class AutoAlignCommand extends CommandBase {
   private Rotation2d  RotationToTarget = new Rotation2d(0);
   private boolean RoationValid = false;
   private double Rotation = 0;
+  private TankDriveSubsystem drive;
+
+  public void AutoAlignCommand(TankDriveSubsystem _drive) {
+    drive = _drive;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -46,11 +52,11 @@ public class AutoAlignCommand extends CommandBase {
         Rotation = BotRotation.getDegrees()-RotationToTarget.getDegrees();
         if (Math.abs(Rotation) < 3) {
             end = true;
-            TankDriveSubsystem.setMotor(0, 0);
+            drive.setMotor(0, 0);
         } else if (Rotation < 0) {
-            TankDriveSubsystem.setMotor(Constants.AUTO_SPEED, (Constants.AUTO_SPEED)*-1);
+            drive.setMotor(Constants.AUTO_SPEED, (Constants.AUTO_SPEED)*-1);
         } else if (Rotation > 0) {
-            TankDriveSubsystem.setMotor((Constants.AUTO_SPEED)*-1, Constants.AUTO_SPEED);
+            drive.setMotor((Constants.AUTO_SPEED)*-1, Constants.AUTO_SPEED);
         }
     } else {
         end = true;
