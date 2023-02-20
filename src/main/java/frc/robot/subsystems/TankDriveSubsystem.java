@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,7 +64,8 @@ public class TankDriveSubsystem extends SubsystemBase {
     private final RelativeEncoder primaryLeftEncoder;
     private DifferentialDriveOdometry m_Odometry;
     private Pose2d OdometryPose;
-    
+    private double speedCoefficient = 1;
+    private boolean m_inverted; // This boolean determines if the drivetrain is inverted.
     
 
     public TankDriveSubsystem() {
@@ -98,7 +100,6 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
         this();
-
         primaryRightMotor.setInverted(invertRight);
         primaryLeftMotor.setInverted(invertLeft);
     }
@@ -132,6 +133,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         return primaryLeftMotor.getPIDController();
     }
 
+    public boolean getInverted() {
+        return m_inverted;
+    }
+
+    public void setInverted(boolean invert) {
+        m_inverted = invert;
+    }
+
     public SparkMaxPIDController getRightPID() {
         return primaryRightMotor.getPIDController();
     }
@@ -139,6 +148,19 @@ public class TankDriveSubsystem extends SubsystemBase {
     public void setMotor(double rightSpeed, double leftSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
+    }
+    
+    public void setSpeed(Boolean Increase){
+        if (Increase) {
+            //Only need increase - if it's called and Increase is false than decrease is pressed instead
+            if (speedCoefficient < 1) {
+                speedCoefficient += 0.5;
+            }
+        } else {
+            if (speedCoefficient > 0){
+                speedCoefficient -= 0.5;
+            }
+        }
     }
 
     public void setMotorVoltage(double leftVoltage, double rightVoltage) {
@@ -205,8 +227,15 @@ public class TankDriveSubsystem extends SubsystemBase {
         // Called every time the scheduler runs while the command is scheduled.
         @Override
         public void execute() {
-            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            // Here's the invert drivetrain invert feature:
+            if (m_inverted) {
+                m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+                m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            } else {
+                // Basically, It takes the negative of the desired speed as the setpoint and runs the PID loop:
+                m_leftPID.setReference(-adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+                m_rightPID.setReference(-adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            }
         }
 
         private double adjustForDeadzone(double in) {
@@ -220,4 +249,20 @@ public class TankDriveSubsystem extends SubsystemBase {
             return out;
         }
     }
+
+    public class SwitchDrivetrainInvert extends CommandBase { // Switches the drivetrain between inverted and NOT inverted:
+        private TankDriveSubsystem m_TankDriveSubsystem;
+        public SwitchDrivetrainInvert(TankDriveSubsystem subsystem) {
+            m_TankDriveSubsystem = subsystem;
+            addRequirements(m_TankDriveSubsystem);
+        }
+
+        @Override
+        public void execute() {
+            // If drivetrain is inverted, it will become not inverted. if it isn't inverted, it'll be inverted:
+            m_TankDriveSubsystem.setInverted(!m_TankDriveSubsystem.getInverted());
+            SmartDashboard.putBoolean("Is drivetrain inverted?", m_TankDriveSubsystem.getInverted());
+        }
+    }
+
 }
