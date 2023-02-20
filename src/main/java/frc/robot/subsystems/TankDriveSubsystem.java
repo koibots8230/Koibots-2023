@@ -146,8 +146,6 @@ public class TankDriveSubsystem extends SubsystemBase {
                     this.resetOdometry(traj.getInitialPose());
                 }
             }),
-
-
             new PPRamseteCommand(
                 traj, 
                 this::getOdometryPose, 
