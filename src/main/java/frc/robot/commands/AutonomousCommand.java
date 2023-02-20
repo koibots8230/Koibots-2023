@@ -25,10 +25,5 @@ public class AutonomousCommand extends SequentialCommandGroup {
       new AutoBalanceCommand(_Gyro, _drive)
     );
   }
-  public AutonomousCommand(VisionSubsystem _vision, TankDriveSubsystem _drive) {
-    addCommands(
-      new FollowPathCommand(_vision, _drive)
-    );
-  }
 
 }
