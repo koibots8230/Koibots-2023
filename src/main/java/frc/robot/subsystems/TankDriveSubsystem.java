@@ -17,7 +17,6 @@ import frc.robot.Constants;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;

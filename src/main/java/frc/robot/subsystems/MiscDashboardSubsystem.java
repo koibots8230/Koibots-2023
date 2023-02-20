@@ -4,8 +4,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.networktables.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // import java.lang.invoke.ClassSpecializer.SpeciesData;
@@ -20,7 +18,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     private double inSpeed = 10; // Speed of the intake motor
     private double inCurrent = 0; // Current of the intake motor
     public boolean is_cube = false; // Boolean to determine whether retreived object is a cube or cone
-    private String is_cube_text = "Cone"; // Text version of boolean above
     private double midCurrent = 0; // Current of the midtake motor
     private double midSpeed = 10; // Speed of the midtake motor
     private boolean intakeReverse = false; // Boolean determining whether or not the intake motor is reversed
@@ -72,13 +69,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
         voltage_alert = getBatteryVoltageAlert();
         voltage = getBatteryVoltage();
-
-        if (is_cube) {
-            is_cube_text = "Cube";
-        } else {
-            is_cube_text = "Cone";
-        }
-    
     }
 
     @Override
@@ -92,14 +82,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         voltage_alert = getBatteryVoltageAlert();
         voltage = getBatteryVoltage();
         batteryCurrent = getBatteryCurrent();
-
-        if (is_cube) {
-            is_cube_text = "Cube";
-
-        } else {
-            is_cube_text = "Cone";
-        }
-    
     }
 
     public static double getBatteryVoltage() {
