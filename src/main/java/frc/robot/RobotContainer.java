@@ -27,8 +27,6 @@ import frc.robot.subsystems.IntakeSubsystem.SwitchIntakeDirection;
 import frc.robot.subsystems.TankDriveSubsystem.SwitchDrivetrainInvert;
 import frc.robot.commands.IntakeCommand;
 import edu.wpi.first.wpilibj.Filesystem;
-
-
 import java.io.File;
 import java.util.Scanner;
 
@@ -49,8 +47,6 @@ public class RobotContainer {
     public final IntakeSubsystem m_intake = new IntakeSubsystem();
     private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
 
-  // Joysticks
-  private final CommandGenericHID driverHID = new CommandGenericHID(0);
   //LED system 
   private final LEDsystem LEDstrips = new LEDsystem(0);//temp values.
   //other stuff
@@ -110,8 +106,10 @@ public class RobotContainer {
             // ==================OPERATOR CONTROLS======================================
 
             // Create Triggers here | Triggers should be named t_CommandName
-            Trigger leftTrigger = m_operatorHID.axisGreaterThan(3, Constants.DEADZONE);
-            Trigger rightTrigger = m_operatorHID.axisGreaterThan(4, Constants.DEADZONE);
+            Trigger leftTrigger = m_operatorHID.axisGreaterThan(3,Constants.DEADZONE);
+            Trigger rightTrigger = m_operatorHID.axisGreaterThan(4,Constants.DEADZONE);
+            rightTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
+            leftTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
 
             Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, 0.1);
             operatorDriveTrigger.onTrue(m_operatorDrive);
@@ -157,59 +155,6 @@ public class RobotContainer {
             System.out.print(primaryError);
         }
     }
-
-    File profile = new File(Filesystem.getDeployDirectory(), m_driverChooser.getSelected() + ".txt");
-    try {
-    Scanner driverProfile = new Scanner(profile);
-
-    //==================OPERATOR CONTROLS:======================================================
-
-      // Create Triggers here | Triggers should be named t_CommandName
-    Trigger leftTrigger = m_operatorHID.axisGreaterThan(3,Constants.DEADZONE);
-    Trigger rightTrigger = m_operatorHID.axisGreaterThan(4,Constants.DEADZONE);
-    rightTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
-    leftTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
-    //BooleanSupplier exampleSupplier = () -> true;
-
-    //Trigger t_exampleCommand = new Trigger(exampleSupplier);
-    Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, 0.1);
-    operatorDriveTrigger.onTrue(m_operatorDrive);
-
-    Trigger operatorSpeedUp = m_operatorHID.button(2);
-    Trigger operatorSpeedDown = m_operatorHID.button(3);
-    operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-    operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
-
-    //================DRIVER CONTROLS==============================================================
-    // create commands
-    // 5 = left bumper
-    // 6 = right bumper
-
-    //Intake is toggled when left bumper is pressed
-    Trigger flipTrigger = m_driverHID.button(5);
-    flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
-
-    //Intake runs when right trigger is pressed
-    BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, 0.1);
-    IntakeCommand m_IntakeCommand = new IntakeCommand(m_intake, m_turnOnIntake);
-    Trigger runIntakeTrigger = m_driverHID.button(3);
-    runIntakeTrigger.onTrue(m_IntakeCommand);
-
-    // Intake is reversed when right bumper is pressed
-    SwitchIntakeDirection m_switchIntake = m_intake.new SwitchIntakeDirection(m_intake);
-    Trigger switchIntakeTrigger = m_driverHID.button(6);
-    switchIntakeTrigger.onTrue(m_switchIntake);
-    
-    // Trigger to reset the controls
-    Trigger resetControls = m_driverHID.button(pairButton);
-    resetControls.whileTrue(new setupControls());
-
-    driverProfile.close();
-    } catch(Exception primaryError) {
-      System.out.print(primaryError);
-    }
-  }
-
 
     class setupControls extends CommandBase {
         @Override
