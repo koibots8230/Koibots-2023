@@ -13,12 +13,12 @@ public class AutoShootCommand extends CommandBase {
   /** Creates a new ShootyCommand. */
   private boolean end = false;
   private double Velocity;
-  private int ShootLevel = 2;
+  private int ShootLevel;
 
-  public void getShooterLevel(BooleanSupplier L2, BooleanSupplier L3) {
-    if (L2.getAsBoolean()) {
+  public AutoShootCommand(Boolean L2, Boolean L3) {
+    if (L2) {
       ShootLevel = 2;
-    } else if (L3.getAsBoolean()) {
+    } else if (L3) {
       ShootLevel = 3;
     }
   }

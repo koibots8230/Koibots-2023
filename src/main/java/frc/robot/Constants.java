@@ -14,17 +14,20 @@ package frc.robot;
 import java.util.Arrays;
 import java.util.List;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.math.geometry.Translation3d;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants.  This class should not be used for any other purpose.  All constants should be
+ * .  This class should not be used for any other purpose.  All  should be
  * declared globally (i.e. public static).  Do not put anything functional in this class.
  *
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
+ *  are needed, to reduce verbosity.
  */
 public class Constants { 
     public enum XboxButtons {
@@ -104,7 +107,7 @@ public class Constants {
     public static final int kSHOOTER_MOTOR_PORT = 0; //To be changed
     public static final double AUTO_SPEED = 0.15;
 
-    //PID constants for PIDCommand Setmotor:
+    //PID  for PIDCommand Setmotor:
     public static final double kp = 6e-5;
     public static final double ki = 0;
     public static final double kd = 0;
@@ -124,7 +127,7 @@ public class Constants {
     // public static final int LEDPort2=0;//neither of these are known currently, but they can be uncommented once we know the port numbers.
     public static final double DEADZONE = 0.15;
     
-    //Shooting constants
+    //Shooting 
     public static final double SHOOTER_ANGLE = 45; //To be changed
     public static final double GRAVITY = 9.8; //If you can figure out a way to change this one, that's impressive
     public static final double SHOOTER_FROM_GROUND = 1; //To be changed
@@ -163,4 +166,7 @@ public class Constants {
     public static final double kTrackwidthMeters = 0;
     public static final DifferentialDriveKinematics kDriveKinematics =
         new DifferentialDriveKinematics(kTrackwidthMeters);
+    
+    
+    
 }

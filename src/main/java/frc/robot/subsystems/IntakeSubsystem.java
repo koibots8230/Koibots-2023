@@ -121,6 +121,37 @@ public class IntakeSubsystem extends SubsystemBase {
         runsForward = forward;
     }
 
+    public class ShortIntakeSpin extends CommandBase {
+        IntakeSubsystem m_intake;
+        int count = 0;
+        int time = 1000;
+
+        public ShortIntakeSpin(IntakeSubsystem subsystem) {
+            m_intake = subsystem;
+            addRequirements(m_intake);
+        }
+
+        public void initialize() {
+            m_intake.turnOn();
+        }
+
+        public void execute() {
+            count ++;
+        }
+
+        public boolean isFinished() {
+            if (count == time) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public void end(boolean interrupted) {
+            m_intake.turnOff();
+        }
+    }
+
     public class FlipIntake extends CommandBase {
         IntakeSubsystem m_intake;
         boolean end = false;

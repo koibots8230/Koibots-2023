@@ -43,7 +43,7 @@
       "stopEvent": {
         "names": [
           "Shoot High",
-          "Intake Down"
+          "IntakeMove"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -70,7 +70,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "Spin Intake"
+          "IntakeSpin"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "minimum",
@@ -97,7 +97,7 @@
       "isStopPoint": true,
       "stopEvent": {
         "names": [
-          "Shoot Mid"
+          "ShootMid"
         ],
         "executionBehavior": "parallel",
         "waitBehavior": "none",
@@ -121,9 +121,10 @@
       "isStopPoint": false,
       "stopEvent": {
         "names": [
-          "Spin Intake"
+          "IntakeSpin",
+          "IntakeMove"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "minimum",
         "waitTime": 0
       }
