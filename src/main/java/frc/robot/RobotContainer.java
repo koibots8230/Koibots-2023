@@ -48,7 +48,7 @@ public class RobotContainer {
     private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
 
   //LED system 
-  private final LEDsystem LEDstrips = new LEDsystem(0);//temp values.
+  private final LEDsystem LEDstrips = new LEDsystem(Constants.LEDPort1);//addressable LED only works from one port.
   //other stuff
   private final CommandGenericHID m_driverHID = new CommandGenericHID(0);
   private final CommandGenericHID m_operatorHID = new CommandGenericHID(1);

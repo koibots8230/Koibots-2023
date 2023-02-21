@@ -109,7 +109,7 @@ public class Constants {
     public static final double slowMoFactor = 0.5;
     //for LED system
     public static final int stripLength=60;//the number of LEDs on each of the LED strips.
-    // public static final int LEDPort1=0;
+    public static final int LEDPort1=0;
     //Intake Constants
     public static final int kRaiseIntakeMotorPort = 2; //To be changed when we know the port of raiseIntakeMotor
     public static final int kMidtakeMotorPort = 1; // To be changed when we have an actual intake
