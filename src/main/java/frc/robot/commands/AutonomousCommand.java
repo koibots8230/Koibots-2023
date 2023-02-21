@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.TankDriveSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
@@ -16,7 +17,7 @@ import frc.robot.subsystems.VisionSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class AutonomousCommand extends SequentialCommandGroup {
+public class AutonomousCommand extends CommandBase {
   /** Creates a new AutonomousCommand. */
   public AutonomousCommand(AHRS _Gyro, TankDriveSubsystem _drive) {
     // Add your commands in the addCommands() call, e.g.
@@ -24,6 +25,8 @@ public class AutonomousCommand extends SequentialCommandGroup {
     addCommands(
       new AutoBalanceCommand(_Gyro, _drive)
     );
+    ArrayList<PathPlannerTrajectory> trajectory;
+
   }
 
 }

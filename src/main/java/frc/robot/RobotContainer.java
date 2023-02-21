@@ -86,7 +86,9 @@ public class RobotContainer {
 
     SendableChooser<Command> m_autoChooser = new SendableChooser<>();
     SendableChooser<String> m_driverChooser = new SendableChooser<>();
-
+    SendableChooser<Boolean> m_isBalancing = new SendableChooser<>();
+    SendableChooser<Boolean> m_isRight = new SendableChooser<>();
+    
     // m_controllerType 0 -> Unrecognized
     // m_controllerType 1 -> Xbox Controller
     // m_controllerType 2 -> Playstation Controller
@@ -198,5 +200,18 @@ public class RobotContainer {
   
   public Command getAutonomousCommand(){
     return m_autoChooser.getSelected();
+  }
+
+  public Integer getWhichPath() {
+    if(m_isBalancing.getSelected()) { 
+        return 2;
+    } else {
+        if (m_isRight.getSelected()) {
+            return 1;
+        } else if (m_isRight.getSelected() == false) {
+            return 3;
+        }
+    }
+    return null;
   }
 }
