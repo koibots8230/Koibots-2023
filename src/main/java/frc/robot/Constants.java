@@ -11,13 +11,23 @@
 
 package frc.robot;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.math.geometry.Translation3d;
+
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants.  This class should not be used for any other purpose.  All constants should be
+ * .  This class should not be used for any other purpose.  All  should be
  * declared globally (i.e. public static).  Do not put anything functional in this class.
  *
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
+ *  are needed, to reduce verbosity.
  */
 public class Constants { 
     public enum XboxButtons {
@@ -94,14 +104,69 @@ public class Constants {
     public static final int kRightMotor1Port = 12;
     public static final int kRightMotor2Port = 13;
     public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
+    public static final int kSHOOTER_MOTOR_PORT = 0; //To be changed
     public static final double AUTO_SPEED = 0.15;
 
-    //PID constants for PIDCommand Setmotor:
+    //PID  for PIDCommand Setmotor:
     public static final double kp = 6e-5;
     public static final double ki = 0;
     public static final double kd = 0;
     //Slowmotion, deadzone, etc:
     public static final double slowMoFactor = 0.5;
+    //for LED system
+    public static final int stripLength=60;//the number of LEDs on each of the LED strips.
+    // public static final int LEDPort1=0;
+    //Intake Constants
+    public static final int kRaiseIntakeMotorPort = 2; //To be changed when we know the port of raiseIntakeMotor
+    public static final int kMidtakeMotorPort = 1; // To be changed when we have an actual intake
+    public static final double RUNNING_SPEED = 0.7;
+    public static final double RAISE_SPEED = 0.1; 
+    public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
+    public static final double INTAKE_UP_POSITION =1; // To be changed when we have an actual intake
+    public static final double INTAKE_DOWN_POSITION = 1; // To be changed when we have an actual intake
+    // public static final int LEDPort2=0;//neither of these are known currently, but they can be uncommented once we know the port numbers.
     public static final double DEADZONE = 0.15;
-}
+    
+    //Shooting 
+    public static final double SHOOTER_ANGLE = 45; //To be changed
+    public static final double GRAVITY = 9.8; //If you can figure out a way to change this one, that's impressive
+    public static final double SHOOTER_FROM_GROUND = 1; //To be changed
+    public static final double MOTOR_SPEED_TO_VELOCITY = 0; //To be changed
+    public static final double MIDDLE_HEIGHT = 23.5*0.0254;
+    public static final double MIDDLE_X = 24.25*0.0254;
+    //Blue Side
+    public static final double Y1 = 43.125*0.0254;
+    public static final double Y2 = 108.5*0.0254;
+    public static final double Y3 = 174.625*0.0254;
+    public static final Translation3d MC1 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
+    public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
+    public static final Translation3d MC3 = new Translation3d(MIDDLE_X, Y3, MIDDLE_HEIGHT);
+    public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1, MC2, MC3);
 
+    public static final double HIGH_HEIGHT = 35.5*0.0254;
+    public static final double HIGH_X = 12.25*0.0254;
+    //Blue Side
+    public static final Translation3d HC1 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
+    public static final Translation3d HC2 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
+    public static final Translation3d HC3 = new Translation3d(HIGH_X, Y3, HIGH_HEIGHT);
+    public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1, HC2, HC3);
+  
+    //Encoder Values
+    public static final double RIGHT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
+    public static final double LEFT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
+
+    //Path Folowing Values TO BE CHANGED
+    public static final double ksVolts = 0;
+    public static final double kvVoltSecondsPerMeter = 0;
+    public static final double kaVoltSecondsSquaredPerMeter = 0;
+    public static final double kPDriveVel = 0;
+    public static final double kMaxSpeedMetersPerSecond = 0;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0;
+    
+    public static final double kTrackwidthMeters = 0;
+    public static final DifferentialDriveKinematics kDriveKinematics =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+    
+    
+    
+}

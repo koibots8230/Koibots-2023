@@ -7,7 +7,6 @@ package frc.robot.commands;
 import com.kauailabs.navx.frc.AHRS;
 import frc.robot.subsystems.TankDriveSubsystem;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.commands.AutoBalanceCommand;
 
 public class waitCommand extends CommandBase {
   /** Creates a new waitCommand. */
