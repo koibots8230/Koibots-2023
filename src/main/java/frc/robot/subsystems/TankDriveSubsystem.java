@@ -167,6 +167,12 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_TankDriveSubsystem.setInverted(!m_TankDriveSubsystem.getInverted());
             SmartDashboard.putBoolean("Is drivetrain inverted?", m_TankDriveSubsystem.getInverted());
         }
+
+        @Override 
+        public boolean isFinished() {
+            return true;
+        }
+        
     }
 
 }
