@@ -139,7 +139,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
-            if (-Constants.CURRENT_ZONE_AMPS < m_intake.getRaiseMotorCurrent() && m_intake.getRaiseMotorCurrent() < Constants.CURRENT_ZONE_AMPS) {
+            if (Math.abs(m_intake.getRaiseMotorCurrent()) < Constants.CURRENT_ZONE_AMPS) {
                 if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
                 end = true;
                 } else {
