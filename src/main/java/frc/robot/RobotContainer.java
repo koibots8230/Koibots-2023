@@ -121,8 +121,7 @@ public class RobotContainer {
             Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -0.1);
             intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
             intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
-            intakeMoveUp.onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
-            intakeMoveDown.onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
+            intakeMoveUp.and(intakeMoveDown).whileFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
 
             // ================DRIVER CONTROLS==========================================
             // create commands
