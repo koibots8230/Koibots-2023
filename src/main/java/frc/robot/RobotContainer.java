@@ -109,7 +109,7 @@ public class RobotContainer {
             Trigger leftTrigger = m_operatorHID.axisGreaterThan(3, Constants.DEADZONE);
             Trigger rightTrigger = m_operatorHID.axisGreaterThan(4, Constants.DEADZONE);
 
-            Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, 0.1);
+            Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
             operatorDriveTrigger.onTrue(m_operatorDrive);
 
             Trigger operatorSpeedUp = m_operatorHID.button(2);
@@ -117,8 +117,8 @@ public class RobotContainer {
             operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
             operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
-            Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, 0.1);
-            Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -0.1);
+            Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
+            Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -Constants.DEADZONE);
             intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
             intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
             intakeMoveUp.and(intakeMoveDown).whileFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
@@ -133,7 +133,7 @@ public class RobotContainer {
             flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
 
             // Intake runs when right trigger is pressed
-            BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, 0.1);
+            BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
             IntakeCommand m_IntakeCommand = new IntakeCommand(m_intake, m_turnOnIntake);
             Trigger runIntakeTrigger = m_driverHID.button(3);
             runIntakeTrigger.onTrue(m_IntakeCommand);
