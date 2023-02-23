@@ -174,5 +174,10 @@ public class IntakeSubsystem extends SubsystemBase {
             m_IntakeSubsystem.setForward(!getForward());
             SmartDashboard.putBoolean("Is intake reversed?", m_IntakeSubsystem.getForward());
         }
+
+        @Override 
+        public boolean isFinished() {
+            return true;
+        }
     }
 }
