@@ -26,11 +26,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.SwitchIntakeDirection;
 import frc.robot.subsystems.TankDriveSubsystem.SwitchDrivetrainInvert;
 import frc.robot.commands.IntakeCommand;
-import edu.wpi.first.wpilibj.Filesystem;
 
-
-import java.io.File;
-import java.util.Scanner;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -98,60 +94,50 @@ public class RobotContainer {
             pairButton = 7;
         }
 
-        File profile = new File(Filesystem.getDeployDirectory(), m_driverChooser.getSelected() + ".txt");
 
-        try {
-            Scanner driverProfile = new Scanner(profile);
+        // ==================OPERATOR CONTROLS======================================
 
-            // ==================OPERATOR CONTROLS======================================
+        // Create Triggers here | Triggers should be named t_CommandName
+        Trigger leftTrigger = m_operatorHID.axisGreaterThan(3, Constants.DEADZONE);
+        Trigger rightTrigger = m_operatorHID.axisGreaterThan(4, Constants.DEADZONE);
 
-            // Create Triggers here | Triggers should be named t_CommandName
-            Trigger leftTrigger = m_operatorHID.axisGreaterThan(3, Constants.DEADZONE);
-            Trigger rightTrigger = m_operatorHID.axisGreaterThan(4, Constants.DEADZONE);
+        Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
+        operatorDriveTrigger.onTrue(m_operatorDrive);
 
-            Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
-            operatorDriveTrigger.onTrue(m_operatorDrive);
+        Trigger operatorSpeedUp = m_operatorHID.button(2);
+        Trigger operatorSpeedDown = m_operatorHID.button(3);
+        operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
+        operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
-            Trigger operatorSpeedUp = m_operatorHID.button(2);
-            Trigger operatorSpeedDown = m_operatorHID.button(3);
-            operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-            operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+        Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
+        Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -Constants.DEADZONE);
+        intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
+        intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
+        intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
 
-            Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
-            Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -Constants.DEADZONE);
-            intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
-            intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
-            intakeMoveUp.and(intakeMoveDown).whileFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
+        // ================DRIVER CONTROLS==========================================
+        // create commands
+        // 5 = left bumper
+        // 6 = right bumper
 
-            // ================DRIVER CONTROLS==========================================
-            // create commands
-            // 5 = left bumper
-            // 6 = right bumper
+        // Intake is toggled when left bumper is pressed
+        Trigger flipTrigger = m_driverHID.button(5);
+        flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
 
-            // Intake is toggled when left bumper is pressed
-            Trigger flipTrigger = m_driverHID.button(5);
-            flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+        // Intake runs when right trigger is pressed
+        BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
+        IntakeCommand m_IntakeCommand = new IntakeCommand(m_intake, m_turnOnIntake);
+        Trigger runIntakeTrigger = m_driverHID.button(3);
+        runIntakeTrigger.onTrue(m_IntakeCommand);
 
-            // Intake runs when right trigger is pressed
-            BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
-            IntakeCommand m_IntakeCommand = new IntakeCommand(m_intake, m_turnOnIntake);
-            Trigger runIntakeTrigger = m_driverHID.button(3);
-            runIntakeTrigger.onTrue(m_IntakeCommand);
+        // Intake is reversed when right bumper is pressed
+        SwitchIntakeDirection m_switchIntake = m_intake.new SwitchIntakeDirection(m_intake);
+        Trigger switchIntakeTrigger = m_driverHID.button(6);
+        switchIntakeTrigger.onTrue(m_switchIntake);
 
-            // Intake is reversed when right bumper is pressed
-            SwitchIntakeDirection m_switchIntake = m_intake.new SwitchIntakeDirection(m_intake);
-            Trigger switchIntakeTrigger = m_driverHID.button(6);
-            switchIntakeTrigger.onTrue(m_switchIntake);
-
-            // Trigger to reset the controls
-            Trigger resetControls = m_driverHID.button(pairButton);
-            resetControls.whileTrue(new setupControls());
-
-            driverProfile.close();
-        } catch (Exception primaryError) {
-            System.out.print(primaryError);
-        }
-
+        // Trigger to reset the controls
+        Trigger resetControls = m_driverHID.button(pairButton);
+        resetControls.whileTrue(new setupControls());
     }
 
     class setupControls extends CommandBase {
