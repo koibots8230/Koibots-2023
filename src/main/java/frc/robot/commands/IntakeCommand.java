@@ -16,7 +16,7 @@ public class IntakeCommand extends CommandBase {
     }
     
     @Override
-    public void execute() {
+    public void initialize() {
         m_intake.turnOn(m_intake.getForward());
     }
     @Override
