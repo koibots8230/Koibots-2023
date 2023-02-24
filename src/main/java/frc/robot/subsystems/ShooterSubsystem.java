@@ -35,11 +35,11 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     shooterMotor1 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_1, MotorType.kBrushless);
     shooterMotor2 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_2, MotorType.kBrushless);
-    shooterMotor2.follow(shooterMotor1);
   }
 
   public void SetShooter(double Speed){
     shooterMotor1.set(Speed);
+    shooterMotor2.set(-Speed);
   }
 
   @Override
