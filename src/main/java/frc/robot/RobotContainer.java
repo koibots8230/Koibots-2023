@@ -124,11 +124,13 @@ public class RobotContainer {
         Trigger flipTrigger = m_driverHID.button(5);
         flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
 
-        // Intake runs when right trigger is pressed
-        BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
-        IntakeCommand m_IntakeCommand = new IntakeCommand(m_intake, m_turnOnIntake);
-        Trigger runIntakeTrigger = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
-        runIntakeTrigger.onTrue(m_IntakeCommand);
+        // Intake runs FORWARD when right trigger is pressed
+        Trigger runIntakeForwardsTrigger = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
+        runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
+
+        // Intake runs BACKWARD when right bumper is pressed
+        Trigger runIntakeBackwardsTrigger = m_driverHID.button(6);
+        runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
 
         //new Intake 
         // Intake is reversed when right bumper is pressed

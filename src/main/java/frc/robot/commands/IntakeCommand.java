@@ -1,28 +1,23 @@
 package frc.robot.commands;
 
-import java.util.function.BooleanSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.IntakeSubsystem;
 
 public class IntakeCommand extends CommandBase {
     private final IntakeSubsystem m_intake;
-    private final BooleanSupplier m_runOrNot;
+    private final Boolean m_fwd;
 
-    public IntakeCommand(IntakeSubsystem subsystem, BooleanSupplier run) {
+    public IntakeCommand(IntakeSubsystem subsystem, Boolean fwd) {
         m_intake = subsystem;
-        m_runOrNot = run;
+        m_fwd = fwd;
         addRequirements(m_intake);
     }
     
     @Override
     public void initialize() {
-        m_intake.turnOn(m_intake.getForward());
+        m_intake.turnOn(m_fwd);
     }
-    @Override
-    public boolean isFinished(){
-        return m_runOrNot.getAsBoolean();
-    }
+
     @Override
     public void end(boolean interrupted) {
         m_intake.turnOff();
