@@ -17,10 +17,14 @@ public class IntakeCommand extends CommandBase {
     
     @Override
     public void execute() {
-        if (m_runOrNot.getAsBoolean()) {
-            m_intake.turnOn(m_intake.getForward());
-        } else {
-            m_intake.turnOff();
-        }
+        m_intake.turnOn(m_intake.getForward());
+    }
+    @Override
+    public boolean isFinished(){
+        return m_runOrNot.getAsBoolean();
+    }
+    @Override
+    public void end(boolean interrupted) {
+        m_intake.turnOff();
     }
 }

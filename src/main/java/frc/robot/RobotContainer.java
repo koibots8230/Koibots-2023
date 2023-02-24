@@ -127,9 +127,10 @@ public class RobotContainer {
         // Intake runs when right trigger is pressed
         BooleanSupplier m_turnOnIntake = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
         IntakeCommand m_IntakeCommand = new IntakeCommand(m_intake, m_turnOnIntake);
-        Trigger runIntakeTrigger = m_driverHID.button(3);
+        Trigger runIntakeTrigger = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
         runIntakeTrigger.onTrue(m_IntakeCommand);
 
+        //new Intake 
         // Intake is reversed when right bumper is pressed
         SwitchIntakeDirection m_switchIntake = m_intake.new SwitchIntakeDirection(m_intake);
         Trigger switchIntakeTrigger = m_driverHID.button(6);
