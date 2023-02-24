@@ -14,8 +14,10 @@ public class AutoShootCommand extends CommandBase {
   private boolean end = false;
   private double Velocity;
   private int ShootLevel = 2;
+  private ShooterSubsystem shooter;
 
-  public void getShooterLevel(BooleanSupplier L2, BooleanSupplier L3) {
+  public void getShooterLevel(BooleanSupplier L2, BooleanSupplier L3, ShooterSubsystem _shooter) {
+    shooter = _shooter;
     if (L2.getAsBoolean()) {
       ShootLevel = 2;
     } else if (L3.getAsBoolean()) {
@@ -38,7 +40,7 @@ public class AutoShootCommand extends CommandBase {
       end = true;
     }
     if (Velocity != 0) {
-      ShooterSubsystem.SetShooter(Constants.MOTOR_SPEED_TO_VELOCITY*Velocity);
+      shooter.SetShooter(Constants.MOTOR_SPEED_TO_VELOCITY*Velocity);
     }
   }
   // Called every time the scheduler runs while the command is scheduled.

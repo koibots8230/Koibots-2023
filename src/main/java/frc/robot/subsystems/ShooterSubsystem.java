@@ -29,10 +29,17 @@ public class ShooterSubsystem extends SubsystemBase {
   private double distance;
   private Translation2d Spot = new Translation2d(0, 0);
 
-  private static CANSparkMax shooterMotor = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT, MotorType.kBrushless);
+  private CANSparkMax shooterMotor1;
+  private CANSparkMax shooterMotor2;
   
-  public static void SetShooter(double Speed){
-    shooterMotor.set(Speed);
+  public ShooterSubsystem() {
+    shooterMotor1 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_1, MotorType.kBrushless);
+    shooterMotor2 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_2, MotorType.kBrushless);
+    shooterMotor2.follow(shooterMotor1);
+  }
+
+  public void SetShooter(double Speed){
+    shooterMotor1.set(Speed);
   }
 
   @Override
