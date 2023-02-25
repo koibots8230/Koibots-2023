@@ -25,14 +25,15 @@ public class VisionSubsystem extends SubsystemBase{
     final PhotonCamera camera;
     final Transform3d robotToCam;
     AprilTagFieldLayout aprilTagFieldLayout;
-    SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
+    // SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
+    private final boolean m_sideChooser = true;
 
     public VisionSubsystem() {
         camera = new PhotonCamera("camera");
         robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
         aprilTagFieldLayout = null;
         try {
-            if (m_sideChooser.getSelected()) {
+            if (m_sideChooser) {
                 aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/BlueAprilTagLayout.json");
             } else {
                 aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/RedAprilTagLayout.json");

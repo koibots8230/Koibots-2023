@@ -98,9 +98,9 @@ public class Constants {
     public static final int kLeftMotor2Port = 14;
     public static final int kRightMotor1Port = 12;
     public static final int kRightMotor2Port = 13;
-    public static final int kIntakeMotorPort = 0; // To be changed when we have an actual intake
-    public static final int kSHOOTER_MOTOR_PORT_1 = 0; //To be changed
-    public static final int kSHOOTER_MOTOR_PORT_2 = 0; //To be changed
+    public static final int kIntakeMotorPort = 3; // To be changed when we have an actual intake
+    public static final int kSHOOTER_MOTOR_PORT_1 = 1; //To be changed
+    public static final int kSHOOTER_MOTOR_PORT_2 = 2; //To be changed
     public static final double AUTO_SPEED = 0.15;
 
     //PID constants for PIDCommand Setmotor:
