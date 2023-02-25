@@ -85,12 +85,11 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw()+180), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
 
+        m_inverted = false;
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds(){
         return wheelSpeeds;
-        
-        m_inverted = false;
     }
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
@@ -136,10 +135,6 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public SparkMaxPIDController getLeftPID() {
         return primaryLeftMotor.getPIDController();
-    }
-
-    public boolean getInverted() {
-        return m_inverted;
     }
 
     public void setInverted(boolean invert) {
