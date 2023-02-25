@@ -26,8 +26,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.function.DoubleSupplier;
 
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.IntakeSubsystem.SwitchIntakeDirection;
-import frc.robot.subsystems.TankDriveSubsystem.SwitchDrivetrainInvert;
 import frc.robot.commands.IntakeCommand;
 
 /**
@@ -65,10 +63,6 @@ public class RobotContainer {
       () -> m_operatorHID.getRawAxis(5),
       m_tankDriveSubsystem);
 
-  // Drivetrain is reversed when button A is pressed on the controller:
-  SwitchDrivetrainInvert m_SwitchDrivetrainInvertCommand = m_tankDriveSubsystem.new SwitchDrivetrainInvert(
-      m_tankDriveSubsystem);
-
 
   SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   SendableChooser<String> m_driverChooser = new SendableChooser<>();
@@ -82,10 +76,6 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
-  private RobotContainer() {
-    configureButtonBindings();
-  }
-
   private void configureButtonBindings() {
     m_tankDriveSubsystem.setDefaultCommand(m_driveCommand);
 
@@ -127,40 +117,68 @@ public class RobotContainer {
     // Intake runs BACKWARD when right bumper is pressed
     Trigger runIntakeBackwardsTrigger = m_driverHID.button(6);
     runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
-
-    Trigger invertDrivetrainTrigger = m_driverHID.button(1)
-    .onTrue(m_tankDriveSubsystem.new SwitchDrivetrainInvert(m_tankDriveSubsystem));
-
-    // new Intake
-    // Intake is reversed when right bumper is pressed
-    SwitchIntakeDirection m_switchIntake = m_intake.new SwitchIntakeDirection(m_intake);
-    Trigger switchIntakeTrigger = m_driverHID.button(6);
-    switchIntakeTrigger.onTrue(m_switchIntake);
   }
 
   public static RobotContainer getInstance() {
     return m_robotContainer;
   }
+    /**
+     * The container for the robot. Contains subsystems, OI devices, and commands.
+     */
+    private RobotContainer() {
+        configureButtonBindings();
 
-  private void invertDrivetrain(boolean invert) {
-    if (invert) {
-      m_tankDriveSubsystem.setInverted(true, true, true);
-      System.out.println("Invert On");
-    } else {
-      m_tankDriveSubsystem.setInverted(false, false, false);
-      System.out.println("Invert Off");
-    }
-  }
+        int pairButton;
+        String hidType = m_driverHID.getHID().getName();
+        if (hidType.equals("")) { // Xbox Controller | Name Unknown
+            m_controllerType = 1;
+            pairButton = 7;
+        } else if (hidType.equals("Wireless Controller")) { // PS5 | Is still called "Wireless Controller" if plugged in with a wire.
+            m_controllerType = 2;
+            pairButton = 7;
+        } else {
+            m_controllerType = 0;
+            pairButton = 7;
+        }
 
-  private void invertDrivetrain() {
-    if (m_tankDriveSubsystem.getInverted()) {
-      m_tankDriveSubsystem.setInverted(false, false, false);
-      System.out.println("Invert Off");
-    } else {
-      m_tankDriveSubsystem.setInverted(true, true, true);
-      System.out.println("Invert On");
+
+        // ==================OPERATOR CONTROLS======================================
+
+        // Create Triggers here | Triggers should be named t_CommandName
+        Trigger leftTrigger = m_operatorHID.axisGreaterThan(3, Constants.DEADZONE);
+        Trigger rightTrigger = m_operatorHID.axisGreaterThan(4, Constants.DEADZONE);
+
+        Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
+        operatorDriveTrigger.onTrue(m_operatorDrive);
+
+        Trigger operatorSpeedUp = m_operatorHID.button(2);
+        Trigger operatorSpeedDown = m_operatorHID.button(3);
+        operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
+        operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+
+        Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
+        Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -Constants.DEADZONE);
+        intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
+        intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
+        intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
+
+        // ================DRIVER CONTROLS==========================================
+        // create commands
+        // 5 = left bumper
+        // 6 = right bumper
+
+        // Intake is toggled when left bumper is pressed
+        Trigger flipTrigger = m_driverHID.button(5);
+        flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+
+        // Intake runs FORWARD when right trigger is pressed
+        Trigger runIntakeForwardsTrigger = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
+        runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
+
+        // Intake runs BACKWARD when right bumper is pressed
+        Trigger runIntakeBackwardsTrigger = m_driverHID.button(6);
+        runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
     }
-  }
 
   public CommandGenericHID getController() {
     return m_driverHID;

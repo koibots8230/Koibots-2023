@@ -99,4 +99,6 @@ public class Constants {
   public static final double TRACK_WIDTH_METERS = 0;
   public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
       TRACK_WIDTH_METERS);
+
+  public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
 }

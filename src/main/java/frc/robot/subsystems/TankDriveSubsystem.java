@@ -20,7 +20,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -53,9 +52,6 @@ public class TankDriveSubsystem extends SubsystemBase {
     private DifferentialDriveOdometry m_Odometry;
     private Pose2d OdometryPose;
     
-    private boolean m_inverted; // This boolean determines if the drivetrain is inverted.
-    
-
     public TankDriveSubsystem() {
         primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
 
@@ -79,8 +75,6 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryRightEncoder.setVelocityConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
 
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw()+180), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
-
-        m_inverted = false;
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds(){
@@ -91,16 +85,6 @@ public class TankDriveSubsystem extends SubsystemBase {
         this();
         primaryRightMotor.setInverted(invertRight);
         primaryLeftMotor.setInverted(invertLeft);
-    }
-
-    private boolean isInverted = false;
-
-    public void setInverted(boolean invertRight, boolean invertLeft, boolean invertJS) {
-        isInverted = invertJS;
-    }
-
-    public boolean getInverted() {
-        return isInverted;
     }
 
     @Override
@@ -130,10 +114,6 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public SparkMaxPIDController getLeftPID() {
         return primaryLeftMotor.getPIDController();
-    }
-
-    public void setInverted(boolean invert) {
-        m_inverted = invert;
     }
 
     public SparkMaxPIDController getRightPID() {
@@ -223,14 +203,8 @@ public class TankDriveSubsystem extends SubsystemBase {
         @Override
         public void execute() {
             // Here's the invert drivetrain invert feature:
-            if (m_inverted) {
-                m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-                m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            } else {
-                // Basically, It takes the negative of the desired speed as the setpoint and runs the PID loop:
-                m_leftPID.setReference(-adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-                m_rightPID.setReference(-adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            }
+            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
         }
 
         private double adjustForDeadzone(double in) {
@@ -245,25 +219,5 @@ public class TankDriveSubsystem extends SubsystemBase {
         }
     }
 
-    public class SwitchDrivetrainInvert extends CommandBase { // Switches the drivetrain between inverted and NOT inverted:
-        private TankDriveSubsystem m_TankDriveSubsystem;
-        public SwitchDrivetrainInvert(TankDriveSubsystem subsystem) {
-            m_TankDriveSubsystem = subsystem;
-            addRequirements(m_TankDriveSubsystem);
-        }
-
-        @Override
-        public void execute() {
-            // If drivetrain is inverted, it will become not inverted. if it isn't inverted, it'll be inverted:
-            m_TankDriveSubsystem.setInverted(!m_TankDriveSubsystem.getInverted());
-            SmartDashboard.putBoolean("Is drivetrain inverted?", m_TankDriveSubsystem.getInverted());
-        }
-
-        @Override 
-        public boolean isFinished() {
-            return true;
-        }
-        
-    }
 
 }
