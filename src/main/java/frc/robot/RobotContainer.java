@@ -27,6 +27,19 @@ import java.io.File;
 import java.util.Scanner;
 import java.util.function.DoubleSupplier;
 
+import java.io.File;
+import java.util.Scanner;
+
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPoint;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -201,10 +214,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
   */
   public Command getAutonomousCommand() {
-    // The selected command will be run in autonomous
     return m_autoChooser.getSelected();
   }
-  
-
 }
 

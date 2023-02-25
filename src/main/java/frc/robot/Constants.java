@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -138,5 +139,21 @@ public class Constants {
     public static final Translation3d HC2 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
     public static final Translation3d HC3 = new Translation3d(HIGH_X, Y3, HIGH_HEIGHT);
     public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1, HC2, HC3);
-  }
+    
+    //Encoder Values
+    public static final double RIGHT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
+    public static final double LEFT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
+
+    //Path Folowing Values TO BE CHANGED
+    public static final double ksVolts = 0;
+    public static final double kvVoltSecondsPerMeter = 0;
+    public static final double kaVoltSecondsSquaredPerMeter = 0;
+    public static final double kPDriveVel = 0;
+    public static final double kMaxSpeedMetersPerSecond = 0;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0;
+    
+    public static final double kTrackwidthMeters = 0;
+    public static final DifferentialDriveKinematics kDriveKinematics =
+        new DifferentialDriveKinematics(kTrackwidthMeters);
+}
 
