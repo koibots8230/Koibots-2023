@@ -16,6 +16,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -36,6 +38,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private double intakePosition; // This variable refers to the incline of the intake IN DEGREES
 
+    private final AnalogInput topHallEffectSensor;
+    private final AnalogInput bottomHallEffectSensor;
+
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
         intakeMotor.setInverted(false);
@@ -53,6 +58,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // Intake starts off going forward:
         runsForward = true;
+
+        // Hall effect sensors
+        topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
+        bottomHallEffectSensor = new AnalogInput(1); // Change port numer when testing the code
     }
 
     @Override
@@ -121,10 +130,24 @@ public class IntakeSubsystem extends SubsystemBase {
         runsForward = forward;
     }
 
+    public AnalogInput getHallEffectSensor() {
+        // Returns the correct hall effect sensor based off current intake state:
+        if (topHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
+            return bottomHallEffectSensor;
+            // If the top hall effect sensor is triggered, it means that the intake is top.
+            // Assuming that we want to go down, the function returns the BOTTOM sensor.
+        } else if (bottomHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
+            return topHallEffectSensor;
+            // The OPPOSITE goes for the top sensor.
+        } else {
+            return bottomHallEffectSensor;
+        }
+    }
+
     public class FlipIntake extends CommandBase {
         IntakeSubsystem m_intake;
         boolean end = false;
-        int direction = 1;
+        AnalogInput hallEffectSensor;
 
         public FlipIntake(IntakeSubsystem subsystem) {
             m_intake = subsystem;
@@ -133,20 +156,25 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void initialize() {
-            direction *= -1;
-            m_intake.setRaiseIntakeSpeed(direction * Constants.RAISE_SPEED);
+            hallEffectSensor = m_intake.getHallEffectSensor();
+            if (hallEffectSensor == topHallEffectSensor) {
+                m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
+            } else if (hallEffectSensor == bottomHallEffectSensor) {
+                m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+            }
         }
 
         @Override
         public void execute() {
-            if (Math.abs(m_intake.getRaiseMotorCurrent()) < Constants.CURRENT_ZONE_AMPS) {
+            System.out.println("Intake is moving!!!!!!!!!!!!");
+            if (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
                 if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
+                m_intake.setRaiseIntakeSpeed(0);
                 end = true;
                 } else {
                     return;
                 }
             } 
-            end = true;
         }
 
         @Override
@@ -156,28 +184,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void end(boolean interrupted) {
-            m_intake.setRaiseIntakeSpeed(0);
-        }
-    }
-
-   
-
-    public class SwitchIntakeDirection extends CommandBase {
-        private final IntakeSubsystem m_IntakeSubsystem;
-        public SwitchIntakeDirection(IntakeSubsystem subsystem) {
-            m_IntakeSubsystem = subsystem;
-            addRequirements(m_IntakeSubsystem); 
-        }
-
-        @Override
-        public void execute() {
-            m_IntakeSubsystem.setForward(!getForward());
-            SmartDashboard.putBoolean("Is intake reversed?", m_IntakeSubsystem.getForward());
-        }
-
-        @Override 
-        public boolean isFinished() {
-            return true;
         }
     }
 }
