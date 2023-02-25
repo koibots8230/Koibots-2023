@@ -52,16 +52,6 @@ public class Constants {
   public static final double DEADZONE = 0.15;
   public static final double AUTO_SPEED = 0.15;
 
-  // Intake Constants
-
-  public static final double RUNNING_SPEED = 0.7;
-  public static final double RAISE_SPEED = 0.1;
-  public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
-  public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
-  public static final double INTAKE_DOWN_POSITION = 1; // To be changed when we have an actual intake
-
-  // for LED system
-  public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
   // public static final int LEDPort1=0;
   // public static final int LEDPort2=0;//neither of these are known currently,
   // but they can be uncommented once we know the port numbers.
@@ -118,8 +108,7 @@ public class Constants {
     public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
     public static final double INTAKE_UP_POSITION =1; // To be changed when we have an actual intake
     public static final double INTAKE_DOWN_POSITION = 1; // To be changed when we have an actual intake
-    public static final double DEADZONE = 0.15;
-  public static final double TRACK_WIDTH_METERS = 0;
-  public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
-      TRACK_WIDTH_METERS);
+    public static final double TRACK_WIDTH_METERS = 0;
+    public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
+    TRACK_WIDTH_METERS);
 }
