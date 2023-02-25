@@ -10,16 +10,32 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import java.util.function.DoubleSupplier;
 
+import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
@@ -28,21 +44,47 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
     private double speedCoefficient = 1;
+    private AHRS gyro = new AHRS(SPI.Port.kMXP);
+    final DifferentialDrive drivetrain;
+    DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
+    //Encoders:
+    private final RelativeEncoder primaryRightEncoder;
+    private final RelativeEncoder primaryLeftEncoder;
+    private DifferentialDriveOdometry m_Odometry;
+    private Pose2d OdometryPose;
+    
     private boolean m_inverted; // This boolean determines if the drivetrain is inverted.
     
 
     public TankDriveSubsystem() {
-        primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
+        primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
 
-        secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
+        secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
 
-        primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
+        primaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_1, MotorType.kBrushless);
 
-        secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
+        secondaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
+
+        drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
+
+        primaryRightEncoder = primaryRightMotor.getEncoder();
+        primaryLeftEncoder = primaryLeftMotor.getEncoder();
+
+        primaryLeftEncoder.setPositionConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
+        primaryRightEncoder.setPositionConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
         
+        primaryLeftEncoder.setVelocityConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
+        primaryRightEncoder.setVelocityConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
+
+        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw()+180), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
+
         m_inverted = false;
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+        return wheelSpeeds;
     }
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
@@ -51,10 +93,34 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryLeftMotor.setInverted(invertLeft);
     }
 
+    private boolean isInverted = false;
+
+    public void setInverted(boolean invertRight, boolean invertLeft, boolean invertJS) {
+        isInverted = invertJS;
+    }
+
+    public boolean getInverted() {
+        return isInverted;
+    }
+
     @Override
     public void periodic() {
+        wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
+        OdometryPose = m_Odometry.update(
+            new Rotation2d(gyro.getYaw()+180),
+            primaryLeftEncoder.getPosition(),
+            primaryRightEncoder.getPosition());
         // This method will be called once per scheduler run
     }
+    public Pose2d getOdometryPose() {
+        return OdometryPose;
+    }
+    public void resetOdometry(Pose2d pose) {
+        primaryLeftEncoder.setPosition(0);
+        primaryRightEncoder.setPosition(0);
+        m_Odometry.resetPosition(
+            gyro.getRotation2d(), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition(), pose);
+      }
 
     @Override
     public void simulationPeriodic() {
@@ -66,10 +132,6 @@ public class TankDriveSubsystem extends SubsystemBase {
         return primaryLeftMotor.getPIDController();
     }
 
-    public boolean getInverted() {
-        return m_inverted;
-    }
-
     public void setInverted(boolean invert) {
         m_inverted = invert;
     }
@@ -78,7 +140,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         return primaryRightMotor.getPIDController();
     }
 
-    public void setMotor(double rightSpeed, double leftSpeed) {
+    public void setMotor(double leftSpeed, double rightSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
     }
@@ -87,15 +149,44 @@ public class TankDriveSubsystem extends SubsystemBase {
         if (Increase) {
             //Only need increase - if it's called and Increase is false than decrease is pressed instead
             if (speedCoefficient < 1) {
-                speedCoefficient += 0.5;
+                speedCoefficient += 0.05;
             }
         } else {
             if (speedCoefficient > 0){
-                speedCoefficient -= 0.5;
+                speedCoefficient -= 0.05;
             }
         }
     }
 
+    public void setMotorVoltage(double leftVoltage, double rightVoltage) {
+        primaryRightMotor.setVoltage(rightVoltage);
+        primaryLeftMotor.setVoltage(leftVoltage);
+        drivetrain.feed();
+    }
+
+    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+        return new SequentialCommandGroup(
+            new InstantCommand(() -> {
+                if (isFirstPath) {
+                    this.resetOdometry(traj.getInitialPose());
+                }
+            }),
+            new PPRamseteCommand(
+                traj, 
+                this::getOdometryPose, 
+                new RamseteController(), 
+                new SimpleMotorFeedforward(Constants.ks_VOLTS, Constants.kv_VOLT_SECONDS_PER_METER, Constants.ka_VOLT_SECONDS_SQUARED_PERMETER),
+                Constants.DRIVE_KINEMATICS, 
+                this::getWheelSpeeds, 
+                new PIDController(Constants.kp_DRIVE_VEL, 0, 0),
+                new PIDController(Constants.kp_DRIVE_VEL, 0, 0),
+                this::setMotorVoltage,
+                true,
+                this
+                )
+        );
+    }
+    
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
@@ -118,14 +209,14 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_rightPID.setOutputRange(-1, 1);
             m_leftPID.setOutputRange(-1, 1);
 
-            m_rightPID.setP(Constants.kp);
-            m_leftPID.setP(Constants.kp);
+            m_rightPID.setP(0);
+            m_leftPID.setP(0);
 
-            m_rightPID.setI(Constants.ki);
-            m_leftPID.setI(Constants.ki);
+            m_rightPID.setI(0);
+            m_leftPID.setI(0);
 
-            m_rightPID.setD(Constants.kd);
-            m_leftPID.setD(Constants.kd);
+            m_rightPID.setD(0);
+            m_leftPID.setD(0);
         }
 
         // Called every time the scheduler runs while the command is scheduled.
@@ -167,6 +258,12 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_TankDriveSubsystem.setInverted(!m_TankDriveSubsystem.getInverted());
             SmartDashboard.putBoolean("Is drivetrain inverted?", m_TankDriveSubsystem.getInverted());
         }
+
+        @Override 
+        public boolean isFinished() {
+            return true;
+        }
+        
     }
 
 }
