@@ -80,8 +80,8 @@ public class RobotContainer {
     // ==================OPERATOR CONTROLS======================================
 
     // Create Triggers here | Triggers should be named t_CommandName
-    Trigger operatorSpeedUp = m_operatorHID.button(2);
-    Trigger operatorSpeedDown = m_operatorHID.button(3);
+    Trigger operatorSpeedUp = m_operatorHID.cross();
+    Trigger operatorSpeedDown = m_operatorHID.circle();
     Trigger leftTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
     Trigger rightTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
 
@@ -137,38 +137,6 @@ public class RobotContainer {
             m_controllerType = 0;
             pairButton = 7;
         }
-
-
-        // ==================OPERATOR CONTROLS======================================
-
-        // Create Triggers here | Triggers should be named t_CommandName
-        Trigger operatorSpeedUp = m_operatorHID.button(2);
-        Trigger operatorSpeedDown = m_operatorHID.button(3);
-        operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-        operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
-
-        Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
-        Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -Constants.DEADZONE);
-        intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
-        intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
-        intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
-
-        // ================DRIVER CONTROLS==========================================
-        // create commands
-        // 5 = left bumper
-        // 6 = right bumper
-
-        // Intake is toggled when left bumper is pressed
-        Trigger flipTrigger = m_driverHID.button(5);
-        flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
-
-        // Intake runs FORWARD when right trigger is pressed
-        Trigger runIntakeForwardsTrigger = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
-        runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
-
-        // Intake runs BACKWARD when right bumper is pressed
-        Trigger runIntakeBackwardsTrigger = m_driverHID.button(6);
-        runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
     }
 
   public CommandGenericHID getController() {
