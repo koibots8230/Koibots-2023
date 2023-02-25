@@ -14,7 +14,7 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.function.DoubleSupplier;
 
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
 import frc.robot.commands.IntakeCommand;
 
 /**
@@ -40,18 +41,21 @@ import frc.robot.commands.IntakeCommand;
  */
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
+  
+  SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
+  public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+  public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
 
   // other stuff
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
   private final CommandPS4Controller m_operatorHID = new CommandPS4Controller(1);
 
-  // Commands
-  private DoubleSupplier leftDriveTrain = () -> m_driverHID.getRawAxis(1);
-  private DoubleSupplier rightDriveTrain = () -> m_driverHID.getRawAxis(5);
+  private DoubleSupplier leftDriveTrain = () -> m_driverHID.getLeftY();
+  private DoubleSupplier rightDriveTrain = () -> m_driverHID.getRightY();
 
   private final TankDriveSubsystem.driveMotorCommand m_driveCommand = m_tankDriveSubsystem.new driveMotorCommand(
       rightDriveTrain,
@@ -78,11 +82,16 @@ public class RobotContainer {
     // Create Triggers here | Triggers should be named t_CommandName
     Trigger operatorSpeedUp = m_operatorHID.button(2);
     Trigger operatorSpeedDown = m_operatorHID.button(3);
+    Trigger leftTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
+    Trigger rightTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
+
+    CommunityShotCommand com_shot_cmd = m_ShooterSubsystem.new CommunityShotCommand(m_ShooterSubsystem);
+    leftTrigger.whileTrue(com_shot_cmd);
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
     operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
-    Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
-    Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -Constants.DEADZONE);
+    Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.DEADZONE);
+    Trigger intakeMoveDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.DEADZONE);
     intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
     intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
     intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
@@ -95,15 +104,15 @@ public class RobotContainer {
     // 6 = right bumper
 
     // Intake is toggled when left bumper is pressed
-    Trigger flipTrigger = m_driverHID.button(5);
+    Trigger flipTrigger = m_driverHID.leftBumper();
     flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
 
     // Intake runs FORWARD when right trigger is pressed
-    Trigger runIntakeForwardsTrigger = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
+    Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
 
     // Intake runs BACKWARD when right bumper is pressed
-    Trigger runIntakeBackwardsTrigger = m_driverHID.button(6);
+    Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
   }
 

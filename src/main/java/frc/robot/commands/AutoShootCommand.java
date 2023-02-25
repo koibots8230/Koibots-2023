@@ -2,6 +2,9 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -48,6 +51,7 @@ public class AutoShootCommand extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    shooter.SetShooter(0);
   }
 
   // Returns true when the command should end.

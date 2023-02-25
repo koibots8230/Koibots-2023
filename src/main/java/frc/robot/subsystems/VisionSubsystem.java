@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
@@ -9,9 +10,12 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,20 +26,19 @@ public class VisionSubsystem extends SubsystemBase{
     final PhotonCamera camera;
     final Transform3d robotToCam;
     AprilTagFieldLayout aprilTagFieldLayout;
-    SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
+    private Boolean side = false;
 
-    public VisionSubsystem() {
-        camera = new PhotonCamera("camera");
+    boolean m_sideChooser = true;
+    public VisionSubsystem(Boolean _side) {
+        camera = new PhotonCamera("KoiBotsCamera");
         robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
         aprilTagFieldLayout = null;
         try {
-            if (m_sideChooser.getSelected()) {
-                aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/BlueAprilTagLayout.json");
-            } else {
-                aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource("../../../Deploy/RedAprilTagLayout.json");
+            aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
+            if (side == false) {
+                aprilTagFieldLayout.setOrigin(new Pose3d(651.25*0.0254, 0.0, 0.0, new Rotation3d(0, 0, Math.PI)));
             }
-            }
-        catch (IOException ioexcept) {
+        } catch (IOException ioexcept) {
             System.err.println("File did not exist! Try fixing your settings");  
         }
         photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, robotToCam);
