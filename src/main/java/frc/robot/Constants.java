@@ -36,8 +36,8 @@ public class Constants {
   public static final int RIGHT_DRIVE_MOTOR_1 = 12;
   public static final int RIGHT_DRIVE_MOTOR_2 = 13;
   public static final int INTAKE_MOTOR = 10;
-  public static final int SHOOTER_MOTOR_1 = 0; // To be changed
-  public static final int SHOOTER_MOTOR_2 = 0; // To be changed
+  public static final int SHOOTER_MOTOR_1 = 3; // To be changed
+  public static final int SHOOTER_MOTOR_2 = 4; // To be changed
   public static final int RAISE_INTAKE_MOTOR = 2; // To be changed when we know the port of raiseIntakeMotor
   public static final int MIDTAKE_MOTOR = 1; // To be changed when we have an actual intake
 

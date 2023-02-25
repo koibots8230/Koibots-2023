@@ -32,13 +32,17 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax shooterMotor2;
 
   public ShooterSubsystem() {
-    shooterMotor1 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_1, MotorType.kBrushless);
-    shooterMotor2 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_2, MotorType.kBrushless);
+    shooterMotor1 = new CANSparkMax(Constants.SHOOTER_MOTOR_1, MotorType.kBrushless);
+    shooterMotor2 = new CANSparkMax(Constants.SHOOTER_MOTOR_2, MotorType.kBrushless);
   }
 
   public void SetShooter(double Speed) {
     shooterMotor1.set(Speed);
     shooterMotor2.set(-Speed);
+  }
+  
+  public Pose3d getPose() {
+    return Bot3d;
   }
 
   @Override
@@ -46,9 +50,9 @@ public class ShooterSubsystem extends SubsystemBase {
     // TODO: What if we want to turn this off?
     if (count == 10) { // TODO: Make this a constant that we can adjust as part of the class
       count = 0;
-      // Optional<EstimatedRobotPose> BotThing = VisionSubsystem.photonPoseEstimator.update();
-      // if (BotThing.isPresent()) {
-        //Bot3d = BotThing.get().estimatedPose;
+      Optional<EstimatedRobotPose> BotThing = VisionSubsystem.photonPoseEstimator.update();
+      if (BotThing.isPresent()) {
+        Bot3d = BotThing.get().estimatedPose;
         Bot3d = new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0));
         VariablesDefined = true;
         for (int a = 0; a < 3; a++) {
@@ -65,9 +69,9 @@ public class ShooterSubsystem extends SubsystemBase {
             Closest = Constants.MIDDLE_SPOTS.get(a-1);
           }
         }
-      //} else {
-        //VariablesDefined = false;
-      //}
+      } else {
+        VariablesDefined = false;
+      }
     } else {
       count++;
     }
@@ -76,28 +80,26 @@ public class ShooterSubsystem extends SubsystemBase {
   public class CommunityShotCommand extends CommandBase {
     private DoubleSupplier m_Trigger;
 
-    public CommunityShotCommand(DoubleSupplier Trigger, ShooterSubsystem m_ShooterSubsystem) {
-      m_Trigger = Trigger;
+    public CommunityShotCommand(ShooterSubsystem m_ShooterSubsystem) {
       addRequirements(m_ShooterSubsystem);
     }
 
     @Override
     public void initialize() {
-      if (m_Trigger.getAsDouble() > Constants.DEADZONE) {
-        SetShooter(.75);
-      }
+      SetShooter(.75);
     }
 
     @Override
     public void end(boolean interrupted) {
       SetShooter(0);
     }
-  }
+}
 
   @Override
   public void simulationPeriodic() {
 
   }
+  
 
   // Put methods for controlling this subsystem
   // here. Call these from Commands.

@@ -27,6 +27,7 @@ import java.util.function.DoubleSupplier;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.SwitchIntakeDirection;
+import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
 import frc.robot.subsystems.TankDriveSubsystem.SwitchDrivetrainInvert;
 import frc.robot.commands.IntakeCommand;
 
@@ -46,6 +47,7 @@ public class RobotContainer {
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
+  public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
 
   // other stuff
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
@@ -90,6 +92,8 @@ public class RobotContainer {
     Trigger leftTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
     Trigger rightTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
 
+    CommunityShotCommand com_shot_cmd = m_ShooterSubsystem.new CommunityShotCommand(m_ShooterSubsystem);
+    leftTrigger.whileTrue(com_shot_cmd);
 
     Trigger operatorSpeedUp = m_operatorHID.cross();
     Trigger operatorSpeedDown = m_operatorHID.circle();
