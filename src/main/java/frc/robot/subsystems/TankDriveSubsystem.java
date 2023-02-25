@@ -26,6 +26,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
+    private double speedCoefficient = 1;
     
 
     public TankDriveSubsystem() {
@@ -44,9 +45,18 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
         this();
-
         primaryRightMotor.setInverted(invertRight);
         primaryLeftMotor.setInverted(invertLeft);
+    }
+
+    private boolean isInverted = false;
+
+    public void setInverted(boolean invertRight, boolean invertLeft, boolean invertJS) {
+        isInverted = invertJS;
+    }
+
+    public boolean getInverted() {
+        return isInverted;
     }
 
     @Override
@@ -71,6 +81,19 @@ public class TankDriveSubsystem extends SubsystemBase {
     public void setMotor(double leftSpeed, double rightSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
+    }
+    
+    public void setSpeed(Boolean Increase){
+        if (Increase) {
+            //Only need increase - if it's called and Increase is false than decrease is pressed instead
+            if (speedCoefficient < 1) {
+                speedCoefficient += 0.05;
+            }
+        } else {
+            if (speedCoefficient > 0){
+                speedCoefficient -= 0.05;
+            }
+        }
     }
 
     public class driveMotorCommand extends CommandBase {
@@ -123,4 +146,5 @@ public class TankDriveSubsystem extends SubsystemBase {
             return out;
         }
     }
+
 }
