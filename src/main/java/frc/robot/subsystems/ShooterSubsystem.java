@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
-import org.ejml.equation.Variable;
 import org.photonvision.EstimatedRobotPose;
 
 import com.revrobotics.CANSparkMax;
@@ -13,7 +12,6 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -33,8 +31,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private CANSparkMax shooterMotor2;
   
   public ShooterSubsystem() {
-    shooterMotor1 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_1, MotorType.kBrushless);
-    shooterMotor2 = new CANSparkMax(Constants.kSHOOTER_MOTOR_PORT_2, MotorType.kBrushless);
+    shooterMotor1 = new CANSparkMax(Constants.SHOOTER_MOTOR_1, MotorType.kBrushless);
+    shooterMotor2 = new CANSparkMax(Constants.SHOOTER_MOTOR_2, MotorType.kBrushless);
   }
 
   public void SetShooter(double Speed){

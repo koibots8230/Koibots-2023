@@ -18,21 +18,17 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import java.util.function.BiConsumer;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -40,7 +36,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxAlternateEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
@@ -62,14 +57,14 @@ public class TankDriveSubsystem extends SubsystemBase {
     
 
     public TankDriveSubsystem() {
-        primaryRightMotor = new CANSparkMax(Constants.kRightMotor1Port, MotorType.kBrushless);
+        primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
 
-        secondaryRightMotor = new CANSparkMax(Constants.kRightMotor2Port, MotorType.kBrushless);
+        secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
 
-        primaryLeftMotor = new CANSparkMax(Constants.kLeftMotor1Port, MotorType.kBrushless);
+        primaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_1, MotorType.kBrushless);
 
-        secondaryLeftMotor = new CANSparkMax(Constants.kLeftMotor2Port, MotorType.kBrushless);
+        secondaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
         drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
@@ -180,11 +175,11 @@ public class TankDriveSubsystem extends SubsystemBase {
                 traj, 
                 this::getOdometryPose, 
                 new RamseteController(), 
-                new SimpleMotorFeedforward(Constants.ksVolts, Constants.kvVoltSecondsPerMeter, Constants.kaVoltSecondsSquaredPerMeter),
-                Constants.kDriveKinematics, 
+                new SimpleMotorFeedforward(Constants.ks_VOLTS, Constants.kv_VOLT_SECONDS_PER_METER, Constants.ka_VOLT_SECONDS_SQUARED_PERMETER),
+                Constants.DRIVE_KINEMATICS, 
                 this::getWheelSpeeds, 
-                new PIDController(Constants.kPDriveVel, 0, 0),
-                new PIDController(Constants.kPDriveVel, 0, 0),
+                new PIDController(Constants.kp_DRIVE_VEL, 0, 0),
+                new PIDController(Constants.kp_DRIVE_VEL, 0, 0),
                 this::setMotorVoltage,
                 true,
                 this
@@ -214,14 +209,14 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_rightPID.setOutputRange(-1, 1);
             m_leftPID.setOutputRange(-1, 1);
 
-            m_rightPID.setP(Constants.kp);
-            m_leftPID.setP(Constants.kp);
+            m_rightPID.setP(0);
+            m_leftPID.setP(0);
 
-            m_rightPID.setI(Constants.ki);
-            m_leftPID.setI(Constants.ki);
+            m_rightPID.setI(0);
+            m_leftPID.setI(0);
 
-            m_rightPID.setD(Constants.kd);
-            m_leftPID.setD(Constants.kd);
+            m_rightPID.setD(0);
+            m_leftPID.setD(0);
         }
 
         // Called every time the scheduler runs while the command is scheduled.

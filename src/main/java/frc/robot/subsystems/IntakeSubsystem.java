@@ -37,15 +37,15 @@ public class IntakeSubsystem extends SubsystemBase {
     private double intakePosition; // This variable refers to the incline of the intake IN DEGREES
 
     public IntakeSubsystem() {
-        intakeMotor = new CANSparkMax(Constants.kIntakeMotorPort, MotorType.kBrushless);
+        intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
         intakeMotor.setInverted(false);
         intakeEncoder = intakeMotor.getEncoder();
-        midtakeMotor = new CANSparkMax(Constants.kMidtakeMotorPort, MotorType.kBrushless); 
+        midtakeMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless); 
         midtakeMotor.setInverted(false);
         midtakeEncoder = midtakeMotor.getEncoder();
 
         // raiseIntakeMotor:
-        raiseIntakeMotor = new CANSparkMax(Constants.kRaiseIntakeMotorPort, MotorType.kBrushless);
+        raiseIntakeMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
         raiseIntakeMotor.setInverted(false);
         raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
         raiseIntakeEncoder.setPosition(0);
