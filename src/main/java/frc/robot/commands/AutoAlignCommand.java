@@ -51,8 +51,8 @@ public class AutoAlignCommand extends CommandBase {
     if (RoationValid) {
         Rotation = BotRotation.getDegrees()-RotationToTarget.getDegrees();
         if (Math.abs(Rotation) < 3) {
-            end = true;
             drive.setMotor(0, 0);
+            end = true;
         } else if (Rotation < 0) {
             drive.setMotor(Constants.AUTO_SPEED, (Constants.AUTO_SPEED)*-1);
         } else if (Rotation > 0) {
