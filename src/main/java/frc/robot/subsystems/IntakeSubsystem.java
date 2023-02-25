@@ -16,6 +16,8 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -36,6 +38,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private double intakePosition; // This variable refers to the incline of the intake IN DEGREES
 
+    private final AnalogInput topHallEffectSensor;
+    private final AnalogInput bottomHallEffectSensor;
+
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.kIntakeMotorPort, MotorType.kBrushless);
         intakeMotor.setInverted(false);
@@ -53,6 +58,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
         // Intake starts off going forward:
         runsForward = true;
+
+        // Hall effect sensors
+        topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
+        bottomHallEffectSensor = new AnalogInput(1); // Change port numer when testing the code
     }
 
     @Override
@@ -119,6 +128,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void setForward(boolean forward) {
         runsForward = forward;
+    }
+
+    public AnalogInput getTopHallEffectSensor() {
+        return topHallEffectSensor;
+    }
+
+    public AnalogInput getBottomHallEffectSensor() {
+        return bottomHallEffectSensor;
     }
 
     public class FlipIntake extends CommandBase {

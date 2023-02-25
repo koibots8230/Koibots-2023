@@ -132,12 +132,6 @@ public class RobotContainer {
         Trigger runIntakeBackwardsTrigger = m_driverHID.button(6);
         runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
 
-        //new Intake 
-        // Intake is reversed when right bumper is pressed
-        SwitchIntakeDirection m_switchIntake = m_intake.new SwitchIntakeDirection(m_intake);
-        Trigger switchIntakeTrigger = m_driverHID.button(6);
-        switchIntakeTrigger.onTrue(m_switchIntake);
-
         // Trigger to reset the controls
         Trigger resetControls = m_driverHID.button(pairButton);
         resetControls.whileTrue(new setupControls());
