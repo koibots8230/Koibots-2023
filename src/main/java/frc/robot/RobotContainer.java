@@ -43,11 +43,14 @@ import frc.robot.commands.IntakeCommand;
  */
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
+  
+  SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
   private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
   public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+  public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
 
   // other stuff
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
