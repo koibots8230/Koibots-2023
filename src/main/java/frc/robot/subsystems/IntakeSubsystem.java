@@ -26,11 +26,12 @@ import frc.robot.Constants;
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
     private final RelativeEncoder intakeEncoder;
-    private final CANSparkMax midtakeMotor;
-    private final RelativeEncoder midtakeEncoder;
 
-    // Boolean for the way that the intake runs. True means forward, false means backwards:
-    private boolean runsForward;
+    private final CANSparkMax firstConveyer;
+    private final CANSparkMax secondConveyer;
+    private final RelativeEncoder conveyerEncoder;
+    private final CANSparkMax leftStarWheelsMotor;
+    private final CANSparkMax rightStarWheelsMotor;
 
     // This motor raises and lowers the intake:
     private final CANSparkMax raiseIntakeMotor;
@@ -45,9 +46,17 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
         intakeMotor.setInverted(false);
         intakeEncoder = intakeMotor.getEncoder();
-        midtakeMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless); 
-        midtakeMotor.setInverted(false);
-        midtakeEncoder = midtakeMotor.getEncoder();
+
+        firstConveyer = new CANSparkMax(Constants.FIRST_CONVEYER_MOTOR, MotorType.kBrushless); 
+        firstConveyer.setInverted(false);
+        secondConveyer = new CANSparkMax(Constants.SECOND_CONVEYER_MOTOR, MotorType.kBrushless);
+        secondConveyer.follow(firstConveyer);
+        conveyerEncoder = firstConveyer.getEncoder();
+
+        rightStarWheelsMotor = new CANSparkMax(Constants.RIGHT_STARWHEELS_MOTOR, MotorType.kBrushless);
+        leftStarWheelsMotor = new CANSparkMax(Constants.LEFT_STARWHEELS_MOTOR, MotorType.kBrushless);
+        leftStarWheelsMotor.setInverted(true);
+        leftStarWheelsMotor.follow(rightStarWheelsMotor);
 
         // raiseIntakeMotor:
         raiseIntakeMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
@@ -55,9 +64,6 @@ public class IntakeSubsystem extends SubsystemBase {
         raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
         raiseIntakeEncoder.setPosition(0);
         intakePosition = 0;
-
-        // Intake starts off going forward:
-        runsForward = true;
 
         // Hall effect sensors
         topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
@@ -71,8 +77,8 @@ public class IntakeSubsystem extends SubsystemBase {
         double InCurrent = intakeMotor.getOutputCurrent(); 
         SmartDashboard.putNumber("Intake Motor Speed (RPM)", inVelocity);
         SmartDashboard.putNumber("Main Battery Current (A)", InCurrent);
-        double midVelocity = midtakeEncoder.getVelocity();
-        double midCurrent = midtakeMotor.getOutputCurrent();
+        double midVelocity = conveyerEncoder.getVelocity();
+        double midCurrent = firstConveyer.getOutputCurrent();
         SmartDashboard.putNumber("Midtake Motor Current (A)", midCurrent);
         SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
 
@@ -84,22 +90,23 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void turnOn() {
         intakeMotor.set(Constants.RUNNING_SPEED);
-        midtakeMotor.set(Constants.RUNNING_SPEED);
+        firstConveyer.set(Constants.RUNNING_SPEED);
+        rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
     }
 
     public void turnOn(Boolean Forwards) {
         if (Forwards){
             intakeMotor.set(Constants.RUNNING_SPEED);
-            midtakeMotor.set(Constants.RUNNING_SPEED);
+            firstConveyer.set(Constants.RUNNING_SPEED);
         } else {
             intakeMotor.set(-Constants.RUNNING_SPEED);
-            midtakeMotor.set(-Constants.RUNNING_SPEED);
+            firstConveyer.set(-Constants.RUNNING_SPEED);
         }
     }
 
     public void turnOff() {
         intakeMotor.set(0);
-        midtakeMotor.set(0);
+        firstConveyer.set(0);
     }
 
     public double getRaiseMotorCurrent() {
@@ -120,14 +127,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public CANSparkMax getIntakeRaiseMotor() {
         return raiseIntakeMotor;
-    }
-
-    public boolean getForward() {
-        return runsForward;
-    }
-
-    public void setForward(boolean forward) {
-        runsForward = forward;
     }
 
     public AnalogInput getHallEffectSensor() {

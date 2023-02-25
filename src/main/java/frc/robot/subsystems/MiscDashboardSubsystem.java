@@ -20,8 +20,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     public boolean is_cube = false; // Boolean to determine whether retreived object is a cube or cone
     private double midCurrent = 0; // Current of the midtake motor
     private double midSpeed = 10; // Speed of the midtake motor
-    private boolean intakeReverse = false; // Boolean determining whether or not the intake motor is reversed
-    private boolean drivetrainInvert = false; // Boolean determining whether or not the drivetrain is inverted
     
     public MiscDashboardSubsystem() {
         ShuffleboardTab main_tab = Shuffleboard.getTab("Main");
@@ -51,12 +49,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         // Cube or cone? Place your bets!!
         main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
         withSize(3,1).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#880088", "Color when false", "#FFEE00"));
-
-        // Displaying drivetrain invert and intake reverse:
-        main_tab.addBoolean("Is drivetrain inverted?", () -> drivetrainInvert).withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(0, 4).withSize(3, 1);
-        main_tab.addBoolean("Is intake reversed?", () -> intakeReverse).withWidget(BuiltInWidgets.kBooleanBox)
-        .withPosition(3, 4).withSize(3, 1);
     }
 
     @Override
