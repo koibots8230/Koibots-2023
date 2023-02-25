@@ -58,12 +58,6 @@ public class RobotContainer {
       leftDriveTrain,
       m_tankDriveSubsystem);
 
-  private final TankDriveSubsystem.driveMotorCommand m_operatorDrive = m_tankDriveSubsystem.new driveMotorCommand(
-      () -> m_operatorHID.getRawAxis(1),
-      () -> m_operatorHID.getRawAxis(5),
-      m_tankDriveSubsystem);
-
-
   SendableChooser<Command> m_autoChooser = new SendableChooser<>();
   SendableChooser<String> m_driverChooser = new SendableChooser<>();
 
@@ -82,12 +76,6 @@ public class RobotContainer {
     // ==================OPERATOR CONTROLS======================================
 
     // Create Triggers here | Triggers should be named t_CommandName
-    Trigger leftTrigger = m_operatorHID.axisGreaterThan(3, Constants.DEADZONE);
-    Trigger rightTrigger = m_operatorHID.axisGreaterThan(4, Constants.DEADZONE);
-
-    Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
-    operatorDriveTrigger.onTrue(m_operatorDrive);
-
     Trigger operatorSpeedUp = m_operatorHID.button(2);
     Trigger operatorSpeedDown = m_operatorHID.button(3);
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
@@ -145,12 +133,6 @@ public class RobotContainer {
         // ==================OPERATOR CONTROLS======================================
 
         // Create Triggers here | Triggers should be named t_CommandName
-        Trigger leftTrigger = m_operatorHID.axisGreaterThan(3, Constants.DEADZONE);
-        Trigger rightTrigger = m_operatorHID.axisGreaterThan(4, Constants.DEADZONE);
-
-        Trigger operatorDriveTrigger = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
-        operatorDriveTrigger.onTrue(m_operatorDrive);
-
         Trigger operatorSpeedUp = m_operatorHID.button(2);
         Trigger operatorSpeedDown = m_operatorHID.button(3);
         operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
