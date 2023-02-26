@@ -82,11 +82,10 @@ public class RobotContainer {
     // Create Triggers here | Triggers should be named t_CommandName
     Trigger operatorSpeedUp = m_operatorHID.cross();
     Trigger operatorSpeedDown = m_operatorHID.circle();
-    Trigger leftTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
-    Trigger rightTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
+    Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
+    Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
 
-    CommunityShotCommand com_shot_cmd = m_ShooterSubsystem.new CommunityShotCommand(m_ShooterSubsystem);
-    leftTrigger.whileTrue(com_shot_cmd);
+
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
     operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
@@ -102,6 +101,10 @@ public class RobotContainer {
     // create commands
     // 5 = left bumper
     // 6 = right bumper
+
+    CommunityShotCommand com_shot_cmd = m_ShooterSubsystem.new CommunityShotCommand(m_ShooterSubsystem);
+    Trigger leftTrigger = m_driverHID.leftTrigger(Constants.DEADZONE);
+    leftTrigger.whileTrue(com_shot_cmd);
 
     // Intake is toggled when left bumper is pressed
     Trigger flipTrigger = m_driverHID.leftBumper();
