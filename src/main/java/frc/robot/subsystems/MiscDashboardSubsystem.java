@@ -21,7 +21,7 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     private double midCurrent = 0; // Current of the midtake motor
     private double midSpeed = 10; // Speed of the midtake motor
     
-    public MiscDashboardSubsystem() {
+    public MiscDashboardSubsystem(IntakeSubsystem intake, ShooterSubsystem shooter) {
         ShuffleboardTab main_tab = Shuffleboard.getTab("Main");
         
         // Battery info:
@@ -34,21 +34,21 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         withSize(2,2).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 600));
 
         //The motor speeds:
-        main_tab.addNumber("Intake Motor Speed (RPM)", () -> inSpeed).withPosition(0, 2).
-        withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
+        //main_tab.addNumber("Intake Motor Speed (RPM)", () -> inSpeed).withPosition(0, 2).
+        //withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
 
-        main_tab.addNumber("Midtake Motor Speed (RPM)", () -> midSpeed).withPosition(3, 2).
-        withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
+        //main_tab.addNumber("Midtake Motor Speed (RPM)", () -> midSpeed).withPosition(3, 2).
+        //withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
 
-        main_tab.addNumber("Intake Motor Current (A)", () -> inCurrent).withPosition(0, 3).
+        main_tab.addNumber("Raise Intake Motor Current (A)", () -> intake.getIntakeRaiseMotor().getOutputCurrent()).withPosition(0, 3).
         withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
 
-        main_tab.addNumber("Midtake Motor Current (A)", () -> midCurrent).withPosition(3, 3).
-        withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
-
+        main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 4).
+        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+        
         // Cube or cone? Place your bets!!
-        main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
-        withSize(3,1).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#880088", "Color when false", "#FFEE00"));
+        //main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
+        //withSize(3,1).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#880088", "Color when false", "#FFEE00"));
     }
 
     @Override
