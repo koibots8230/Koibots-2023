@@ -28,7 +28,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private final RelativeEncoder intakeEncoder;
 
     private final CANSparkMax firstConveyer;
-    private final CANSparkMax secondConveyer;
     private final RelativeEncoder conveyerEncoder;
     private final CANSparkMax leftStarWheelsMotor;
     private final CANSparkMax rightStarWheelsMotor;
@@ -47,14 +46,12 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.setInverted(false);
         intakeEncoder = intakeMotor.getEncoder();
 
-        firstConveyer = new CANSparkMax(Constants.FIRST_CONVEYER_MOTOR, MotorType.kBrushless); 
+        firstConveyer = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless); 
         firstConveyer.setInverted(false);
-        secondConveyer = new CANSparkMax(Constants.SECOND_CONVEYER_MOTOR, MotorType.kBrushless);
-        secondConveyer.follow(firstConveyer);
         conveyerEncoder = firstConveyer.getEncoder();
 
-        rightStarWheelsMotor = new CANSparkMax(Constants.RIGHT_STARWHEELS_MOTOR, MotorType.kBrushless);
-        leftStarWheelsMotor = new CANSparkMax(Constants.LEFT_STARWHEELS_MOTOR, MotorType.kBrushless);
+        rightStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_L, MotorType.kBrushless);
+        leftStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_R, MotorType.kBrushless);
         leftStarWheelsMotor.setInverted(true);
         leftStarWheelsMotor.follow(rightStarWheelsMotor);
 
