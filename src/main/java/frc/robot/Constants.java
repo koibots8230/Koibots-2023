@@ -36,14 +36,12 @@ public class Constants {
   public static final int RIGHT_DRIVE_MOTOR_1 = 12;
   public static final int RIGHT_DRIVE_MOTOR_2 = 13;
   public static final int INTAKE_MOTOR = 10;
-  public static final int SHOOTER_MOTOR_1 = 3; // To be changed
-  public static final int SHOOTER_MOTOR_2 = 4; // To be changed
-  public static final int RAISE_INTAKE_MOTOR = 2; // To be changed when we know the port of raiseIntakeMotor
-  public static final int FIRST_CONVEYER_MOTOR = 1; // To be changed when we have an actual midtake
-  public static final int SECOND_CONVEYER_MOTOR = 0; // To be changed when we have an actual midtake
-  public static final int RIGHT_STARWHEELS_MOTOR = 5; // To be changed when we have an actual midtake
-  public static final int LEFT_STARWHEELS_MOTOR = 6; // To be changed when we have an actual midtake
-  // Note: LEFT_STARWHEELS_MOTOR folows RIGHT_STARWEELS_MOTOR.
+  public static final int SHOOTER_MOTOR_L = 4; // To be changed
+  public static final int SHOOTER_MOTOR_R = 5; // To be changed
+  public static final int RAISE_INTAKE_MOTOR = 11; // To be changed when we know the port of raiseIntakeMotor
+  public static final int MIDTAKE_MOTOR = 7; // To be changed when we have an actual intake
+  public static final int STAR_WHEELS_MOTOR_L = 8;
+  public static final int STAR_WHEELS_MOTOR_R = 9;
 
   // Slowmotion, deadzone, etc:
   public static final double SLOW_MODE_FACTOR = 0.5;
