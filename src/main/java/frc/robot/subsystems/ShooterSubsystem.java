@@ -31,14 +31,21 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
+  private RelativeEncoder shooterEncoder;
 
   public ShooterSubsystem() {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
     shooterMotorR.setInverted(true);
     shooterMotorR.follow(shooterMotorL);
+
+    shooterEncoder = shooterMotorL.getEncoder();
   }
 
+  public double getShooterSpeed() {
+    return shooterEncoder.getVelocity();
+  }
+  
   public void SetShooter(double Speed) {
     shooterMotorL.set(Speed);
   }
