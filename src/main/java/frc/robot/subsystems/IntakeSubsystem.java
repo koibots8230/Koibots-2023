@@ -107,6 +107,7 @@ public class IntakeSubsystem extends SubsystemBase {
     public void turnOff() {
         intakeMotor.set(0);
         firstConveyer.set(0);
+        rightStarWheelsMotor.set(0);
     }
 
     public double getRaiseMotorCurrent() {
@@ -157,15 +158,14 @@ public class IntakeSubsystem extends SubsystemBase {
         public void initialize() {
             hallEffectSensor = m_intake.getHallEffectSensor();
             if (hallEffectSensor == topHallEffectSensor) {
-                m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
-            } else if (hallEffectSensor == bottomHallEffectSensor) {
                 m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+            } else if (hallEffectSensor == bottomHallEffectSensor) {
+                m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
             }
         }
 
         @Override
         public void execute() {
-            System.out.println("Intake is moving!!!!!!!!!!!!");
             if (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
                 if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
                 m_intake.setRaiseIntakeSpeed(0);
