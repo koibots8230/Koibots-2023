@@ -130,17 +130,19 @@ public class IntakeSubsystem extends SubsystemBase {
         return raiseIntakeMotor;
     }
 
-    public AnalogInput getHallEffectSensor() {
+    public boolean getHallEffectSensor() {
+        //top = true
+        //bottom = false
         // Returns the correct hall effect sensor based off current intake state:
         if (topHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
-            return bottomHallEffectSensor;
+            return false;
             // If the top hall effect sensor is triggered, it means that the intake is top.
             // Assuming that we want to go down, the function returns the BOTTOM sensor.
         } else if (bottomHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
-            return topHallEffectSensor;
+            return true;
             // The OPPOSITE goes for the top sensor.
         } else {
-            return bottomHallEffectSensor;
+            return false;
         }
     }
 
@@ -156,11 +158,12 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void initialize() {
+            boolean top;
             System.out.println("Intake is moving");
-            hallEffectSensor = m_intake.getHallEffectSensor();
-            if (hallEffectSensor == topHallEffectSensor) {
+            top = m_intake.getHallEffectSensor();
+            if (top) {
                 m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
-            } else if (hallEffectSensor == bottomHallEffectSensor) {
+            } else {
                 m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
             }
         }
