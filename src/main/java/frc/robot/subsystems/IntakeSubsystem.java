@@ -51,6 +51,7 @@ public class IntakeSubsystem extends SubsystemBase {
         conveyerEncoder = firstConveyer.getEncoder();
 
         rightStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_L, MotorType.kBrushless);
+        rightStarWheelsMotor.setInverted(true);
         leftStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_R, MotorType.kBrushless);
         leftStarWheelsMotor.setInverted(true);
         leftStarWheelsMotor.follow(rightStarWheelsMotor);
@@ -93,17 +94,20 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void turnOn(Boolean Forwards) {
         if (Forwards){
-            intakeMotor.set(Constants.RUNNING_SPEED);
-            firstConveyer.set(Constants.RUNNING_SPEED);
-        } else {
             intakeMotor.set(-Constants.RUNNING_SPEED);
+            firstConveyer.set(Constants.RUNNING_SPEED);
+            rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
+        } else {
+            intakeMotor.set(Constants.RUNNING_SPEED);
             firstConveyer.set(-Constants.RUNNING_SPEED);
+            rightStarWheelsMotor.set(-Constants.RUNNING_SPEED);
         }
     }
 
     public void turnOff() {
         intakeMotor.set(0);
         firstConveyer.set(0);
+        rightStarWheelsMotor.set(0);
     }
 
     public double getRaiseMotorCurrent() {
@@ -152,6 +156,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void initialize() {
+            System.out.println("Intake is moving");
             hallEffectSensor = m_intake.getHallEffectSensor();
             if (hallEffectSensor == topHallEffectSensor) {
                 m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
@@ -162,7 +167,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
-            System.out.println("Intake is moving!!!!!!!!!!!!");
             if (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
                 if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
                 m_intake.setRaiseIntakeSpeed(0);

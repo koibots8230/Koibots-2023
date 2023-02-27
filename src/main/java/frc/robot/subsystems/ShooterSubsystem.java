@@ -47,43 +47,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   
   public void SetShooter(double Speed) {
-    shooterMotorL.set(Speed);
+    shooterMotorL.set(-Speed);
   }
   
   public Pose3d getPose() {
     return Bot3d;
-  }
-
-  @Override
-  public void periodic() {
-    // TODO: What if we want to turn this off?
-    if (count == 10) { // TODO: Make this a constant that we can adjust as part of the class
-      count = 0;
-      Optional<EstimatedRobotPose> BotThing = VisionSubsystem.photonPoseEstimator.update();
-      if (BotThing.isPresent()) {
-        Bot3d = BotThing.get().estimatedPose;
-        Bot3d = new Pose3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, 0.0));
-        VariablesDefined = true;
-        for (int a = 0; a < 3; a++) {
-          if (ShootLevel == 2) {
-            Spot = Constants.MIDDLE_SPOTS.get(a).toTranslation2d();
-          } else {
-            Spot = Constants.HIGH_SPOTS.get(a).toTranslation2d();
-          }
-          xDistance = Bot3d.getX() - Spot.getX();
-          yDistance = Bot3d.getY() - Spot.getY();
-          distance = Math.sqrt((xDistance * xDistance) + (yDistance * yDistance));
-          if (distance < ClosestDistance) {
-            ClosestDistance = distance;
-            Closest = Constants.MIDDLE_SPOTS.get(a-1);
-          }
-        }
-      } else {
-        VariablesDefined = false;
-      }
-    } else {
-      count++;
-    }
   }
 
   public class CommunityShotCommand extends CommandBase {
