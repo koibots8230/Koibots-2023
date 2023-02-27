@@ -140,19 +140,20 @@ public class IntakeSubsystem extends SubsystemBase {
     public CANSparkMax getIntakeRaiseMotor() {
         return raiseIntakeMotor;
     }
+    public AnalogInput getTopHallEffectSensor(){
+        return topHallEffectSensor;
+    }
+    public AnalogInput getBottomHallEffectSensor() {
+        return bottomHallEffectSensor;
+    }
 
     public IntakeState getIntakeState() {
-        // Returns the correct hall effect sensor based off current intake state:
         if (topHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
             return IntakeState.BOTTOM;
-            // If the top hall effect sensor is triggered, it means that the intake is top.
-            // Assuming that we want to go down, the function returns the BOTTOM sensor.
         }
         if (bottomHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
             return IntakeState.TOP;
-            // The OPPOSITE goes for the top sensor.
-        } 
-        //if none of these conditions are satisified, we know that we are not in intake state top or bototm
+        }
         return IntakeState.MOVE;
     }
 
@@ -160,7 +161,6 @@ public class IntakeSubsystem extends SubsystemBase {
         IntakeSubsystem m_intake;
         boolean end = false;
         AnalogInput hallEffectSensor;
-
         public FlipIntake(IntakeSubsystem subsystem) {
             m_intake = subsystem;
             addRequirements(m_intake);
@@ -175,8 +175,10 @@ public class IntakeSubsystem extends SubsystemBase {
             switch(top){
                 case TOP:
                     m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+                    hallEffectSensor = getBottomHallEffectSensor();
                 case BOTTOM:
                     m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
+                    hallEffectSensor = getTopHallEffectSensor();
                 case MOVE:
                     //dont use this command if we're in a move state, so just end
                     //leaving this in case we need it in future challenges
@@ -184,6 +186,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 case CALIBRATE:
                     //move down to calibrate if we dont know our position
                     m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+                    hallEffectSensor = getBottomHallEffectSensor();
             }
         }
 

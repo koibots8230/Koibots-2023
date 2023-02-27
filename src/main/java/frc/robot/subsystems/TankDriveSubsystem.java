@@ -178,7 +178,8 @@ public class TankDriveSubsystem extends SubsystemBase {
         // Called every time the scheduler runs while the command is scheduled.
         @Override
         public void execute() {
-            // Here's the invert drivetrain invert feature:
+            System.out.println(m_leftSpeed.getAsDouble());
+            System.out.println(m_rightSpeed.getAsDouble());
             m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
             m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
         }
