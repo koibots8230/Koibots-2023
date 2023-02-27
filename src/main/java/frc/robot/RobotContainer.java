@@ -15,6 +15,7 @@ package frc.robot;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -46,11 +47,13 @@ public class RobotContainer {
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private static MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem();
+
   public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+
   //LED system 
   private final LEDsystem LEDstrips = new LEDsystem(Constants.LEDPort1);//addressable LED only works from one port.
-  public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
+  //public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
+  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem);
 
   // other stuff
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
@@ -64,14 +67,7 @@ public class RobotContainer {
       leftDriveTrain,
       m_tankDriveSubsystem);
 
-  SendableChooser<Command> m_autoChooser = new SendableChooser<>();
-  SendableChooser<String> m_driverChooser = new SendableChooser<>();
-
-  // m_controllerType 0 -> Unrecognized
-  // m_controllerType 1 -> Xbox Controller
-  // m_controllerType 2 -> Playstation Controller
-  // m_controllerType 3 -> Flight Joystick
-  int m_controllerType;
+  SendableChooser<Command> m_autoChooser = new SendableChooser<>(); 
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -82,22 +78,21 @@ public class RobotContainer {
     // ==================OPERATOR CONTROLS======================================
 
     // Create Triggers here | Triggers should be named t_CommandName
-    Trigger operatorSpeedUp = m_operatorHID.button(2);
-    Trigger operatorSpeedDown = m_operatorHID.button(3);
-    Trigger leftTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
-    Trigger rightTrigger = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
-    rightTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
-    leftTrigger.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
 
-    CommunityShotCommand com_shot_cmd = m_ShooterSubsystem.new CommunityShotCommand(m_ShooterSubsystem);
-    leftTrigger.whileTrue(com_shot_cmd);
+    Trigger operatorSpeedUp = m_operatorHID.cross();
+    Trigger operatorSpeedDown = m_operatorHID.circle();
+    Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
+    Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
+    rightTrigger_op.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
+    leftTrigger_op.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
+
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
     operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
-    Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.DEADZONE);
-    Trigger intakeMoveDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.DEADZONE);
-    intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
-    intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
+    Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, -Constants.DEADZONE);
+    Trigger intakeMoveDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, Constants.DEADZONE);
+    intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.3), m_intake));
+    intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.3), m_intake));
     intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
 
 
@@ -107,6 +102,10 @@ public class RobotContainer {
     // 5 = left bumper
     // 6 = right bumper
 
+    Trigger shootTrigger = m_driverHID.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, Constants.DEADZONE);
+    CommunityShotCommand com_shot_cmd = m_ShooterSubsystem.new CommunityShotCommand(m_ShooterSubsystem);
+    shootTrigger.whileTrue(com_shot_cmd);
+    
     // Intake is toggled when left bumper is pressed
     Trigger flipTrigger = m_driverHID.leftBumper();
     flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
@@ -128,51 +127,6 @@ public class RobotContainer {
      */
     private RobotContainer() {
         configureButtonBindings();
-
-        int pairButton;
-        String hidType = m_driverHID.getHID().getName();
-        if (hidType.equals("")) { // Xbox Controller | Name Unknown
-            m_controllerType = 1;
-            pairButton = 7;
-        } else if (hidType.equals("Wireless Controller")) { // PS5 | Is still called "Wireless Controller" if plugged in with a wire.
-            m_controllerType = 2;
-            pairButton = 7;
-        } else {
-            m_controllerType = 0;
-            pairButton = 7;
-        }
-
-
-        // ==================OPERATOR CONTROLS======================================
-
-        // Create Triggers here | Triggers should be named t_CommandName
-        Trigger operatorSpeedUp = m_operatorHID.button(2);
-        Trigger operatorSpeedDown = m_operatorHID.button(3);
-        operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-        operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
-
-        Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(1, Constants.DEADZONE);
-        Trigger intakeMoveDown = m_operatorHID.axisLessThan(1, -Constants.DEADZONE);
-        intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.1), m_intake));
-        intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.1), m_intake));
-        intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
-
-        // ================DRIVER CONTROLS==========================================
-        // create commands
-        // 5 = left bumper
-        // 6 = right bumper
-
-        // Intake is toggled when left bumper is pressed
-        Trigger flipTrigger = m_driverHID.button(5);
-        flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
-
-        // Intake runs FORWARD when right trigger is pressed
-        Trigger runIntakeForwardsTrigger = m_driverHID.axisGreaterThan(3, Constants.DEADZONE);
-        runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
-
-        // Intake runs BACKWARD when right bumper is pressed
-        Trigger runIntakeBackwardsTrigger = m_driverHID.button(6);
-        runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
     }
 
   public CommandGenericHID getController() {

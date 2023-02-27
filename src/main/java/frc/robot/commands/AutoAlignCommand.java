@@ -8,15 +8,20 @@ import frc.robot.subsystems.TankDriveSubsystem;
 
 public class AutoAlignCommand extends CommandBase {
   /** Creates a new ShootyCommand. */
-  private boolean end = false;
-  private Rotation2d  BotRotation = new Rotation2d(0);
-  private Rotation2d  RotationToTarget = new Rotation2d(0);
-  private boolean RoationValid = false;
-  private double Rotation = 0;
+  private boolean end;
+  private Rotation2d  BotRotation;
+  private Rotation2d  RotationToTarget;
+  private boolean RoationValid;
+  private double Rotation;
   private TankDriveSubsystem drive;
 
   public void AutoAlignCommand(TankDriveSubsystem _drive) {
     drive = _drive;
+    BotRotation = new Rotation2d(0);
+    RotationToTarget = new Rotation2d(0);
+    RoationValid = false;
+    Rotation = 0;
+    end = false;
   }
 
   // Called when the command is initially scheduled.

@@ -31,8 +31,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
@@ -54,6 +52,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     
     public TankDriveSubsystem() {
         primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
+        primaryRightMotor.setInverted(true);
 
         secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
@@ -143,29 +142,6 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryLeftMotor.setVoltage(leftVoltage);
         drivetrain.feed();
     }
-
-    public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
-        return new SequentialCommandGroup(
-            new InstantCommand(() -> {
-                if (isFirstPath) {
-                    this.resetOdometry(traj.getInitialPose());
-                }
-            }),
-            new PPRamseteCommand(
-                traj, 
-                this::getOdometryPose, 
-                new RamseteController(), 
-                new SimpleMotorFeedforward(Constants.ks_VOLTS, Constants.kv_VOLT_SECONDS_PER_METER, Constants.ka_VOLT_SECONDS_SQUARED_PERMETER),
-                Constants.DRIVE_KINEMATICS, 
-                this::getWheelSpeeds, 
-                new PIDController(Constants.kp_DRIVE_VEL, 0, 0),
-                new PIDController(Constants.kp_DRIVE_VEL, 0, 0),
-                this::setMotorVoltage,
-                true,
-                this
-                )
-        );
-    }
     
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
@@ -203,19 +179,15 @@ public class TankDriveSubsystem extends SubsystemBase {
         @Override
         public void execute() {
             // Here's the invert drivetrain invert feature:
-            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_leftPID.setReference(adjustForDeadzone(-m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(-m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
         }
 
         private double adjustForDeadzone(double in) {
             if (Math.abs(in) < Constants.DEADZONE) {
                 return 0;
             }
-            double sign = (int) Math.signum(in);
-            double out = Math.abs(sign);
-            out *= (1 / 1 - Constants.DEADZONE);
-            out *= sign * out;
-            return out;
+            return in;
         }
     }
 
