@@ -138,12 +138,14 @@ public class IntakeSubsystem extends SubsystemBase {
             return false;
             // If the top hall effect sensor is triggered, it means that the intake is top.
             // Assuming that we want to go down, the function returns the BOTTOM sensor.
-        } else if (bottomHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
+        }
+        if (bottomHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
             return true;
             // The OPPOSITE goes for the top sensor.
-        } else {
-            return false;
-        }
+        } 
+        //return false if we don't get anything; by default returns the bottom... we should probably have a case for this
+        //we only use this assuming in flip intake that we are down or up, but otherwise we should probably have it return a state
+        return false;
     }
 
     public class FlipIntake extends CommandBase {
@@ -174,9 +176,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
                 m_intake.setRaiseIntakeSpeed(0);
                 end = true;
-                } else {
-                    return;
-                }
+                } 
             } 
         }
 
