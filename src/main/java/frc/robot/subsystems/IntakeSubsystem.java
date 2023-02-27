@@ -40,6 +40,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final AnalogInput topHallEffectSensor;
     private final AnalogInput bottomHallEffectSensor;
+    private IntakeState state;
 
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
@@ -66,6 +67,15 @@ public class IntakeSubsystem extends SubsystemBase {
         // Hall effect sensors
         topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
         bottomHallEffectSensor = new AnalogInput(1); // Change port numer when testing the code
+
+        state = IntakeState.TOP;
+    }
+
+    enum IntakeState {
+        BOTTOM,
+        TOP,
+        MOVE,
+        CALIBRATE
     }
 
     @Override
@@ -79,6 +89,7 @@ public class IntakeSubsystem extends SubsystemBase {
         double midCurrent = firstConveyer.getOutputCurrent();
         SmartDashboard.putNumber("Midtake Motor Current (A)", midCurrent);
         SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
+        state = getIntakeState();
 
     }
 
@@ -130,22 +141,19 @@ public class IntakeSubsystem extends SubsystemBase {
         return raiseIntakeMotor;
     }
 
-    public boolean getHallEffectSensor() {
-        //top = true
-        //bottom = false
+    public IntakeState getIntakeState() {
         // Returns the correct hall effect sensor based off current intake state:
         if (topHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
-            return false;
+            return IntakeState.BOTTOM;
             // If the top hall effect sensor is triggered, it means that the intake is top.
             // Assuming that we want to go down, the function returns the BOTTOM sensor.
         }
         if (bottomHallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
-            return true;
+            return IntakeState.TOP;
             // The OPPOSITE goes for the top sensor.
         } 
-        //return false if we don't get anything; by default returns the bottom... we should probably have a case for this
-        //we only use this assuming in flip intake that we are down or up, but otherwise we should probably have it return a state
-        return false;
+        //if none of these conditions are satisified, we know that we are not in intake state top or bototm
+        return IntakeState.MOVE;
     }
 
     public class FlipIntake extends CommandBase {
@@ -160,13 +168,22 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void initialize() {
-            boolean top;
+            IntakeState top;
             System.out.println("Intake is moving");
-            top = m_intake.getHallEffectSensor();
-            if (top) {
-                m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
-            } else {
-                m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
+            top = m_intake.getIntakeState();
+            //use get just incase intake isnt run
+            switch(top){
+                case TOP:
+                    m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+                case BOTTOM:
+                    m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
+                case MOVE:
+                    //dont use this command if we're in a move state, so just end
+                    //leaving this in case we need it in future challenges
+                    end = true;
+                case CALIBRATE:
+                    //move down to calibrate if we dont know our position
+                    m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
             }
         }
 
@@ -185,8 +202,5 @@ public class IntakeSubsystem extends SubsystemBase {
             return end;
         }
 
-        @Override
-        public void end(boolean interrupted) {
-        }
     }
 }
