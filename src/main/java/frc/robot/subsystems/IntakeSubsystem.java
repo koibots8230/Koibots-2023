@@ -123,7 +123,7 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         return calculated_speed;
     }
-    
+
     public double getRaiseMotorCurrent() {
         return raiseIntakeMotor.getOutputCurrent();
     }
@@ -135,6 +135,12 @@ public class IntakeSubsystem extends SubsystemBase {
     public void setRaiseIntakeSpeed(double speed){
         raiseIntakeMotor.set(speed*approximateSpeed(raiseIntakeEncoder.getPosition()));
         //check if weve reached the bottom or top and update position
+
+
+        //check if weve reached bottom or end
+        if(getIntakeState() == IntakeState.BOTTOM || getIntakeState() == IntakeState.TOP) {
+            raiseIntakeEncoder.setPosition(0);
+        }
     }
 
     public RelativeEncoder getRaiseEncoder() {
