@@ -186,8 +186,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
-            if (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
-                if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
+            boolean CurrentOrHallEffectTriggered = (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED);
+            boolean EncoderPositionPassed = (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION);
+            if (CurrentOrHallEffectTriggered) {
+                if (EncoderPositionPassed) {
                 m_intake.setRaiseIntakeSpeed(0);
                 end = true;
                 } 
