@@ -97,12 +97,6 @@ public class IntakeSubsystem extends SubsystemBase {
     public void simulationPeriodic() {
     }
 
-    public void turnOn() {
-        intakeMotor.set(Constants.RUNNING_SPEED);
-        firstConveyer.set(Constants.RUNNING_SPEED);
-        rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
-    }
-
     public void turnOn(Boolean Forwards) {
         if (Forwards){
             intakeMotor.set(-Constants.RUNNING_SPEED);
