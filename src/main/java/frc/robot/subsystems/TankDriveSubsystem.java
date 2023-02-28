@@ -53,7 +53,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     public TankDriveSubsystem() {
         primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
         primaryRightMotor.setInverted(true);
-        
+
         secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
 
@@ -179,8 +179,8 @@ public class TankDriveSubsystem extends SubsystemBase {
         @Override
         public void execute() {
             // Here's the invert drivetrain invert feature:
-            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_leftPID.setReference(adjustForDeadzone(-m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(-m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
         }
 
         private double adjustForDeadzone(double in) {
