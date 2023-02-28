@@ -116,6 +116,14 @@ public class IntakeSubsystem extends SubsystemBase {
         rightStarWheelsMotor.set(0);
     }
 
+    private double approximateSpeed(double Position){
+        double calculated_speed = Constants.RAISE_SPEED * Math.pow(4, -(Math.abs(Position)/20));
+        if (calculated_speed < 0.10) {
+            return 0.10;
+        }
+        return calculated_speed;
+    }
+    
     public double getRaiseMotorCurrent() {
         return raiseIntakeMotor.getOutputCurrent();
     }
@@ -125,7 +133,8 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setRaiseIntakeSpeed(double speed){
-        raiseIntakeMotor.set(speed);
+        raiseIntakeMotor.set(speed*approximateSpeed(raiseIntakeEncoder.getPosition()));
+        //check if weve reached the bottom or top and update position
     }
 
     public RelativeEncoder getRaiseEncoder() {
@@ -224,13 +233,6 @@ public class IntakeSubsystem extends SubsystemBase {
             return end;
         }
         
-        private double approximateSpeed(double Position){
-            double calculated_speed = Constants.RAISE_SPEED * Math.pow(4, -(Math.abs(Position)/20));
-            if (calculated_speed < 0.10) {
-                return 0.10;
-            }
-            return calculated_speed;
-        }
         @Override
         public void end(boolean Interrupted){
             m_intake.getRaiseEncoder().setPosition(0);
