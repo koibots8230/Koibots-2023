@@ -54,7 +54,8 @@ public class Constants {
   public static final double RAISE_SPEED = 0.35;
   public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
   public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
-  public static final double INTAKE_DOWN_POSITION = 1; // To be changed when we have an actual intake
+  public static final double INTAKE_DOWN_POSITION = -1; // To be changed when we have an actual intake
+  public static final double INTAKE_CHANGE_POSITION = 20;
 
   // for LED system
   public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
