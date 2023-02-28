@@ -41,6 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
     private final AnalogInput topHallEffectSensor;
     private final AnalogInput bottomHallEffectSensor;
     private IntakeState state;
+    private IntakeState previous_state;
 
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
@@ -162,25 +163,28 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void initialize() {
-            IntakeState top;
             System.out.println("Intake is moving");
-            top = m_intake.getIntakeState();
+            previous_state = m_intake.getIntakeState();
             //use get just incase intake isnt run
-            switch(top){
+            switch(previous_state){
                 case TOP:
                     m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
                     hallEffectSensor = getBottomHallEffectSensor();
+                    break;
                 case BOTTOM:
                     m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
                     hallEffectSensor = getTopHallEffectSensor();
+                    break;
                 case MOVE:
                     //dont use this command if we're in a move state, so just end
                     //leaving this in case we need it in future challenges
                     end = true;
+                    break;
                 case CALIBRATE:
                     //move down to calibrate if we dont know our position
                     m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
                     hallEffectSensor = getBottomHallEffectSensor();
+                    break;
             }
         }
 
@@ -194,12 +198,42 @@ public class IntakeSubsystem extends SubsystemBase {
                 end = true;
                 } 
             } 
+            //change speeds
+            //intakePos is absolute cause we caccount for signs when settings
+            double intakePos = Math.abs(intakeEncoder.getPosition());
+            switch(previous_state){
+                case TOP:
+                    m_intake.setRaiseIntakeSpeed(-approximateSpeed(intakePos));
+                    break;
+                case BOTTOM:
+                    m_intake.setRaiseIntakeSpeed(approximateSpeed(intakePos));
+                    break;
+                case CALIBRATE:
+                    //move down to calibrate if we dont know our position
+                    m_intake.setRaiseIntakeSpeed(-approximateSpeed(intakePos));
+                    break;
+                case MOVE:
+                    //move 
+                    break;
+            }
+
         }
 
         @Override
         public boolean isFinished() {
             return end;
         }
-
+        
+        private double approximateSpeed(double Position){
+            double calculated_speed = Constants.RAISE_SPEED * Math.pow(4, -(Math.abs(Position)/20));
+            if (calculated_speed < 0.10) {
+                return 0.10;
+            }
+            return calculated_speed;
+        }
+        @Override
+        public void end(boolean Interrupted){
+            m_intake.getRaiseEncoder().setPosition(0);
+        }
     }
 }
