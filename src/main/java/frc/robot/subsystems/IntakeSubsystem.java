@@ -138,7 +138,9 @@ public class IntakeSubsystem extends SubsystemBase {
 
 
         //check if weve reached bottom or end
-        if(getIntakeState() == IntakeState.BOTTOM || getIntakeState() == IntakeState.TOP) {
+        boolean EncoderPositionPassed = (Math.abs(getRaiseEncoder().getPosition()) >= Constants.INTAKE_CHANGE_POSITION);
+
+        if((getIntakeState() == IntakeState.BOTTOM || getIntakeState() == IntakeState.TOP) && (EncoderPositionPassed)) {
             raiseIntakeEncoder.setPosition(0);  
         }
     }
