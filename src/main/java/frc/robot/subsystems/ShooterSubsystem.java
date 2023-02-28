@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.lang.System.Logger.Level;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
@@ -56,21 +57,46 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public class CommunityShotCommand extends CommandBase {
     private DoubleSupplier m_Trigger;
+    private ShooterSubsystem shooter;
 
     public CommunityShotCommand(ShooterSubsystem m_ShooterSubsystem) {
       addRequirements(m_ShooterSubsystem);
+      shooter = m_ShooterSubsystem;
     }
 
     @Override
     public void initialize() {
-      SetShooter(.75);
+      shooter.SetShooter(Constants.COMMUNITY_SHOOTER_SPEED);
     }
 
     @Override
     public void end(boolean interrupted) {
-      SetShooter(0);
+      shooter.SetShooter(0);
     }
-}
+  }
+  
+  public class LevelShootCommand extends CommandBase {
+    private ShooterSubsystem shooter;
+    private int shootLevel;
+
+    public LevelShootCommand(ShooterSubsystem m_ShooterSubsystem, Integer m_shootLevel) {
+        addRequirements(m_ShooterSubsystem);
+        shooter = m_ShooterSubsystem;
+        shootLevel = m_shootLevel;
+    }
+
+    public void initialize() {
+      if (shootLevel == 2) {
+        shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
+      } else if (shootLevel == 3) {
+        shooter.SetShooter(Constants.L3_SHOOTER_SPEED);
+      }
+    }
+
+    public void end(boolean interrupted) {
+      shooter.SetShooter(0);
+    }
+  }
 
   @Override
   public void simulationPeriodic() {

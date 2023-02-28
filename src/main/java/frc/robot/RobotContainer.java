@@ -80,6 +80,12 @@ public class RobotContainer {
     Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
     Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
 
+    Trigger shootL2 = m_operatorHID.L1();
+    Trigger shootL3 = m_operatorHID.R1();
+
+    shootL2.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 2));
+    shootL3.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 3));
+
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
     operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
