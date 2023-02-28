@@ -23,6 +23,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
+import com.revrobotics.SparkMaxPIDController;
+import java.util.function.DoubleSupplier;
+
+
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
     private final RelativeEncoder intakeEncoder;
@@ -92,6 +96,14 @@ public class IntakeSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
         state = getIntakeState();
 
+    }
+
+    public SparkMaxPIDController getIntakePID() {
+        return rightStarWheelsMotor.getPIDController();
+    }
+
+    public SparkMaxPIDController getMidtakePID() {
+        return intakeMotor.getPIDController();
     }
 
     @Override
@@ -167,6 +179,52 @@ public class IntakeSubsystem extends SubsystemBase {
             return IntakeState.TOP;
         }
         return IntakeState.MOVE;
+    }
+
+    public class IntakeCommand extends CommandBase {
+        private DoubleSupplier m_intakeSpeed;
+        private SparkMaxPIDController m_intakePID;
+        private SparkMaxPIDController m_midtakePID;
+        private IntakeSubsystem m_intakeSubsystem;
+
+        public IntakeCommand(DoubleSupplier intakeSpeed, IntakeSubsystem subsystem) {
+            m_intakeSpeed = intakeSpeed;
+            m_intakeSubsystem = subsystem;
+            addRequirements(subsystem);
+        }
+        
+        @Override
+        public void initialize() {
+            m_intakePID = m_intakeSubsystem.getIntakePID();
+            m_midtakePID = m_intakeSubsystem.getMidtakePID();
+
+            m_intakePID.setOutputRange(-1, 1);
+            m_midtakePID.setOutputRange(-1, 1);
+
+            m_intakePID.setP(0);
+            m_midtakePID.setP(0);
+
+            m_intakePID.setI(0);
+            m_midtakePID.setI(0);
+
+            m_intakePID.setD(0);
+            m_midtakePID.setD(0);
+        }
+
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            // Here's the invert drivetrain invert feature:
+            m_intakePID.setReference(adjustForDeadzone(m_intakeSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_midtakePID.setReference(adjustForDeadzone(m_intakeSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+        }
+
+        private double adjustForDeadzone(double in) {
+            if (Math.abs(in) < Constants.DEADZONE) {
+                return 0;
+            }
+            return in;
+        }
     }
 
     public class FlipIntake extends CommandBase {
