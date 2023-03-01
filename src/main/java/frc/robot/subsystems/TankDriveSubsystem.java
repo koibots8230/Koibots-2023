@@ -144,6 +144,11 @@ public class TankDriveSubsystem extends SubsystemBase {
             }
         }
     }
+    
+    public double[] getEncoderPositions(){
+        //get the in between of both encoders
+        return (new double[] {primaryLeftEncoder.getPosition(),primaryRightEncoder.getPosition()});
+    }
 
     public void setMotorVoltage(double leftVoltage, double rightVoltage) {
         primaryRightMotor.setVoltage(rightVoltage);
@@ -197,6 +202,79 @@ public class TankDriveSubsystem extends SubsystemBase {
             }
             double sign = (in < 0) ? -.25 : .25;
             return sign*in*in;
+        }
+    }
+
+    public class driveDistanceCommand extends CommandBase {
+        private double m_rightSpeed;
+        private double m_leftSpeed;
+        private SparkMaxPIDController m_rightPID;
+        private SparkMaxPIDController m_leftPID;
+        private TankDriveSubsystem m_DriveSubsystem;
+        private double[] m_initialPositions;
+        private boolean hasReachedEnd;
+        private double m_encoderLimit;
+
+
+        //Direction should be from -1 to 1 to indicate direction; 0 is Balanced, -1 is full left, 1 is full right
+        public driveDistanceCommand(double leftSpeed, double rightSpeed, double encoder_limit, TankDriveSubsystem subsystem) {
+            m_DriveSubsystem = subsystem;
+            m_encoderLimit = encoder_limit;
+            m_leftSpeed = leftSpeed;
+            m_rightSpeed = rightSpeed;
+            addRequirements(subsystem);
+        }
+        
+        @Override
+        public void initialize() {
+
+            m_initialPositions = m_DriveSubsystem.getEncoderPositions();
+            hasReachedEnd = false;
+
+            m_rightPID = m_DriveSubsystem.getRightPID();
+            m_leftPID = m_DriveSubsystem.getLeftPID();
+
+            m_rightPID.setOutputRange(-1, 1);
+            m_leftPID.setOutputRange(-1, 1);
+
+            m_rightPID.setP(6e-5);
+            m_leftPID.setP(6e-5);
+
+            m_rightPID.setI(0);
+            m_leftPID.setI(0);
+
+            m_rightPID.setD(0);
+            m_leftPID.setD(0);
+        }
+
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            // Here's the invert drivetrain invert feature:
+            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed), CANSparkMax.ControlType.kDutyCycle);
+
+            // check if we have reached the end
+            double[] current_positions = getEncoderPositions();
+            double l_dif = (current_positions[0] - m_initialPositions[0]);
+            double r_dif = (current_positions[1] - m_initialPositions[1]); 
+
+            if ((l_dif + r_dif)>= m_encoderLimit) {
+                hasReachedEnd = true;
+            }
+        }
+
+        private double adjustForDeadzone(double in) {
+            if (Math.abs(in) < Constants.DEADZONE) {
+                return 0;
+            }
+            double sign = (in < 0) ? -.25 : .25;
+            return sign*in*in;
+        }
+        
+        @Override 
+        public boolean isFinished() {
+            return hasReachedEnd;
         }
     }
 
