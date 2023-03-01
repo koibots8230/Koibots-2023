@@ -15,6 +15,7 @@ package frc.robot;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -22,9 +23,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import java.util.function.DoubleSupplier;
+
+import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
@@ -44,6 +50,7 @@ public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
   
   SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
+
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -63,11 +70,11 @@ public class RobotContainer {
       rightDriveTrain,
       leftDriveTrain,
       m_tankDriveSubsystem);
-
-  SendableChooser<Command> m_autoChooser = new SendableChooser<>(); 
-
-
   
+  
+  SendableChooser<Command> m_autoChooser;
+
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -75,6 +82,7 @@ public class RobotContainer {
     m_tankDriveSubsystem.setDefaultCommand(m_driveCommand);
 
     // ==================OPERATOR CONTROLS======================================
+
 
     // Create Triggers here | Triggers should be named t_CommandName
     Trigger operatorSpeedUp = m_operatorHID.cross();
@@ -128,7 +136,14 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     private RobotContainer() {
+      m_autoChooser = new SendableChooser<Command>();
+
+      AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+      m_autoChooser.setDefaultOption("Shoot Then Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake, 0.5, 10, 0.3, 0.3));
+      m_autoChooser.addOption("Shoot Then  Autobalance", new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 0.5, 10, 0.3, 0.3, m_gyro));
         configureButtonBindings();
+      ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");
+      m_shuffleboard.add(m_autoChooser);
     }
 
   public CommandGenericHID getController() {
