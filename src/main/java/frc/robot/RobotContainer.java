@@ -15,6 +15,7 @@ package frc.robot;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
@@ -22,9 +23,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import java.util.function.DoubleSupplier;
+
+import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
@@ -44,6 +50,7 @@ public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
   
   SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
+
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -53,7 +60,7 @@ public class RobotContainer {
   //LED system 
   private final LEDsystem LEDstrips = new LEDsystem(Constants.LEDPort1);//addressable LED only works from one port.
   //public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
-  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem);
+  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
 
   // other stuff
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
@@ -66,8 +73,10 @@ public class RobotContainer {
       rightDriveTrain,
       leftDriveTrain,
       m_tankDriveSubsystem);
+  
+  
+  SendableChooser<Command> m_autoChooser;
 
-  SendableChooser<Command> m_autoChooser = new SendableChooser<>(); 
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -76,6 +85,7 @@ public class RobotContainer {
     m_tankDriveSubsystem.setDefaultCommand(m_driveCommand);
 
     // ==================OPERATOR CONTROLS======================================
+
 
     // Create Triggers here | Triggers should be named t_CommandName
 
@@ -86,14 +96,20 @@ public class RobotContainer {
     rightTrigger_op.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
     leftTrigger_op.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
 
+    Trigger shootL2 = m_operatorHID.L1();
+    Trigger shootL3 = m_operatorHID.R1();
+
+    shootL2.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 2));
+    shootL3.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 3));
+
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
     operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
-    Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, -Constants.DEADZONE);
-    Trigger intakeMoveDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, Constants.DEADZONE);
-    intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0.3), m_intake));
-    intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-0.3), m_intake));
-    intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
+    //Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, -Constants.DEADZONE);
+    //Trigger intakeMoveDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, Constants.DEADZONE); 
+    //intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED), m_intake));
+    //intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED), m_intake));
+    //intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
 
 
 
@@ -126,7 +142,14 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     private RobotContainer() {
+      m_autoChooser = new SendableChooser<Command>();
+
+      AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+      m_autoChooser.setDefaultOption("Shoot Then Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake, 0.5, 10, 0.3, 0.3));
+      m_autoChooser.addOption("Shoot Then  Autobalance", new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 0.5, 10, 0.3, 0.3, m_gyro));
         configureButtonBindings();
+      ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");
+      m_shuffleboard.add(m_autoChooser);
     }
 
   public CommandGenericHID getController() {

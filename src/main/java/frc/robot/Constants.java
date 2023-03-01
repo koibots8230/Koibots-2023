@@ -54,7 +54,18 @@ public class Constants {
   public static final double DEADZONE = 0.15;
   public static final double AUTO_SPEED = 0.15;
 
-  // public static final int LEDPort1=0;
+  // Intake Constants
+
+  public static final double RUNNING_SPEED = 0.35;
+  public static final double RAISE_SPEED = 0.35;
+  public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
+  public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
+  public static final double INTAKE_DOWN_POSITION = -1; // To be changed when we have an actual intake
+  public static final double INTAKE_CHANGE_POSITION = 20;
+
+  // for LED system
+  public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
+  public static final int LEDPort1=0;
   // public static final int LEDPort2=0;//neither of these are known currently,
   // but they can be uncommented once we know the port numbers.
 
@@ -93,25 +104,14 @@ public class Constants {
   public static final double kp_DRIVE_VEL = 0;
   public static final double MAX_SPEED_METERS_PER_SECOND = 0;
   public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 0;
-    //PID constants for PIDCommand Setmotor:
-    public static final double kp = 6e-5;
-    public static final double ki = 0;
-    public static final double kd = 0;
-    //Slowmotion, deadzone, etc:
-    public static final double slowMoFactor = 0.5;
-    //for LED system
-    public static final int LED_STRIP_LENGTH=60;//the number of LEDs on each of the LED strips.
-    public static final int LEDPort1=0;
-    //Intake Constants
-    public static final int kRaiseIntakeMotorPort = 2; //To be changed when we know the port of raiseIntakeMotor
-    public static final int kMidtakeMotorPort = 1; // To be changed when we have an actual intake
-    public static final double RUNNING_SPEED = 0.7;
-    public static final double RAISE_SPEED = 0.1; 
-    public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
-    public static final double INTAKE_UP_POSITION =1; // To be changed when we have an actual intake
-    public static final double INTAKE_DOWN_POSITION = 1; // To be changed when we have an actual intake
-    public static final double TRACK_WIDTH_METERS = 0;
-    public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
-    TRACK_WIDTH_METERS);
-    public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5; 
+
+  public static final double TRACK_WIDTH_METERS = 0;
+  public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
+      TRACK_WIDTH_METERS);
+
+  public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
+
+  public static final double COMMUNITY_SHOOTER_SPEED = .95;
+  public static final double L2_SHOOTER_SPEED = .5;
+  public static final double L1_SHOOTER_SPEED = .25;
 }
