@@ -139,17 +139,19 @@ public class RobotContainer {
       m_autoChooser = new SendableChooser<Command>();
 
       AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-      m_autoChooser.setDefaultOption("Shoot Then Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
+      m_autoChooser.setDefaultOption("Shoot->Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
       Constants.SHOOT_SECONDS, 
       Constants.SHOOT_MOVE_LIMIT, 
       Constants.SHOOT_LEFT_SPEED, 
       Constants.SHOOT_RIGHT_SPEED));
-      m_autoChooser.addOption("Shoot Then  Autobalance", new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 
+      m_autoChooser.addOption("Shoot->Autobalance", new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 
       Constants.SHOOT_SECONDS, 
       Constants.AUTOBALANCE_MOVE_LIMIT,
       Constants.AUTO_LEFT_SPEED, 
       Constants.AUTO_RIGHT_SPEED,
       m_gyro));
+      
+      m_autoChooser.addOption(("NO AUTO"), null);
         configureButtonBindings();
       ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");
       m_shuffleboard.add(m_autoChooser);
@@ -165,6 +167,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+
     return m_autoChooser.getSelected();
   }
 }
