@@ -48,6 +48,17 @@ public class Constants {
   public static final double DEADZONE = 0.15;
   public static final double AUTO_SPEED = 0.15;
 
+  //Constants for auto
+  public static final double AUTOBALANCE_MOVE_LIMIT = 10;
+  public static final double SHOOT_MOVE_LIMIT = 60;
+
+  public static final double SHOOT_RIGHT_SPEED = 0.8;
+  public static final double SHOOT_LEFT_SPEED = 0.8;
+  
+  public static final double AUTO_RIGHT_SPEED = 0.8;
+  public static final double AUTO_LEFT_SPEED = 0.8;
+
+  public static final double SHOOT_SECONDS = 0.9;
   // Intake Constants
 
   public static final double RUNNING_SPEED = 0.35;
