@@ -107,15 +107,13 @@ public class ShooterSubsystem extends SubsystemBase {
     
   public class ShootTimeCommand extends CommandBase {
     private ShooterSubsystem shooter;
-    private int shootLevel;
     private Timer shootTimer;
     private double shootLimit;
     private boolean hasFinished;
 
-    public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, Integer m_shootLevel, double ShootTime) {
+    public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, double ShootTime) {
         addRequirements(m_ShooterSubsystem);
         shooter = m_ShooterSubsystem;
-        shootLevel = m_shootLevel;
         shootTimer = new Timer();
         shootLimit = ShootTime;
         hasFinished = false;
