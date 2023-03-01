@@ -26,6 +26,8 @@ import frc.robot.Constants;
 import com.revrobotics.SparkMaxPIDController;
 import java.util.function.DoubleSupplier;
 
+import org.ejml.equation.IntegerSequence.For;
+
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
@@ -59,8 +61,7 @@ public class IntakeSubsystem extends SubsystemBase {
         rightStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_L, MotorType.kBrushless);
         rightStarWheelsMotor.setInverted(true);
         leftStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_R, MotorType.kBrushless);
-        leftStarWheelsMotor.setInverted(true);
-        leftStarWheelsMotor.follow(rightStarWheelsMotor);
+        leftStarWheelsMotor.follow(rightStarWheelsMotor, true);
 
         // raiseIntakeMotor:
         raiseIntakeMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
@@ -112,7 +113,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void turnOn(Boolean Forwards) {
         if (Forwards){
-            intakeMotor.set(-.5);
+            intakeMotor.set(-Constants.RUNNING_SPEED);
             firstConveyer.set(Constants.RUNNING_SPEED);
             rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
         } else {
@@ -201,8 +202,8 @@ public class IntakeSubsystem extends SubsystemBase {
             m_intakePID.setOutputRange(-1, 1);
             m_midtakePID.setOutputRange(-1, 1);
 
-            m_intakePID.setP(0);
-            m_midtakePID.setP(0);
+            m_intakePID.setP(6e-5);
+            m_midtakePID.setP(6e-5);
 
             m_intakePID.setI(0);
             m_midtakePID.setI(0);

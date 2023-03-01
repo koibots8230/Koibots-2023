@@ -105,7 +105,7 @@ public class Constants {
 
   public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
 
-  public static final double COMMUNITY_SHOOTER_SPEED = .75;
+  public static final double COMMUNITY_SHOOTER_SPEED = .95;
   public static final double L3_SHOOTER_SPEED = .5;
   public static final double L2_SHOOTER_SPEED = .25;
 }
