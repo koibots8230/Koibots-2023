@@ -48,8 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   
   public void SetShooter(double Speed) {
-    shooterMotorR.set(Speed);
-    shooterMotorL.set(-Speed);
+    shooterMotorR.set(-Speed);
+    shooterMotorL.set(Speed);
   }
   
   public Pose3d getPose() {
