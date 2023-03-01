@@ -21,7 +21,7 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     private double midCurrent = 0; // Current of the midtake motor
     private double midSpeed = 10; // Speed of the midtake motor
     
-    public MiscDashboardSubsystem(IntakeSubsystem intake, ShooterSubsystem shooter) {
+    public MiscDashboardSubsystem(IntakeSubsystem intake, ShooterSubsystem shooter, TankDriveSubsystem drive) {
         ShuffleboardTab main_tab = Shuffleboard.getTab("Main");
         
         // Battery info:
@@ -45,7 +45,18 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
         main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 4).
         withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+
+        main_tab.addNumber("Left Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 4).
+        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+
+        main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 4).
+        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
         
+        main_tab.addNumber("Speed Difference", () -> drive.getLeftDriveSpeed()-drive.getRightDriveSpeed()).withPosition(0, 4).
+        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+
+        
+
         // Cube or cone? Place your bets!!
         //main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
         //withSize(3,1).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#880088", "Color when false", "#FFEE00"));

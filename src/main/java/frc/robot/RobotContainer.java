@@ -50,7 +50,7 @@ public class RobotContainer {
 
   public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
   //public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
-  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem);
+  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
 
   // other stuff
   private final CommandXboxController m_driverHID = new CommandXboxController(0);

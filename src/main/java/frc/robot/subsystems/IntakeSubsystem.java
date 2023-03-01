@@ -100,7 +100,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void turnOn(Boolean Forwards) {
         if (Forwards){
-            intakeMotor.set(-Constants.RUNNING_SPEED);
+            intakeMotor.set(-.5);
             firstConveyer.set(Constants.RUNNING_SPEED);
             rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
         } else {

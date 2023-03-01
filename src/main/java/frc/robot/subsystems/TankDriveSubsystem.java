@@ -86,6 +86,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryLeftMotor.setInverted(invertLeft);
     }
 
+    public double getLeftDriveSpeed() {
+        return primaryLeftEncoder.getVelocity();
+    }
+
+    public double getRightDriveSpeed() {
+        return primaryRightEncoder.getVelocity();
+    }
+
     @Override
     public void periodic() {
         wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
@@ -165,8 +173,8 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_rightPID.setOutputRange(-1, 1);
             m_leftPID.setOutputRange(-1, 1);
 
-            m_rightPID.setP(0);
-            m_leftPID.setP(0);
+            m_rightPID.setP(6e-5);
+            m_leftPID.setP(6e-5);
 
             m_rightPID.setI(0);
             m_leftPID.setI(0);
@@ -179,15 +187,16 @@ public class TankDriveSubsystem extends SubsystemBase {
         @Override
         public void execute() {
             // Here's the invert drivetrain invert feature:
-            m_leftPID.setReference(adjustForDeadzone(-m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(-m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
         }
 
         private double adjustForDeadzone(double in) {
             if (Math.abs(in) < Constants.DEADZONE) {
                 return 0;
             }
-            return in;
+            double sign = (in < 0) ? -.5 : .5;
+            return sign*in*in;
         }
     }
 
