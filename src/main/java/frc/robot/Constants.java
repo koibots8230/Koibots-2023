@@ -50,7 +50,7 @@ public class Constants {
 
   // Intake Constants
 
-  public static final double RUNNING_SPEED = 0.35;
+  public static final double RUNNING_SPEED = 0.4;
   public static final double RAISE_SPEED = 0.35;
   public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
   public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
