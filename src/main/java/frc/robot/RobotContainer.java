@@ -93,8 +93,8 @@ public class RobotContainer {
     Trigger operatorSpeedDown = m_operatorHID.circle();
     Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
     Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
-    rightTrigger_op.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
-    leftTrigger_op.whileTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
+    rightTrigger_op.onTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
+    leftTrigger_op.onTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
 
     Trigger shootL2 = m_operatorHID.L1();
     Trigger shootL3 = m_operatorHID.R1();
