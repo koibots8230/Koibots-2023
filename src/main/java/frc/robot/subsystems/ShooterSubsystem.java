@@ -37,7 +37,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
-    shooterMotorR.follow(shooterMotorL, false);
     shooterEncoder = shooterMotorL.getEncoder();
   }
 
@@ -47,6 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
   
   public void SetShooter(double Speed) {
     shooterMotorR.set(Speed);
+    shooterMotorL.set(Speed);
   }
   
   public Pose3d getPose() {
