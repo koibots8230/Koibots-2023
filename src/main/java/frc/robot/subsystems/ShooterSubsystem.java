@@ -88,9 +88,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void initialize() {
       if (shootLevel == 2) {
-        shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
+        shooter.SetShooter(Constants.L1_SHOOTER_SPEED);
       } else if (shootLevel == 3) {
-        shooter.SetShooter(Constants.L3_SHOOTER_SPEED);
+        shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
       }
     }
 
@@ -124,7 +124,7 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void initialize() {
       shootTimer.start();
-      shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
+      shooter.SetShooter(Constants.L1_SHOOTER_SPEED);
     }
 
     @Override
