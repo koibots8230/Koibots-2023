@@ -32,6 +32,7 @@ public class shootMove extends SequentialCommandGroup {
   /** Creates a new shootMove. */
   public shootMove(TankDriveSubsystem tankDriveSubsystem,
    ShooterSubsystem shooterSubsystem,
+   IntakeSubsystem intakeSubsystem,
     double ShootTime,
     double EncoderDistance, 
     double leftSpeed, 
@@ -39,6 +40,7 @@ public class shootMove extends SequentialCommandGroup {
 
     m_tankDriveSubsystem = tankDriveSubsystem;
     m_ShooterSubsystem = shooterSubsystem;
+    m_IntakeSubsystem = intakeSubsystem;
     m_EncoderDistance = EncoderDistance;
     m_ShootTime = ShootTime;
     m_leftSpeed = leftSpeed;
