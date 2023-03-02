@@ -103,19 +103,25 @@ public class ShooterSubsystem extends SubsystemBase {
     private Timer shootTimer;
     private double shootLimit;
     private boolean hasFinished;
+    private double shootSpeed;
 
-    public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, double ShootTime) {
+    public ShootTimeCommand(ShooterSubsystem subsystem, double time) {
+      this(subsystem, time, Constants.L2_SHOOTER_SPEED);
+    }
+
+    public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, double ShootTime, double speed) {
         addRequirements(m_ShooterSubsystem);
         shooter = m_ShooterSubsystem;
         shootTimer = new Timer();
         shootLimit = ShootTime;
         hasFinished = false;
+       shootSpeed = speed;
     }
 
     @Override
     public void initialize() {
       shootTimer.start();
-      shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
+      shooter.SetShooter(shootSpeed);
     }
 
     @Override

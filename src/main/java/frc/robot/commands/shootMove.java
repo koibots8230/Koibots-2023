@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.net.Socket;
 
+import frc.robot.Constants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.TankDriveSubsystem.driveDistanceCommand;
@@ -61,7 +62,7 @@ public class shootMove extends SequentialCommandGroup {
         new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
         m_tankDriveSubsystem.new driveDistanceCommand(-m_leftSpeed, -m_rightSpeed, 70, tankDriveSubsystem),
         m_tankDriveSubsystem.new driveDistanceCommand(0, 0, 1, tankDriveSubsystem),
-        m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
+        m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime, Constants.L1_SHOOTER_SPEED),
         m_tankDriveSubsystem.new driveDistanceCommand(leftSpeed, rightSpeed, 100, tankDriveSubsystem)
     ); 
   }
