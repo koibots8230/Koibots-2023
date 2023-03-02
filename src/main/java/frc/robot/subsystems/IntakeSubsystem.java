@@ -26,9 +26,6 @@ import frc.robot.Constants;
 import com.revrobotics.SparkMaxPIDController;
 import java.util.function.DoubleSupplier;
 
-import org.ejml.equation.IntegerSequence.For;
-
-
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
     private final RelativeEncoder intakeEncoder;
@@ -46,7 +43,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final AnalogInput topHallEffectSensor;
     private final AnalogInput bottomHallEffectSensor;
-    private IntakeState state;
+    
     private IntakeState previous_state;
 
     public IntakeSubsystem() {
@@ -74,7 +71,6 @@ public class IntakeSubsystem extends SubsystemBase {
         topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
         bottomHallEffectSensor = new AnalogInput(1); // Change port numer when testing the code
 
-        state = IntakeState.TOP;
     }
 
     enum IntakeState {
@@ -95,7 +91,6 @@ public class IntakeSubsystem extends SubsystemBase {
         double midCurrent = firstConveyer.getOutputCurrent();
         SmartDashboard.putNumber("Midtake Motor Current (A)", midCurrent);
         SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
-        state = getIntakeState();
 
     }
 
