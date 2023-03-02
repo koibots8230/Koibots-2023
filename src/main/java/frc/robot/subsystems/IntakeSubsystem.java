@@ -113,15 +113,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public void turnOn(Boolean Forwards) {
         if (Forwards){
-            intakeMotor.set(-Constants.RUNNING_SPEED);
-            firstConveyer.set(Constants.RUNNING_SPEED);
-            rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
-            leftStarWheelsMotor.set(Constants.RUNNING_SPEED);
+            intakeMotor.set(-Constants.INTAKE_RUNNING_SPEED);
+            firstConveyer.set(Constants.BELT_RUNNING_SPEED);
+            rightStarWheelsMotor.set(Constants.STARS_RUNNING_SPEED);
+            leftStarWheelsMotor.set(Constants.STARS_RUNNING_SPEED);
         } else {
-            intakeMotor.set(Constants.RUNNING_SPEED);
-            firstConveyer.set(-Constants.RUNNING_SPEED);
-            rightStarWheelsMotor.set(-Constants.RUNNING_SPEED);
-            leftStarWheelsMotor.set(-Constants.RUNNING_SPEED);
+            intakeMotor.set(Constants.INTAKE_RUNNING_SPEED);
+            firstConveyer.set(-Constants.BELT_RUNNING_SPEED);
+            rightStarWheelsMotor.set(-Constants.STARS_RUNNING_SPEED);
+            leftStarWheelsMotor.set(-Constants.STARS_RUNNING_SPEED);
         }
     }
 

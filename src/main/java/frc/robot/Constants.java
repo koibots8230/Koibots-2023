@@ -50,18 +50,22 @@ public class Constants {
 
   //Constants for auto
   public static final double AUTOBALANCE_MOVE_LIMIT = 25;
-  public static final double SHOOT_MOVE_LIMIT = 130;
+  public static final double SHOOT_MOVE_LIMIT = 140;
 
   public static final double SHOOT_RIGHT_SPEED = 0.25;
   public static final double SHOOT_LEFT_SPEED = 0.25;
   
-  public static final double AUTO_RIGHT_SPEED = 0.25;
-  public static final double AUTO_LEFT_SPEED = 0.25;
+  public static final double AUTO_RIGHT_SPEED = 0.3;
+  public static final double AUTO_LEFT_SPEED = 0.3;
 
   public static final double SHOOT_SECONDS = 0.9;
   // Intake Constants
 
   public static final double RUNNING_SPEED = 0.4;
+  public static final double STARS_RUNNING_SPEED = 0.4;
+  public static final double BELT_RUNNING_SPEED = 0.4;
+  public static final double INTAKE_RUNNING_SPEED = 0.3;
+
   public static final double RAISE_SPEED = 0.35;
   public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
   public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
@@ -118,5 +122,5 @@ public class Constants {
 
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
   public static final double L2_SHOOTER_SPEED = .6;
-  public static final double L1_SHOOTER_SPEED = .25;
+  public static final double L1_SHOOTER_SPEED = .4;
 }

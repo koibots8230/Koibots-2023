@@ -200,7 +200,7 @@ public class TankDriveSubsystem extends SubsystemBase {
             if (Math.abs(in) < Constants.DEADZONE) {
                 return 0;
             }
-            double sign = (in < 0) ? -.25 : .25;
+            double sign = (in < 0) ? -.4 : .4;
             return sign*in*in;
         }
     }

@@ -54,10 +54,15 @@ public class shootMove extends SequentialCommandGroup {
         new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
         m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, m_EncoderDistance, tankDriveSubsystem),
         m_tankDriveSubsystem.new driveDistanceCommand(-0.2, -0.2, 5, tankDriveSubsystem),
-        m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, 35, tankDriveSubsystem),
+        m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, 45, tankDriveSubsystem),
         new InstantCommand(() -> m_IntakeSubsystem.turnOn(true), m_IntakeSubsystem),
-        new WaitCommand(0.8),
-        new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem)
+        new WaitCommand(0.4),
+        m_tankDriveSubsystem.new driveDistanceCommand(-m_leftSpeed, -m_rightSpeed, 60, tankDriveSubsystem),
+        new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
+        m_tankDriveSubsystem.new driveDistanceCommand(-m_leftSpeed, -m_rightSpeed, 70, tankDriveSubsystem),
+        m_tankDriveSubsystem.new driveDistanceCommand(0, 0, 1, tankDriveSubsystem),
+        m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
+        m_tankDriveSubsystem.new driveDistanceCommand(leftSpeed, rightSpeed, 100, tankDriveSubsystem)
     ); 
   }
 }
