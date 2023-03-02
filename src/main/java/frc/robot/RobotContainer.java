@@ -14,7 +14,6 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
@@ -25,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -140,7 +139,12 @@ public class RobotContainer {
 
     // Intake runs BACKWARD when right bumper is pressed
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
-    runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false));
+    runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false)
+    .alongWith(Commands.runEnd(
+      () -> m_ShooterSubsystem.SetShooter(Constants.L1_SHOOTER_SPEED), 
+      () -> m_ShooterSubsystem.SetShooter(0), 
+      m_ShooterSubsystem)));
+    
   }
 
   public static RobotContainer getInstance() {
