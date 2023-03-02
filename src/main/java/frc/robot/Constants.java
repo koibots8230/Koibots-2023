@@ -46,17 +46,17 @@ public class Constants {
   // Slowmotion, deadzone, etc:
   public static final double SLOW_MODE_FACTOR = 0.5;
   public static final double DEADZONE = 0.15;
-  public static final double AUTO_SPEED = 0.15;
+  public static final double AUTO_SPEED = 0.1;
 
   //Constants for auto
-  public static final double AUTOBALANCE_MOVE_LIMIT = 10;
-  public static final double SHOOT_MOVE_LIMIT = 60;
+  public static final double AUTOBALANCE_MOVE_LIMIT = 25;
+  public static final double SHOOT_MOVE_LIMIT = 130;
 
-  public static final double SHOOT_RIGHT_SPEED = 0.8;
-  public static final double SHOOT_LEFT_SPEED = 0.8;
+  public static final double SHOOT_RIGHT_SPEED = 0.25;
+  public static final double SHOOT_LEFT_SPEED = 0.25;
   
-  public static final double AUTO_RIGHT_SPEED = 0.3;
-  public static final double AUTO_LEFT_SPEED = 0.3;
+  public static final double AUTO_RIGHT_SPEED = 0.25;
+  public static final double AUTO_LEFT_SPEED = 0.25;
 
   public static final double SHOOT_SECONDS = 0.9;
   // Intake Constants
@@ -117,6 +117,6 @@ public class Constants {
   public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
 
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
-  public static final double L2_SHOOTER_SPEED = .5;
+  public static final double L2_SHOOTER_SPEED = .6;
   public static final double L1_SHOOTER_SPEED = .25;
 }

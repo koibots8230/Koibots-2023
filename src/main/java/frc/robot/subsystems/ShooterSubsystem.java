@@ -122,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void initialize() {
       shootTimer.start();
-      shooter.SetShooter(Constants.L1_SHOOTER_SPEED);
+      shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
     }
 
     @Override

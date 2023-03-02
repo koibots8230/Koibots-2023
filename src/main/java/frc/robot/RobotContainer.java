@@ -76,7 +76,7 @@ public class RobotContainer {
       m_tankDriveSubsystem);
   
   
-  SendableChooser<Command> m_autoChooser;
+  SendableChooser<Integer> m_autoChooser;
   SendableChooser<Boolean> m_customAuto;
   SendableChooser<Integer> m_customChooser;
 
@@ -150,8 +150,11 @@ public class RobotContainer {
      */
     private RobotContainer() {
       //choosing what auto
-      m_autoChooser = new SendableChooser<Command>();
+      m_autoChooser = new SendableChooser<Integer>();
 
+      m_autoChooser.addOption("Shoot->Move", 0);
+      m_autoChooser.addOption("Shoot->Autobalance", 1);
+      m_autoChooser.addOption("DO NOTHING", 2);
       m_customAuto = new SendableChooser<Boolean>();
       //integer representes which auto we get
       m_customChooser = new SendableChooser<Integer>();
@@ -173,18 +176,21 @@ public class RobotContainer {
 
 
       AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-      m_autoChooser.setDefaultOption("Shoot->Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
-      Constants.SHOOT_SECONDS, 
-      Constants.SHOOT_MOVE_LIMIT, 
-      Constants.SHOOT_LEFT_SPEED, 
-      Constants.SHOOT_RIGHT_SPEED));
-      m_autoChooser.addOption("Shoot->Autobalance", new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 
-      Constants.SHOOT_SECONDS, 
-      Constants.AUTOBALANCE_MOVE_LIMIT,
-      Constants.AUTO_LEFT_SPEED, 
-      Constants.AUTO_RIGHT_SPEED,
-      m_gyro,
-      m_intake));
+      // m_autoChooser.setDefaultOption("Shoot->Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
+      // Constants.SHOOT_SECONDS, 
+      // Constants.SHOOT_MOVE_LIMIT, 
+      // Constants.SHOOT_LEFT_SPEED, 
+      // Constants.SHOOT_RIGHT_SPEED));
+      // m_autoChooser.addOption("Shoot->Autobalance", new shootAutobalance(
+      //   m_tankDriveSubsystem,
+      //   m_ShooterSubsystem, 
+      //   Constants.SHOOT_SECONDS, 
+      //   Constants.AUTOBALANCE_MOVE_LIMIT,
+      //   Constants.AUTO_LEFT_SPEED, 
+      //   Constants.AUTO_RIGHT_SPEED,
+      //   m_gyro,
+      //   m_intake
+      // ));
 
       m_autoChooser.addOption(("NO AUTO"), null);
         configureButtonBindings();
@@ -192,6 +198,10 @@ public class RobotContainer {
       m_shuffleboard.add(m_autoChooser);
       m_autotab.add(m_customAuto);
       m_autotab.add(m_autoChooser);
+      m_shuffleboard.addNumber("Encoder Left", ()->m_tankDriveSubsystem.getEncoderPositions()[0]);
+      m_shuffleboard.addNumber("Encoder Right", ()->m_tankDriveSubsystem.getEncoderPositions()[1]);
+      
+
     }
 
   public CommandGenericHID getController() {
@@ -229,7 +239,26 @@ public class RobotContainer {
       //if nothing seletcted
       return null;
     } else {
-    return m_autoChooser.getSelected();
+    switch(m_autoChooser.getSelected()){
+      case(0):
+      return new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
+      Constants.SHOOT_SECONDS, 
+      Constants.SHOOT_MOVE_LIMIT, 
+      Constants.SHOOT_LEFT_SPEED, 
+      Constants.SHOOT_RIGHT_SPEED);
+      case(1):
+      AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+      return new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 
+      Constants.SHOOT_SECONDS, 
+      Constants.AUTOBALANCE_MOVE_LIMIT,
+      Constants.AUTO_LEFT_SPEED, 
+      Constants.AUTO_RIGHT_SPEED,
+      m_gyro,
+      m_intake);
+      case(2):
+      return null;
+    }
+    return null;
     }
   }
 }

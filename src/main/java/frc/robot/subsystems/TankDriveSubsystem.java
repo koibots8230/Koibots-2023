@@ -255,26 +255,25 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_rightPID.setReference((-m_rightSpeed), CANSparkMax.ControlType.kDutyCycle);
 
             // check if we have reached the end
-            double[] current_positions = getEncoderPositions();
+            double[] current_positions = m_DriveSubsystem.getEncoderPositions();
             double l_dif = (current_positions[0] - m_initialPositions[0]);
             double r_dif = (current_positions[1] - m_initialPositions[1]); 
 
-            if ((l_dif + r_dif)>= m_encoderLimit) {
+            if (Math.abs(l_dif + r_dif)>= m_encoderLimit) {
+                System.out.println("Reached end condition for DriveDistance");
                 hasReachedEnd = true;
             }
-        }
-
-        private double adjustForDeadzone(double in) {
-            if (Math.abs(in) < Constants.DEADZONE) {
-                return 0;
-            }
-            double sign = (in < 0) ? -.25 : .25;
-            return sign*in*in;
         }
         
         @Override 
         public boolean isFinished() {
             return hasReachedEnd;
+        }
+
+        @Override 
+        public void end(boolean isInterrupted){
+            m_leftPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
         }
     }
 

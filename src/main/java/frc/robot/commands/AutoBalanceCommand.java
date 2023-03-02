@@ -33,14 +33,14 @@ public class AutoBalanceCommand extends CommandBase {
     double rightDirection = 0;
     double leftDirection = 0;
     if (Math.abs(gyro.getWorldLinearAccelX()) > 0.8) {
-      rightDirection = gyro.getRoll() * gyro.getWorldLinearAccelX();
-      leftDirection = gyro.getRoll() * gyro.getWorldLinearAccelX() * -1;
+      rightDirection = gyro.getRoll() * gyro.getWorldLinearAccelY();
+      leftDirection = gyro.getRoll() * gyro.getWorldLinearAccelY() * -1;
     } else {
       rightDirection = gyro.getRoll();
       leftDirection = gyro.getRoll();
     }
     
-    m_driveSubsystem.setMotor(Constants.AUTO_SPEED * Math.signum(rightDirection), Constants.AUTO_SPEED * Math.signum(leftDirection));
+    m_driveSubsystem.setMotor(-Constants.AUTO_SPEED * Math.signum(rightDirection), -Constants.AUTO_SPEED * Math.signum(leftDirection));
   }
 
   // Called once the command ends or is interrupted.

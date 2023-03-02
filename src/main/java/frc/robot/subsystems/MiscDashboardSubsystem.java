@@ -1,16 +1,21 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // import java.lang.invoke.ClassSpecializer.SpeciesData;
 import java.util.Map;
 
+import com.kauailabs.navx.frc.AHRS;
+
 public class MiscDashboardSubsystem extends SubsystemBase {
 
+    private AHRS gyro = new AHRS(Port.kMXP);
     // private int periodic_loop_counter = 0;
     private boolean voltage_alert = true;
     private double voltage = 11; // Voltage of the battery
@@ -55,7 +60,7 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         main_tab.addNumber("Speed Difference", () -> drive.getLeftDriveSpeed()-drive.getRightDriveSpeed()).withPosition(0, 4).
         withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
 
-        
+
 
         // Cube or cone? Place your bets!!
         //main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
@@ -70,6 +75,8 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         }
         periodic_loop_counter += 1; */
 
+        SmartDashboard.putNumber("Gyro Roll", gyro.getRoll());
+        SmartDashboard.putNumber("Gyro Pitch", gyro.getPitch());
         voltage_alert = getBatteryVoltageAlert();
         voltage = getBatteryVoltage();
     }
