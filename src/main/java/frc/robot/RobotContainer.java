@@ -183,7 +183,8 @@ public class RobotContainer {
       Constants.AUTOBALANCE_MOVE_LIMIT,
       Constants.AUTO_LEFT_SPEED, 
       Constants.AUTO_RIGHT_SPEED,
-      m_gyro));
+      m_gyro,
+      m_intake));
 
       m_autoChooser.addOption(("NO AUTO"), null);
         configureButtonBindings();
@@ -222,7 +223,8 @@ public class RobotContainer {
           Constants.AUTOBALANCE_MOVE_LIMIT,
           Constants.AUTO_LEFT_SPEED, 
           Constants.AUTO_RIGHT_SPEED,
-          m_gyro);
+          m_gyro,
+          m_intake);
       } 
       //if nothing seletcted
       return null;

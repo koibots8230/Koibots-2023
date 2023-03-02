@@ -9,6 +9,8 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.TankDriveSubsystem.driveDistanceCommand;
 import frc.robot.subsystems.ShooterSubsystem.ShootTimeCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+
 import com.kauailabs.navx.frc.AHRS;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -18,6 +20,7 @@ public class shootAutobalance extends SequentialCommandGroup {
 
   TankDriveSubsystem  m_tankDriveSubsystem;
   ShooterSubsystem    m_ShooterSubsystem;
+  IntakeSubsystem     m_IntakeSubsystem;
   
   double m_EncoderDistance;
   double m_ShootTime;
@@ -34,7 +37,8 @@ public class shootAutobalance extends SequentialCommandGroup {
   double EncoderDistance,
   double leftSpeed,
   double rightSpeed,
-  AHRS Gyro
+  AHRS Gyro,
+  IntakeSubsystem intakeSubsystem
   ) {
     
     m_tankDriveSubsystem = tankDriveSubsystem;
@@ -43,10 +47,13 @@ public class shootAutobalance extends SequentialCommandGroup {
     m_ShootTime = ShootTime;
     m_leftSpeed = leftSpeed;
     m_rightSpeed = rightSpeed;
+    m_IntakeSubsystem = intakeSubsystem;
     m_Gyro = Gyro;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
+    addCommands((new InstantCommand(() -> m_IntakeSubsystem.turnOn(true), m_IntakeSubsystem)),
+    m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
+    (new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem)),
     m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, m_EncoderDistance, tankDriveSubsystem),
     new AutoBalanceCommand(Gyro, m_tankDriveSubsystem)
     );

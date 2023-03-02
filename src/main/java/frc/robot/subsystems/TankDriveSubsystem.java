@@ -251,8 +251,8 @@ public class TankDriveSubsystem extends SubsystemBase {
         @Override
         public void execute() {
             // Here's the invert drivetrain invert feature:
-            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed), CANSparkMax.ControlType.kDutyCycle);
+            m_leftPID.setReference((-m_leftSpeed), CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference((-m_rightSpeed), CANSparkMax.ControlType.kDutyCycle);
 
             // check if we have reached the end
             double[] current_positions = getEncoderPositions();

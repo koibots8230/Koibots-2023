@@ -55,8 +55,8 @@ public class Constants {
   public static final double SHOOT_RIGHT_SPEED = 0.8;
   public static final double SHOOT_LEFT_SPEED = 0.8;
   
-  public static final double AUTO_RIGHT_SPEED = 0.8;
-  public static final double AUTO_LEFT_SPEED = 0.8;
+  public static final double AUTO_RIGHT_SPEED = 0.3;
+  public static final double AUTO_LEFT_SPEED = 0.3;
 
   public static final double SHOOT_SECONDS = 0.9;
   // Intake Constants
