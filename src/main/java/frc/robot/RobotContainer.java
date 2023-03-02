@@ -14,6 +14,7 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
@@ -27,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.GenericEntry;
 
 import java.util.function.DoubleSupplier;
 
@@ -35,6 +37,8 @@ import com.kauailabs.navx.frc.AHRS;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
 import frc.robot.commands.IntakeCommand;
+
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -73,7 +77,16 @@ public class RobotContainer {
   
   
   SendableChooser<Command> m_autoChooser;
+  SendableChooser<Boolean> m_customAuto;
+  SendableChooser<Integer> m_customChooser;
 
+  GenericEntry autobal_leftSpeed; //= m_autotab.add("autobal leftSpeed", Constants.AUTO_LEFT_SPEED).getEntry();
+  GenericEntry autobal_rightSpeed; //= m_autotab.add("autobal rightSpeed", Constants.AUTO_RIGHT_SPEED).getEntry();
+  GenericEntry shoot_leftSpeed; //= m_autotab.add("shoot leftSpeed", Constants.SHOOT_LEFT_SPEED).getEntry();
+  GenericEntry shoot_rightSpeed;// = m_autotab.add("shoot rightSpeed", Constants.SHOOT_RIGHT_SPEED).getEntry();
+  GenericEntry shoot_time; // = m_autotab.add("Shoot time", Constants.SHOOT_SECONDS).getEntry();
+  GenericEntry autobal_limit;
+  GenericEntry shoot_limit;
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -136,14 +149,48 @@ public class RobotContainer {
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     private RobotContainer() {
+      //choosing what auto
       m_autoChooser = new SendableChooser<Command>();
 
+      m_customAuto = new SendableChooser<Boolean>();
+      //integer representes which auto we get
+      m_customChooser = new SendableChooser<Integer>();
+      //chosing parameters of auto
+      ShuffleboardTab m_autotab = Shuffleboard.getTab("Auto");
+      m_customAuto.setDefaultOption("Default autos", false);
+      m_customAuto.addOption("Custom auto", true);
+
+      m_customChooser.addOption("Shoot->Move", 0);
+      m_customChooser.addOption("Shoot->Autobalance", 1);
+
+      autobal_leftSpeed = m_autotab.add("autobal leftSpeed", Constants.AUTO_LEFT_SPEED).getEntry();
+      autobal_rightSpeed = m_autotab.add("autobal rightSpeed", Constants.AUTO_RIGHT_SPEED).getEntry();
+      shoot_leftSpeed = m_autotab.add("shoot leftSpeed", Constants.SHOOT_LEFT_SPEED).getEntry();
+      shoot_rightSpeed = m_autotab.add("shoot rightSpeed", Constants.SHOOT_RIGHT_SPEED).getEntry();
+      shoot_time = m_autotab.add("Shoot time", Constants.SHOOT_SECONDS).getEntry();
+      autobal_limit = m_autotab.add("ShootAutobalance Encoder Limit", Constants.AUTOBALANCE_MOVE_LIMIT).getEntry();
+      shoot_limit= m_autotab.add("ShootMove EncoderLimit", Constants.SHOOT_MOVE_LIMIT).getEntry();
+
+
       AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-      m_autoChooser.setDefaultOption("Shoot Then Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake, 0.5, 10, 0.3, 0.3));
-      m_autoChooser.addOption("Shoot Then  Autobalance", new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 0.5, 10, 0.3, 0.3, m_gyro));
+      m_autoChooser.setDefaultOption("Shoot->Move", new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
+      Constants.SHOOT_SECONDS, 
+      Constants.SHOOT_MOVE_LIMIT, 
+      Constants.SHOOT_LEFT_SPEED, 
+      Constants.SHOOT_RIGHT_SPEED));
+      m_autoChooser.addOption("Shoot->Autobalance", new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 
+      Constants.SHOOT_SECONDS, 
+      Constants.AUTOBALANCE_MOVE_LIMIT,
+      Constants.AUTO_LEFT_SPEED, 
+      Constants.AUTO_RIGHT_SPEED,
+      m_gyro));
+
+      m_autoChooser.addOption(("NO AUTO"), null);
         configureButtonBindings();
       ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");
       m_shuffleboard.add(m_autoChooser);
+      m_autotab.add(m_customAuto);
+      m_autotab.add(m_autoChooser);
     }
 
   public CommandGenericHID getController() {
@@ -156,6 +203,31 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    //check if custom auto
+    //by defualt is set to false
+    if (m_customAuto.getSelected()) {
+      
+      switch(m_customChooser.getSelected()){
+        //break statements unecessary due to return function
+        case(0):
+          return new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
+          Constants.SHOOT_SECONDS, 
+          Constants.SHOOT_MOVE_LIMIT, 
+          Constants.SHOOT_LEFT_SPEED, 
+          Constants.SHOOT_RIGHT_SPEED);
+        case(1):
+          AHRS m_gyro = new AHRS(SPI.Port.kMXP);
+          return new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem, 
+          Constants.SHOOT_SECONDS, 
+          Constants.AUTOBALANCE_MOVE_LIMIT,
+          Constants.AUTO_LEFT_SPEED, 
+          Constants.AUTO_RIGHT_SPEED,
+          m_gyro);
+      } 
+      //if nothing seletcted
+      return null;
+    } else {
     return m_autoChooser.getSelected();
+    }
   }
 }
