@@ -24,6 +24,8 @@ import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import java.util.function.DoubleSupplier;
 
 public class IntakeSubsystem extends SubsystemBase {
@@ -71,6 +73,7 @@ public class IntakeSubsystem extends SubsystemBase {
         topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
         bottomHallEffectSensor = new AnalogInput(1); // Change port numer when testing the code
 
+        raiseIntakeMotor.setIdleMode(IdleMode.kBrake);
     }
 
     enum IntakeState {
@@ -114,9 +117,9 @@ public class IntakeSubsystem extends SubsystemBase {
             leftStarWheelsMotor.set(Constants.STARS_RUNNING_SPEED);
         } else {
             intakeMotor.set(Constants.INTAKE_RUNNING_SPEED);
-            firstConveyer.set(-Constants.BELT_RUNNING_SPEED);
-            rightStarWheelsMotor.set(-Constants.STARS_RUNNING_SPEED);
-            leftStarWheelsMotor.set(-Constants.STARS_RUNNING_SPEED);
+            firstConveyer.set(-.15);
+            rightStarWheelsMotor.set(-.15);
+            leftStarWheelsMotor.set(-.15);
         }
     }
 
@@ -143,7 +146,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void setRaiseIntakeSpeed(double speed){
-        raiseIntakeMotor.set(approximateSpeed(raiseIntakeEncoder.getPosition()));
+        raiseIntakeMotor.set(speed);
         //check if weve reached the bottom or top and update position
 
 
@@ -179,6 +182,7 @@ public class IntakeSubsystem extends SubsystemBase {
         return IntakeState.MOVE;
     }
 
+    
     public class IntakeCommand extends CommandBase {
         private DoubleSupplier m_intakeSpeed;
         private SparkMaxPIDController m_intakePID;

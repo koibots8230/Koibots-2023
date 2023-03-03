@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.GenericEntry;
@@ -110,12 +112,22 @@ public class RobotContainer {
     operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
     operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
-    //Trigger intakeMoveUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, -Constants.DEADZONE);
-    //Trigger intakeMoveDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, Constants.DEADZONE); 
-    //intakeMoveUp.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED), m_intake));
-    //intakeMoveDown.whileTrue(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED), m_intake));
-    //intakeMoveUp.or(intakeMoveDown).onFalse(new InstantCommand(() -> m_intake.setRaiseIntakeSpeed(0), m_intake));
-
+    Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
+    Trigger intakeMoveDown = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, .3); 
+    intakeMoveUp.whileTrue(
+      new StartEndCommand(
+        () -> m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED),
+        () -> m_intake.setRaiseIntakeSpeed(0),
+        m_intake
+        )
+    );
+    intakeMoveDown.whileTrue(
+      new StartEndCommand(
+        () -> m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED),
+        () -> m_intake.setRaiseIntakeSpeed(0),
+        m_intake
+      )
+    );
 
 
     // ================DRIVER CONTROLS==========================================
@@ -139,7 +151,7 @@ public class RobotContainer {
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false)
     .alongWith(Commands.runEnd(
-      () -> m_ShooterSubsystem.SetShooter(Constants.L1_SHOOTER_SPEED), 
+      () -> m_ShooterSubsystem.SetShooter(-.1), 
       () -> m_ShooterSubsystem.SetShooter(0), 
       m_ShooterSubsystem)));
     
