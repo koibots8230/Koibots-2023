@@ -30,21 +30,28 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 
 public class TankDriveSubsystem extends SubsystemBase {
+
     private CANSparkMax primaryRightMotor;
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
+
     private double speedCoefficient = 1;
+
     private AHRS gyro = new AHRS(SPI.Port.kMXP);
-    final DifferentialDrive drivetrain;
+
+    DifferentialDrive drivetrain;
     DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
-    //Encoders:
+    
     private final RelativeEncoder primaryRightEncoder;
     private final RelativeEncoder primaryLeftEncoder;
+
     private DifferentialDriveOdometry m_Odometry;
     private Pose2d OdometryPose;
     
     public TankDriveSubsystem() {
+
+        // Motors
         primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
         primaryRightMotor.setInverted(true);
 
@@ -58,6 +65,7 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
 
+        // Encoders
         primaryRightEncoder = primaryRightMotor.getEncoder();
         primaryLeftEncoder = primaryLeftMotor.getEncoder();
 
@@ -70,14 +78,20 @@ public class TankDriveSubsystem extends SubsystemBase {
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw()+180), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
     }
 
-    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
-        return wheelSpeeds;
+    @Override
+    public void periodic() {
+        wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
+        OdometryPose = m_Odometry.update(
+            new Rotation2d(gyro.getYaw()+180),
+            primaryLeftEncoder.getPosition(),
+            primaryRightEncoder.getPosition());
+        // This method will be called once per scheduler run
     }
 
-    public TankDriveSubsystem(boolean invertRight, boolean invertLeft) { // optional inversion of motors
-        this();
-        primaryRightMotor.setInverted(invertRight);
-        primaryLeftMotor.setInverted(invertLeft);
+    // ================================Getters================================
+    
+    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+        return wheelSpeeds;
     }
 
     public double getLeftDriveSpeed() {
@@ -88,29 +102,8 @@ public class TankDriveSubsystem extends SubsystemBase {
         return primaryRightEncoder.getVelocity();
     }
 
-    @Override
-    public void periodic() {
-        wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
-        OdometryPose = m_Odometry.update(
-            new Rotation2d(gyro.getYaw()+180),
-            primaryLeftEncoder.getPosition(),
-            primaryRightEncoder.getPosition());
-        // This method will be called once per scheduler run
-    }
     public Pose2d getOdometryPose() {
         return OdometryPose;
-    }
-    public void resetOdometry(Pose2d pose) {
-        primaryLeftEncoder.setPosition(0);
-        primaryRightEncoder.setPosition(0);
-        m_Odometry.resetPosition(
-            gyro.getRotation2d(), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition(), pose);
-      }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run when in simulation
-
     }
 
     public SparkMaxPIDController getLeftPID() {
@@ -120,6 +113,20 @@ public class TankDriveSubsystem extends SubsystemBase {
     public SparkMaxPIDController getRightPID() {
         return primaryRightMotor.getPIDController();
     }
+
+    public double[] getEncoderPositions(){
+        //get the in between of both encoders
+        return (new double[] {primaryLeftEncoder.getPosition(),primaryRightEncoder.getPosition()});
+    }
+
+    // ================================Setters================================
+
+    public void setOdometry(Pose2d pose) {
+        primaryLeftEncoder.setPosition(0);
+        primaryRightEncoder.setPosition(0);
+        m_Odometry.resetPosition(
+            gyro.getRotation2d(), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition(), pose);
+      }
 
     public void setMotor(double leftSpeed, double rightSpeed) {
         primaryLeftMotor.set(leftSpeed);
@@ -138,11 +145,6 @@ public class TankDriveSubsystem extends SubsystemBase {
             }
         }
     }
-    
-    public double[] getEncoderPositions(){
-        //get the in between of both encoders
-        return (new double[] {primaryLeftEncoder.getPosition(),primaryRightEncoder.getPosition()});
-    }
 
     public void setMotorVoltage(double leftVoltage, double rightVoltage) {
         primaryRightMotor.setVoltage(rightVoltage);
@@ -150,6 +152,8 @@ public class TankDriveSubsystem extends SubsystemBase {
         drivetrain.feed();
     }
     
+    // ================================Commands================================
+
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
@@ -182,10 +186,8 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_leftPID.setD(0);
         }
 
-        // Called every time the scheduler runs while the command is scheduled.
         @Override
         public void execute() {
-            // Here's the invert drivetrain invert feature:
             m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
             m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
         }
@@ -198,6 +200,7 @@ public class TankDriveSubsystem extends SubsystemBase {
             return sign*(in*in);
         }
     }
+
 
     public class driveDistanceCommand extends CommandBase {
         private double m_rightSpeed;
@@ -241,14 +244,12 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_leftPID.setD(0);
         }
 
-        // Called every time the scheduler runs while the command is scheduled.
         @Override
         public void execute() {
-            // Here's the invert drivetrain invert feature:
             m_leftPID.setReference((-m_leftSpeed), CANSparkMax.ControlType.kDutyCycle);
             m_rightPID.setReference((-m_rightSpeed), CANSparkMax.ControlType.kDutyCycle);
 
-            // check if we have reached the end
+            // End Check
             double[] current_positions = m_DriveSubsystem.getEncoderPositions();
             double l_dif = (current_positions[0] - m_initialPositions[0]);
             double r_dif = (current_positions[1] - m_initialPositions[1]); 

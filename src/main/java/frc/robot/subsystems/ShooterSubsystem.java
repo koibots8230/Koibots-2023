@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
+  // Auto Shoot Variables
   public static Pose3d Bot3d = null;
   public static boolean VariablesDefined = false;
   public static Translation3d Closest = new Translation3d(0, 0, 0);
@@ -26,6 +27,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double distance;
   private Translation2d Spot = new Translation2d(0, 0);
 
+  // Motors/Encoders
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
   private RelativeEncoder shooterEncoder;
@@ -50,7 +52,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public class CommunityShotCommand extends CommandBase {
-    private DoubleSupplier m_Trigger;
     private ShooterSubsystem shooter;
 
     public CommunityShotCommand(ShooterSubsystem m_ShooterSubsystem) {
@@ -91,13 +92,7 @@ public class ShooterSubsystem extends SubsystemBase {
       shooter.SetShooter(0);
     }
   }
-
-  @Override
-  public void simulationPeriodic() {
-
-  }
-
-    
+   
   public class ShootTimeCommand extends CommandBase {
     private ShooterSubsystem shooter;
     private Timer shootTimer;
@@ -126,7 +121,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     @Override
     public void execute() {
-      //if weve run the shooter for long enough
+      // Check for time
       if (shootTimer.get() >= shootLimit) {
         hasFinished = true;
       }
@@ -142,9 +137,4 @@ public class ShooterSubsystem extends SubsystemBase {
       return hasFinished;
     }
   }
-
-  
-
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
 }

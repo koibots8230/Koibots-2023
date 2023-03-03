@@ -53,8 +53,6 @@ import frc.robot.commands.IntakeCommand;
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
   
-  SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
-
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
@@ -63,10 +61,11 @@ public class RobotContainer {
   //public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
   private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
 
-  // other stuff
+  // Controlers
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
   private final CommandPS4Controller m_operatorHID = new CommandPS4Controller(1);
 
+  // Teleop Drive
   private DoubleSupplier leftDriveTrain = () -> m_driverHID.getLeftY();
   private DoubleSupplier rightDriveTrain = () -> m_driverHID.getRightY();
 
@@ -76,9 +75,12 @@ public class RobotContainer {
       m_tankDriveSubsystem);
   
   
+  // Shuffleboard
   SendableChooser<Integer> m_autoChooser;
   SendableChooser<Boolean> m_customAuto;
   SendableChooser<Integer> m_customChooser;
+  //SendableChooser<Boolean> m_sideChooser;
+
 
   GenericEntry autobal_leftSpeed; //= m_autotab.add("autobal leftSpeed", Constants.AUTO_LEFT_SPEED).getEntry();
   GenericEntry autobal_rightSpeed; //= m_autotab.add("autobal rightSpeed", Constants.AUTO_RIGHT_SPEED).getEntry();
@@ -94,24 +96,29 @@ public class RobotContainer {
   private void configureButtonBindings() {
     m_tankDriveSubsystem.setDefaultCommand(m_driveCommand);
 
-    // ==================OPERATOR CONTROLS======================================
-
-
     // Create Triggers here | Triggers should be named t_CommandName
+
+    // ======================================Operator Controls======================================
+    
+    // Speed Up/Down
     Trigger operatorSpeedUp = m_operatorHID.cross();
     Trigger operatorSpeedDown = m_operatorHID.circle();
-    Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
-    Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
 
+    operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
+    operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+
+    // LED
+    //Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
+    //Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
+
+    // Shooting
     Trigger shootL2 = m_operatorHID.L1();
     Trigger shootL3 = m_operatorHID.R1();
 
     shootL2.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 2));
     shootL3.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 3));
 
-    operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-    operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
-
+    // Manual Intake Up/Down
     Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
     Trigger intakeMoveDown = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, .3); 
     intakeMoveUp.whileTrue(
@@ -130,24 +137,24 @@ public class RobotContainer {
     );
 
 
-    // ================DRIVER CONTROLS==========================================
+    // ======================================DRIVER CONTROLS======================================
     // create commands
     // 5 = left bumper
     // 6 = right bumper
 
+    // Community Shot
     Trigger shootTrigger = m_driverHID.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, Constants.DEADZONE);
     CommunityShotCommand com_shot_cmd = m_ShooterSubsystem.new CommunityShotCommand(m_ShooterSubsystem);
     shootTrigger.whileTrue(com_shot_cmd);
     
-    // Intake is toggled when left bumper is pressed
-    Trigger flipTrigger = m_driverHID.leftBumper();
-    flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+    // Flip Intake
+    //Trigger flipTrigger = m_driverHID.leftBumper();
+    //flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
 
-    // Intake runs FORWARD when right trigger is pressed
-    Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
+    //Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
+    //runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
 
-    // Intake runs BACKWARD when right bumper is pressed
+    // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false)
     .alongWith(Commands.runEnd(
@@ -155,8 +162,8 @@ public class RobotContainer {
       () -> m_ShooterSubsystem.SetShooter(0), 
       m_ShooterSubsystem)));
     
-      //run intake and shooter slowly
-      Trigger runInShooterSlowly=m_operatorHID.square();
+    // Slow Shooter
+    Trigger runInShooterSlowly=m_operatorHID.square();
       runInShooterSlowly.whileTrue(new IntakeCommand(m_intake, true)
       .alongWith(Commands.runEnd(
         ()->m_ShooterSubsystem.SetShooter(.2), 

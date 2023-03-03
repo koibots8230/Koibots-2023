@@ -35,11 +35,14 @@ public class Constants {
   public static final int LEFT_DRIVE_MOTOR_2 = 14;
   public static final int RIGHT_DRIVE_MOTOR_1 = 12;
   public static final int RIGHT_DRIVE_MOTOR_2 = 13;
+
   public static final int INTAKE_MOTOR = 10;
-  public static final int SHOOTER_MOTOR_L = 4; // To be changed
-  public static final int SHOOTER_MOTOR_R = 5; // To be changed
-  public static final int RAISE_INTAKE_MOTOR = 11; // To be changed when we know the port of raiseIntakeMotor
-  public static final int MIDTAKE_MOTOR = 7; // To be changed when we have an actual intake
+  public static final int RAISE_INTAKE_MOTOR = 11; 
+
+  public static final int SHOOTER_MOTOR_L = 4;
+  public static final int SHOOTER_MOTOR_R = 5;
+
+  public static final int MIDTAKE_MOTOR = 7; 
   public static final int STAR_WHEELS_MOTOR_L = 8;
   public static final int STAR_WHEELS_MOTOR_R = 9;
 
@@ -59,8 +62,8 @@ public class Constants {
   public static final double AUTO_LEFT_SPEED = 0.3;
 
   public static final double SHOOT_SECONDS = 0.9;
-  // Intake Constants
-
+  
+  // Intake/Midtake Constants
   public static final double RUNNING_SPEED = 0.4;
   public static final double STARS_RUNNING_SPEED = 0.4;
   public static final double BELT_RUNNING_SPEED = 0.45;
@@ -71,6 +74,7 @@ public class Constants {
   public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
   public static final double INTAKE_DOWN_POSITION = -1; // To be changed when we have an actual intake
   public static final double INTAKE_CHANGE_POSITION = 20;
+  public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
 
   // for LED system
   public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
@@ -79,27 +83,37 @@ public class Constants {
   // but they can be uncommented once we know the port numbers.
 
   // Shooting constants
+
+  // Teleop Shooting
+  public static final double COMMUNITY_SHOOTER_SPEED = .95;
+  public static final double L2_SHOOTER_SPEED = .6;
+  public static final double L1_SHOOTER_SPEED = .4;
+
+  // Auto Shooting 
   public static final double SHOOTER_ANGLE = 45; // To be changed
   public static final double GRAVITY = 9.8; // If you can figure out a way to change this one, that's impressive
   public static final double SHOOTER_FROM_GROUND = 1; // To be changed
   public static final double MOTOR_SPEED_TO_VELOCITY = 0; // To be changed
   public static final double MIDDLE_HEIGHT = 23.5 * 0.0254;
   public static final double MIDDLE_X = 24.25 * 0.0254;
-  // Blue Side
+  
   public static final double Y1 = 43.125 * 0.0254;
   public static final double Y2 = 108.5 * 0.0254;
   public static final double Y3 = 174.625 * 0.0254;
+
   public static final Translation3d MC1 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
   public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
   public static final Translation3d MC3 = new Translation3d(MIDDLE_X, Y3, MIDDLE_HEIGHT);
+
   public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1, MC2, MC3);
 
   public static final double HIGH_HEIGHT = 35.5 * 0.0254;
   public static final double HIGH_X = 12.25 * 0.0254;
-  // Blue Side
+
   public static final Translation3d HC1 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
   public static final Translation3d HC2 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
   public static final Translation3d HC3 = new Translation3d(HIGH_X, Y3, HIGH_HEIGHT);
+
   public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1, HC2, HC3);
 
   // Encoder Values
@@ -118,9 +132,4 @@ public class Constants {
   public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
       TRACK_WIDTH_METERS);
 
-  public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
-
-  public static final double COMMUNITY_SHOOTER_SPEED = .95;
-  public static final double L2_SHOOTER_SPEED = .6;
-  public static final double L1_SHOOTER_SPEED = .4;
 }
