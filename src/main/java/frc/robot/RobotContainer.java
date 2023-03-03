@@ -155,6 +155,14 @@ public class RobotContainer {
       () -> m_ShooterSubsystem.SetShooter(0), 
       m_ShooterSubsystem)));
     
+      //run intake and shooter slowly
+      Trigger runInShooterSlowly=m_operatorHID.square();
+      runInShooterSlowly.whileTrue(new IntakeCommand(m_intake, true)
+      .alongWith(Commands.runEnd(
+        ()->m_ShooterSubsystem.SetShooter(.2), 
+        ()->m_ShooterSubsystem.SetShooter(0),
+        m_ShooterSubsystem)));
+
   }
 
   public static RobotContainer getInstance() {
