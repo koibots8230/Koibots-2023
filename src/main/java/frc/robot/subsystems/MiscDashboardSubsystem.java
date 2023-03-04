@@ -47,14 +47,14 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
         
 
-        main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+        main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 3).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
 
-        main_tab.addNumber("Left Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+        main_tab.addNumber("Left Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 1).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
 
-        main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+        main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getRightDriveSpeed()).withPosition(0, 2).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
         
 
 
@@ -97,10 +97,9 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     }
 
     public static boolean getBatteryVoltageAlert() {
-        if (RobotController.getInputVoltage() >= 12) {
+        if (RobotController.getInputVoltage() > 11) {
             return true;
         }
-
         return false;
 
         /* if (RobotController.getBatteryVoltage() >= 12) {

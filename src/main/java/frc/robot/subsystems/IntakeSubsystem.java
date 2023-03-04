@@ -98,11 +98,6 @@ public class IntakeSubsystem extends SubsystemBase {
     // ================================Setters================================
 
     public void setRaiseIntakeSpeed(double speed){
-        if (speed != 0) {
-            raiseIntakeMotor.setIdleMode(IdleMode.kCoast);
-        } else {
-            raiseIntakeMotor.setIdleMode(IdleMode.kBrake);
-        }
         raiseIntakeMotor.set(speed);
     }
     public void turnOn(Boolean Forwards) {
@@ -220,6 +215,34 @@ public class IntakeSubsystem extends SubsystemBase {
                 return 0;
             }
             return in;
+        }
+    }
+
+    public class MoveIntakeByEncoder extends CommandBase {
+        IntakeSubsystem intake;
+        boolean end = false;
+
+        public MoveIntakeByEncoder(IntakeSubsystem _intake) {
+            addRequirements(_intake);
+            intake = _intake;
+        }
+
+        public void initialize() {
+            intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+        }
+
+        public void periodic() {
+            if (intake.getRaiseEncoder().getPosition() >= 20) {
+                end = true;
+            }
+        }
+
+        public boolean isFinished() {
+            return end;
+        }
+
+        public void end(boolean interrupted) {
+            intake.setRaiseIntakeSpeed(0);
         }
     }
 
