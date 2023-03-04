@@ -30,44 +30,42 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public class Constants {
-  // Hardware Ports
-  public static final int LEFT_DRIVE_MOTOR_1 = 15;
-  public static final int LEFT_DRIVE_MOTOR_2 = 14;
-  public static final int RIGHT_DRIVE_MOTOR_1 = 12;
-  public static final int RIGHT_DRIVE_MOTOR_2 = 13;
-
-  public static final int INTAKE_MOTOR = 10;
-  public static final int RAISE_INTAKE_MOTOR = 11; 
-
-  public static final int SHOOTER_MOTOR_L = 4;
-  public static final int SHOOTER_MOTOR_R = 5;
-
-  public static final int MIDTAKE_MOTOR = 7; 
-  public static final int STAR_WHEELS_MOTOR_L = 8;
-  public static final int STAR_WHEELS_MOTOR_R = 9;
-
-  // Slowmotion, deadzone, etc:
-  public static final double SLOW_MODE_FACTOR = 0.5;
-  public static final double DEADZONE = 0.15;
-  public static final double AUTO_SPEED = 0.1;
+  // ===============================In-Use Values===============================
 
   //Constants for auto
+  // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW WHAT YOU ARE DOING. 
+  // See Jake's hand for what can happen if you change these
+
   public static final double AUTOBALANCE_MOVE_LIMIT = 25;
   public static final double SHOOT_MOVE_LIMIT = 140;
 
-  public static final double SHOOT_RIGHT_SPEED = 0.25;
-  public static final double SHOOT_LEFT_SPEED = 0.25;
+  public static final double SHOOT_RIGHT_SPEED = 0.25; 
+  public static final double SHOOT_LEFT_SPEED = 0.25; 
   
   public static final double AUTO_RIGHT_SPEED = 0.3;
   public static final double AUTO_LEFT_SPEED = 0.3;
 
   public static final double SHOOT_SECONDS = 0.9;
+
+  // Slowmotion, deadzone, etc:
+  public static final double SLOW_MODE_FACTOR = 0.5;
+  public static final double AUTO_SPEED = 0.1;
+  public static final double MAX_DRIVETRAIN_SPEED = 1;
   
   // Intake/Midtake Constants
-  public static final double RUNNING_SPEED = 0.4;
   public static final double STARS_RUNNING_SPEED = 0.4;
   public static final double BELT_RUNNING_SPEED = 0.45;
   public static final double INTAKE_RUNNING_SPEED = 0.3;
+
+  // Teleop Shooting
+  public static final double COMMUNITY_SHOOTER_SPEED = .95;
+  public static final double L2_SHOOTER_SPEED = .6;
+  public static final double L1_SHOOTER_SPEED = .4;
+
+  public static final double DEADZONE = 0.15; // Probably don't change this
+
+
+  // ===============================Unused Values===============================
 
   public static final double RAISE_SPEED = 0.8;
   public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
@@ -81,13 +79,6 @@ public class Constants {
   // public static final int LEDPort1=0;
   // public static final int LEDPort2=0;//neither of these are known currently,
   // but they can be uncommented once we know the port numbers.
-
-  // Shooting constants
-
-  // Teleop Shooting
-  public static final double COMMUNITY_SHOOTER_SPEED = .95;
-  public static final double L2_SHOOTER_SPEED = .6;
-  public static final double L1_SHOOTER_SPEED = .4;
 
   // Auto Shooting 
   public static final double SHOOTER_ANGLE = 45; // To be changed
@@ -131,5 +122,21 @@ public class Constants {
   public static final double TRACK_WIDTH_METERS = 0;
   public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
       TRACK_WIDTH_METERS);
+
+  // Hardware Ports
+  public static final int LEFT_DRIVE_MOTOR_1 = 15;
+  public static final int LEFT_DRIVE_MOTOR_2 = 14;
+  public static final int RIGHT_DRIVE_MOTOR_1 = 12;
+  public static final int RIGHT_DRIVE_MOTOR_2 = 13;
+
+  public static final int INTAKE_MOTOR = 10;
+  public static final int RAISE_INTAKE_MOTOR = 11; 
+
+  public static final int SHOOTER_MOTOR_L = 4;
+  public static final int SHOOTER_MOTOR_R = 5;
+
+  public static final int MIDTAKE_MOTOR = 7; 
+  public static final int STAR_WHEELS_MOTOR_L = 8;
+  public static final int STAR_WHEELS_MOTOR_R = 9;
 
 }

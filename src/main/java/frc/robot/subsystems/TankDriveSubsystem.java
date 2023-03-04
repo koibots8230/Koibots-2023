@@ -196,7 +196,7 @@ public class TankDriveSubsystem extends SubsystemBase {
             if (Math.abs(in) < Constants.DEADZONE) {
                 return 0;
             }
-            double sign = (in < 0) ? -1 : 1;
+            double sign = (in < 0) ? -Constants.MAX_DRIVETRAIN_SPEED : Constants.MAX_DRIVETRAIN_SPEED;
             return sign*(in*in);
         }
     }
