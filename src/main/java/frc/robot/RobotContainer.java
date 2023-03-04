@@ -118,22 +118,22 @@ public class RobotContainer {
     shootL3.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 3));
 
     // Manual Intake Up/Down
-    Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
-    Trigger intakeMoveDown = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, .3); 
-    intakeMoveUp.whileTrue(
-      new StartEndCommand(
-        () -> m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED),
-        () -> m_intake.setRaiseIntakeSpeed(0),
-        m_intake
-        )
-    );
-    intakeMoveDown.whileTrue(
-      new StartEndCommand(
-        () -> m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED),
-        () -> m_intake.setRaiseIntakeSpeed(0),
-        m_intake
-      )
-    );
+    //Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
+    //Trigger intakeMoveDown = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, .3); 
+    //intakeMoveUp.whileTrue(
+      //new StartEndCommand(
+        //() -> m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED),
+        //() -> m_intake.setRaiseIntakeSpeed(0),
+        //m_intake
+        //)
+    //);
+    //intakeMoveDown.whileTrue(
+      //new StartEndCommand(
+        //() -> m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED),
+        //() -> m_intake.setRaiseIntakeSpeed(0),
+        //m_intake
+      //)
+    //);
 
 
     // ======================================DRIVER CONTROLS======================================

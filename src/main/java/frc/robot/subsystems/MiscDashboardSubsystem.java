@@ -45,8 +45,7 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         //main_tab.addNumber("Midtake Motor Speed (RPM)", () -> midSpeed).withPosition(3, 2).
         //withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
 
-        main_tab.addNumber("Raise Intake Motor Current (A)", () -> intake.getIntakeRaiseMotor().getOutputCurrent()).withPosition(0, 3).
-        withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+        
 
         main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 4).
         withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
@@ -57,8 +56,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 4).
         withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
         
-        main_tab.addNumber("Speed Difference", () -> drive.getLeftDriveSpeed()-drive.getRightDriveSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
 
 
 

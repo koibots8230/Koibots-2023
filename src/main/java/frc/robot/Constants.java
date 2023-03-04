@@ -12,7 +12,6 @@ public class Constants {
   // Constants for auto
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
   // WHAT YOU ARE DOING.
-  // See Jake's hand for what can happen if you change these
 
   public static final double AUTOBALANCE_MOVE_LIMIT = 25;
   public static final double SHOOT_MOVE_LIMIT = 140;
