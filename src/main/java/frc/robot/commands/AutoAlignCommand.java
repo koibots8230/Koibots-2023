@@ -15,7 +15,7 @@ public class AutoAlignCommand extends CommandBase {
   private double Rotation;
   private TankDriveSubsystem drive;
 
-  public void AutoAlignCommand(TankDriveSubsystem _drive) {
+  public AutoAlignCommand(TankDriveSubsystem _drive) {
     drive = _drive;
     BotRotation = new Rotation2d(0);
     RotationToTarget = new Rotation2d(0);

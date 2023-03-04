@@ -4,16 +4,10 @@
 
 package frc.robot.commands;
 
-import java.net.Socket;
-
 import frc.robot.Constants;
-import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.TankDriveSubsystem.driveDistanceCommand;
-import frc.robot.subsystems.ShooterSubsystem.ShootTimeCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -61,7 +55,6 @@ public class shootMove extends SequentialCommandGroup {
         m_tankDriveSubsystem.new driveDistanceCommand(-m_leftSpeed, -m_rightSpeed, 60, tankDriveSubsystem),
         new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
         m_tankDriveSubsystem.new driveDistanceCommand(-m_leftSpeed, -m_rightSpeed, 70, tankDriveSubsystem),
-        m_tankDriveSubsystem.new driveDistanceCommand(0, 0, 1, tankDriveSubsystem),
         m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime, Constants.L1_SHOOTER_SPEED),
         m_tankDriveSubsystem.new driveDistanceCommand(leftSpeed, rightSpeed, 100, tankDriveSubsystem)
     ); 

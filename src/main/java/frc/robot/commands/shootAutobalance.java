@@ -5,10 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import frc.robot.subsystems.TankDriveSubsystem.driveDistanceCommand;
-import frc.robot.subsystems.ShooterSubsystem.ShootTimeCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import com.kauailabs.navx.frc.AHRS;
