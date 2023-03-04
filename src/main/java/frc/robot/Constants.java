@@ -1,4 +1,3 @@
-
 package frc.robot;
 
 import java.util.Arrays;
@@ -10,16 +9,17 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 public class Constants {
   // ===============================In-Use Values===============================
 
-  //Constants for auto
-  // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW WHAT YOU ARE DOING. 
+  // Constants for auto
+  // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
+  // WHAT YOU ARE DOING.
   // See Jake's hand for what can happen if you change these
 
   public static final double AUTOBALANCE_MOVE_LIMIT = 25;
   public static final double SHOOT_MOVE_LIMIT = 140;
 
-  public static final double SHOOT_RIGHT_SPEED = 0.25; 
-  public static final double SHOOT_LEFT_SPEED = 0.25; 
-  
+  public static final double SHOOT_RIGHT_SPEED = 0.25;
+  public static final double SHOOT_LEFT_SPEED = 0.25;
+
   public static final double AUTO_RIGHT_SPEED = 0.3;
   public static final double AUTO_LEFT_SPEED = 0.3;
 
@@ -29,7 +29,7 @@ public class Constants {
   public static final double SLOW_MODE_FACTOR = 0.5;
   public static final double AUTO_SPEED = 0.1;
   public static final double MAX_DRIVETRAIN_SPEED = 1;
-  
+
   // Intake/Midtake Constants
   public static final double STARS_RUNNING_SPEED = 0.4;
   public static final double BELT_RUNNING_SPEED = 0.45;
@@ -42,6 +42,21 @@ public class Constants {
 
   public static final double DEADZONE = 0.15; // Probably don't change this
 
+  // Hardware Ports
+  public static final int LEFT_DRIVE_MOTOR_1 = 15;
+  public static final int LEFT_DRIVE_MOTOR_2 = 14;
+  public static final int RIGHT_DRIVE_MOTOR_1 = 12;
+  public static final int RIGHT_DRIVE_MOTOR_2 = 13;
+
+  public static final int INTAKE_MOTOR = 10;
+  public static final int RAISE_INTAKE_MOTOR = 11;
+
+  public static final int SHOOTER_MOTOR_L = 4;
+  public static final int SHOOTER_MOTOR_R = 5;
+
+  public static final int MIDTAKE_MOTOR = 7;
+  public static final int STAR_WHEELS_MOTOR_L = 8;
+  public static final int STAR_WHEELS_MOTOR_R = 9;
 
   // ===============================Unused Values===============================
 
@@ -58,14 +73,14 @@ public class Constants {
   // public static final int LEDPort2=0;//neither of these are known currently,
   // but they can be uncommented once we know the port numbers.
 
-  // Auto Shooting 
+  // Auto Shooting
   public static final double SHOOTER_ANGLE = 45; // To be changed
   public static final double GRAVITY = 9.8; // If you can figure out a way to change this one, that's impressive
   public static final double SHOOTER_FROM_GROUND = 1; // To be changed
   public static final double MOTOR_SPEED_TO_VELOCITY = 0; // To be changed
   public static final double MIDDLE_HEIGHT = 23.5 * 0.0254;
   public static final double MIDDLE_X = 24.25 * 0.0254;
-  
+
   public static final double Y1 = 43.125 * 0.0254;
   public static final double Y2 = 108.5 * 0.0254;
   public static final double Y3 = 174.625 * 0.0254;
@@ -97,24 +112,9 @@ public class Constants {
   public static final double MAX_SPEED_METERS_PER_SECOND = 0;
   public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 0;
 
-  public static final double TRACK_WIDTH_METERS = 0;
-  public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(
-      TRACK_WIDTH_METERS);
-
-  // Hardware Ports
-  public static final int LEFT_DRIVE_MOTOR_1 = 15;
-  public static final int LEFT_DRIVE_MOTOR_2 = 14;
-  public static final int RIGHT_DRIVE_MOTOR_1 = 12;
-  public static final int RIGHT_DRIVE_MOTOR_2 = 13;
-
-  public static final int INTAKE_MOTOR = 10;
-  public static final int RAISE_INTAKE_MOTOR = 11; 
-
-  public static final int SHOOTER_MOTOR_L = 4;
-  public static final int SHOOTER_MOTOR_R = 5;
-
-  public static final int MIDTAKE_MOTOR = 7; 
-  public static final int STAR_WHEELS_MOTOR_L = 8;
-  public static final int STAR_WHEELS_MOTOR_R = 9;
+  // public static final double TRACK_WIDTH_METERS = 0;
+  // public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new
+  // DifferentialDriveKinematics(
+  // TRACK_WIDTH_METERS);
 
 }
