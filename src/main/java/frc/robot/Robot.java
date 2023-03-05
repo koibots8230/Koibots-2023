@@ -34,7 +34,6 @@ public class Robot extends TimedRobot {
 
     AHRS gyro = new AHRS(Port.kMXP);
     private Command m_autonomousCommand;
-
     private RobotContainer m_robotContainer;
 
     /**

@@ -127,15 +127,14 @@ public class RobotContainer {
     // Manual Intake Up/Down
     Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
     Trigger intakeMoveDown = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, .3);
-    intakeMoveUp.whileTrue(new IntakeManualCommand(m_intake, true));
-    intakeMoveDown.whileTrue(new IntakeManualCommand(m_intake, false));
+    //intakeMoveUp.whileTrue(new IntakeManualCommand(m_intake, true));
+    //intakeMoveDown.whileTrue(new IntakeManualCommand(m_intake, false));
 
     Trigger clearButton = m_operatorHID.circle();
 
     clearButton.whileTrue(new InstantCommand(() -> m_intake.ClearStickies(), m_intake));
 
-    // ======================================DRIVER
-    // CONTROLS======================================
+    // ======================================DRIVER CONTROLS======================================
     // create commands
     // 5 = left bumper
     // 6 = right bumper

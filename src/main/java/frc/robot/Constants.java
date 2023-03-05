@@ -26,7 +26,7 @@ public class Constants {
   // Slowmotion, deadzone, etc:
   public static final double SLOW_MODE_FACTOR = 0.5;
   public static final double AUTO_SPEED = 0.07;
-  public static final double MAX_DRIVETRAIN_SPEED = .85;
+  public static final double MAX_DRIVETRAIN_SPEED = .88;
 
   // Intake/Midtake Constants
   public static final double STARS_RUNNING_SPEED = 0.30;
