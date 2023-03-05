@@ -99,9 +99,13 @@ public class Robot extends TimedRobot {
     }
 
     @Override
+    public void autonomousExit() {
+        m_robotContainer.getDrive().setCoast();
+    }
+
+    @Override
     public void teleopInit() {
         m_robotContainer.ResetPositions();
-        m_robotContainer.getDrive().setCoast();
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -116,6 +120,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+    }
+
+    @Override
+    public void teleopExit() {
+        m_robotContainer.getDrive().setBrake();
     }
 
     @Override

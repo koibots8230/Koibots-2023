@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
 public class Constants {
   // ===============================In-Use Values===============================
@@ -37,7 +36,7 @@ public class Constants {
   // Teleop Shooti
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
   public static final double L2_SHOOTER_SPEED = .7;
-  public static final double L1_SHOOTER_SPEED = .4;
+  public static final double L1_SHOOTER_SPEED = .55;
 
   public static final double DEADZONE = 0.15; // Probably don't change this
 

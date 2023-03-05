@@ -239,10 +239,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
         public void initialize() {
             intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+            
         }
 
         public void periodic() {
-            if (intake.getRaiseEncoder().getPosition() >= 20) {
+            if (intake.getRaiseEncoder().getPosition() >= 5) {
                 end = true;
             } else if (intake.getRaiseMotorCurrent() >= 70) {
                 end = true;

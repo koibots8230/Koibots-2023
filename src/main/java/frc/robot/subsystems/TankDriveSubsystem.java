@@ -148,17 +148,12 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryRightMotor.set(rightSpeed);
     }
     
-    public void setSpeed(Boolean Increase){
-        if (Increase) {
-            //Only need increase - if it's called and Increase is false than decrease is pressed instead
-            if (speedCoefficient < 1) {
-                speedCoefficient += 0.05;
-            }
-        } else {
-            if (speedCoefficient > 0){
-                speedCoefficient -= 0.05;
-            }
-        }
+    public void SlowDrive() {
+        speedCoefficient = .33;
+    }
+
+    public void UnslowDrive() {
+        speedCoefficient = 1;
     }
 
     public void setMotorVoltage(double leftVoltage, double rightVoltage) {
@@ -203,8 +198,8 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
-            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble())*speedCoefficient, CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble())*speedCoefficient, CANSparkMax.ControlType.kDutyCycle);
         }
 
         private double adjustForDeadzone(double in) {

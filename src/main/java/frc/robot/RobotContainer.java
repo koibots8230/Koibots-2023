@@ -25,11 +25,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.util.sendable.Sendable;
 
 import java.util.function.DoubleSupplier;
 
@@ -47,7 +46,7 @@ import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
  * the robot
  * (including subsystems, commands, and button mappings) should be declared
  * here.
- */
+ */ 
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
 
@@ -58,8 +57,7 @@ public class RobotContainer {
   public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
   // public final VisionSubsystem m_VisionSubsystem = new
   // VisionSubsystem(m_sideChooser.getSelected());
-  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem,
-      m_tankDriveSubsystem);
+  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
 
   // Controlers
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
@@ -97,15 +95,19 @@ public class RobotContainer {
 
     // Create Triggers here | Triggers should be named t_CommandName
 
-    // ======================================Operator
-    // Controls======================================
+    // ======================================Operator Controls======================================
 
+
+    Trigger slowMode = m_operatorHID.triangle();
+    slowMode.onTrue(new InstantCommand(() -> m_tankDriveSubsystem.SlowDrive()));
+    slowMode.onFalse(new InstantCommand(() -> m_tankDriveSubsystem.UnslowDrive()));
+    
     // Speed Up/Down
-    Trigger operatorSpeedUp = m_operatorHID.cross();
-    Trigger operatorSpeedDown = m_operatorHID.circle();
+    //Trigger operatorSpeedUp = m_operatorHID.cross();
+    //Trigger operatorSpeedDown = m_operatorHID.circle();
 
-    operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-    operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
+    //operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
+    //operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
     // LED
     // Trigger leftTrigger_op =
@@ -179,10 +181,11 @@ public class RobotContainer {
     // choosing what auto
     m_autoChooser = new SendableChooser<Integer>();
 
-    m_autoChooser.addOption("Shoot->Move", 0);
-    m_autoChooser.addOption("Shoot->Autobalance", 1);
+    m_autoChooser.addOption("Shoot -> Move", 0);
+    m_autoChooser.addOption("Shoot -> Autobalance", 1);
     m_autoChooser.addOption("DO NOTHING", 2);
     m_autoChooser.addOption("Exit Community + Balance", 3);
+    m_autoChooser.addOption("Only Shoot Move", 4);
     m_customAuto = new SendableChooser<Boolean>();
     // integer representes which auto we get
     m_customChooser = new SendableChooser<Integer>();
@@ -202,7 +205,6 @@ public class RobotContainer {
     autobal_limit = m_autotab.add("ShootAutobalance Encoder Limit", Constants.AUTOBALANCE_MOVE_LIMIT).getEntry();
     shoot_limit = m_autotab.add("ShootMove EncoderLimit", Constants.SHOOT_MOVE_LIMIT).getEntry();
 
-    AHRS m_gyro = new AHRS(SPI.Port.kMXP);
     // m_autoChooser.setDefaultOption("Shoot->Move", new
     // shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
     // Constants.SHOOT_SECONDS,
@@ -303,7 +305,13 @@ public class RobotContainer {
               Constants.AUTO_RIGHT_SPEED,
               n_gyro,
               m_intake);
-      }
+        case (4):
+            return new ShootMoveOnly(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
+            Constants.SHOOT_SECONDS,
+            Constants.SHOOT_MOVE_LIMIT,
+            Constants.SHOOT_LEFT_SPEED,
+            Constants.SHOOT_RIGHT_SPEED); 
+            }
       return null;
     }
   }
