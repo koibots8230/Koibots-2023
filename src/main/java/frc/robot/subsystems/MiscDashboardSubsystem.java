@@ -50,11 +50,11 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 3).
         withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
 
-        main_tab.addNumber("Left Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 1).
-        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
+        main_tab.addNumber("Left Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()*(68/30)).withPosition(0, 1).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -7500, "max", 7500));
 
-        main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getRightDriveSpeed()).withPosition(0, 2).
-        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
+        main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getRightDriveSpeed()*(68/30)).withPosition(0, 2).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -7500, "max", 7500));
         
 
 

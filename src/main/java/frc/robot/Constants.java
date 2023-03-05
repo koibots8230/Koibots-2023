@@ -13,7 +13,7 @@ public class Constants {
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
   // WHAT YOU ARE DOING.
 
-  public static final double AUTOBALANCE_MOVE_LIMIT = 25;
+  public static final double AUTOBALANCE_MOVE_LIMIT = 85;
   public static final double SHOOT_MOVE_LIMIT = 140;
 
   public static final double SHOOT_RIGHT_SPEED = 0.25;
@@ -26,17 +26,17 @@ public class Constants {
 
   // Slowmotion, deadzone, etc:
   public static final double SLOW_MODE_FACTOR = 0.5;
-  public static final double AUTO_SPEED = 0.1;
-  public static final double MAX_DRIVETRAIN_SPEED = 1;
+  public static final double AUTO_SPEED = 0.07;
+  public static final double MAX_DRIVETRAIN_SPEED = .85;
 
   // Intake/Midtake Constants
-  public static final double STARS_RUNNING_SPEED = 0.4;
-  public static final double BELT_RUNNING_SPEED = 0.45;
-  public static final double INTAKE_RUNNING_SPEED = 0.3;
+  public static final double STARS_RUNNING_SPEED = 0.30;
+  public static final double BELT_RUNNING_SPEED = 0.30;
+  public static final double INTAKE_RUNNING_SPEED = 0.43;
 
-  // Teleop Shooting
+  // Teleop Shooti
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
-  public static final double L2_SHOOTER_SPEED = .6;
+  public static final double L2_SHOOTER_SPEED = .7;
   public static final double L1_SHOOTER_SPEED = .4;
 
   public static final double DEADZONE = 0.15; // Probably don't change this

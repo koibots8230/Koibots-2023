@@ -28,6 +28,7 @@ import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 public class TankDriveSubsystem extends SubsystemBase {
 
@@ -63,7 +64,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         secondaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
-        drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
+        //drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
 
         // Encoders
         primaryRightEncoder = primaryRightMotor.getEncoder();
@@ -90,6 +91,20 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     // ================================Getters================================
     
+    public void setBrake() {
+        primaryLeftMotor.setIdleMode(IdleMode.kBrake);
+        primaryRightMotor.setIdleMode(IdleMode.kBrake);
+        secondaryLeftMotor.setIdleMode(IdleMode.kBrake);
+        secondaryRightMotor.setIdleMode(IdleMode.kBrake);
+    }
+
+    public void setCoast() { 
+        primaryLeftMotor.setIdleMode(IdleMode.kCoast);
+        primaryRightMotor.setIdleMode(IdleMode.kCoast);
+        secondaryLeftMotor.setIdleMode(IdleMode.kCoast);
+        secondaryRightMotor.setIdleMode(IdleMode.kCoast);
+    }
+
     public DifferentialDriveWheelSpeeds getWheelSpeeds(){
         return wheelSpeeds;
     }

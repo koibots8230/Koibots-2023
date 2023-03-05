@@ -53,7 +53,8 @@ public class shootAutobalance extends SequentialCommandGroup {
       m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
       new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
       m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, m_EncoderDistance, tankDriveSubsystem),
-      new AutoBalanceCommand(Gyro, m_tankDriveSubsystem)
+      new InstantCommand(() -> m_tankDriveSubsystem.setBrake()),
+      new AutoBalanceCommand(Gyro, tankDriveSubsystem)
     );
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());

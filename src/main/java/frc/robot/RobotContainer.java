@@ -24,10 +24,12 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.util.sendable.Sendable;
 
 import java.util.function.DoubleSupplier;
 
@@ -35,7 +37,6 @@ import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
-import frc.robot.commands.IntakeCommand;
 
 
 
@@ -78,6 +79,7 @@ public class RobotContainer {
   SendableChooser<Integer> m_autoChooser;
   SendableChooser<Boolean> m_customAuto;
   SendableChooser<Integer> m_customChooser;
+  SendableChooser<Double> m_intakeSpeedChooser;
   //SendableChooser<Boolean> m_sideChooser;
 
 
@@ -118,22 +120,14 @@ public class RobotContainer {
     shootL3.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 3));
 
     // Manual Intake Up/Down
-    //Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
-    //Trigger intakeMoveDown = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, .3); 
-    //intakeMoveUp.whileTrue(
-      //new StartEndCommand(
-        //() -> m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED),
-        //() -> m_intake.setRaiseIntakeSpeed(0),
-        //m_intake
-        //)
-    //);
-    //intakeMoveDown.whileTrue(
-      //new StartEndCommand(
-        //() -> m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED),
-        //() -> m_intake.setRaiseIntakeSpeed(0),
-        //m_intake
-      //)
-    //);
+    Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
+    Trigger intakeMoveDown = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, .3); 
+    intakeMoveUp.whileTrue(new IntakeManualCommand(m_intake, true));
+    intakeMoveDown.whileTrue(new IntakeManualCommand(m_intake, false));
+
+    Trigger clearButton = m_operatorHID.circle();
+
+    clearButton.whileTrue(new InstantCommand(() -> m_intake.ClearStickies(), m_intake));
 
 
     // ======================================DRIVER CONTROLS======================================
@@ -150,8 +144,8 @@ public class RobotContainer {
     //Trigger flipTrigger = m_driverHID.leftBumper();
     //flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
 
-    //Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
-    //runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
+    Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
+    runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
 
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
@@ -237,6 +231,12 @@ public class RobotContainer {
     return m_driverHID;
   }
 
+  public void ResetPositions() {
+    m_intake.resetPosition();
+  }
+  public TankDriveSubsystem getDrive() {
+    return m_tankDriveSubsystem;
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

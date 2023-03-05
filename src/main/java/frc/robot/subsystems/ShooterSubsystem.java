@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -34,6 +35,9 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
     shooterEncoder = shooterMotorL.getEncoder();
+
+    shooterMotorL.setIdleMode(IdleMode.kBrake);
+    shooterMotorR.setIdleMode(IdleMode.kBrake);
   }
 
   public double getShooterSpeed() {
@@ -45,7 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorL.set(Speed);
   }
   
-  public Pose3d getPose() {
+  public Pose3d g54jetPose() {
     return Bot3d;
   }
 
@@ -99,7 +103,7 @@ public class ShooterSubsystem extends SubsystemBase {
     private double shootSpeed;
 
     public ShootTimeCommand(ShooterSubsystem subsystem, double time) {
-      this(subsystem, time, Constants.L2_SHOOTER_SPEED);
+      this(subsystem, time, 0.6);
     }
 
     public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, double ShootTime, double speed) {

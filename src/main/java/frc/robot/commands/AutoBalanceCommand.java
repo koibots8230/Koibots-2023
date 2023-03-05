@@ -13,6 +13,7 @@ import frc.robot.commands.AutoBalanceCommand;
 
 public class AutoBalanceCommand extends CommandBase {
     private final AHRS gyro;
+    private double Factor = 1;
     private final TankDriveSubsystem m_driveSubsystem;
     /** Creates a new AutoBalanceCommand. */
     public AutoBalanceCommand(AHRS _Gyro, TankDriveSubsystem _rightDrive) {
@@ -40,15 +41,15 @@ public class AutoBalanceCommand extends CommandBase {
       leftDirection = gyro.getRoll();
     }
     
-    m_driveSubsystem.setMotor(-Constants.AUTO_SPEED * Math.signum(rightDirection), -Constants.AUTO_SPEED * Math.signum(leftDirection));
+    m_driveSubsystem.setMotor(-Constants.AUTO_SPEED * Factor * Math.signum(rightDirection), -Constants.AUTO_SPEED * Factor * Math.signum(leftDirection));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (false == interrupted) {
-        m_driveSubsystem.setMotor(0, 0);
-      new waitCommand(20, gyro, m_driveSubsystem).schedule();
+    m_driveSubsystem.setMotor(0, 0);
+    if (!interrupted) {
+      new waitCommand(25, gyro, m_driveSubsystem).schedule();
     }
   }
 
@@ -56,6 +57,7 @@ public class AutoBalanceCommand extends CommandBase {
   @Override
   public boolean isFinished() {
     if (Math.abs(gyro.getRoll()) <= 2.5) {
+      Factor -= 0.05;
       return true;
     }
     return false;

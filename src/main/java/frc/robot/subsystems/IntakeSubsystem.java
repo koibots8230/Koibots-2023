@@ -24,7 +24,6 @@ import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
 import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import java.util.function.DoubleSupplier;
 
@@ -74,6 +73,13 @@ public class IntakeSubsystem extends SubsystemBase {
 
     }
 
+    public void resetPosition() {
+        raiseIntakeEncoder.setPosition(0);
+        intakeEncoder.setPosition(0);
+        conveyerEncoder.setPosition(0);
+        rightStarWheelsMotor.getEncoder().setPosition(0);
+    }
+
     enum IntakeState {
         BOTTOM,
         TOP,
@@ -96,6 +102,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     
     // ================================Setters================================
+
+    public void ClearStickies() {
+        raiseIntakeMotor.clearFaults();
+    }
 
     public void setRaiseIntakeSpeed(double speed){
         raiseIntakeMotor.set(speed);
@@ -234,6 +244,8 @@ public class IntakeSubsystem extends SubsystemBase {
         public void periodic() {
             if (intake.getRaiseEncoder().getPosition() >= 20) {
                 end = true;
+            } else if (intake.getRaiseMotorCurrent() >= 70) {
+                end = true;
             }
         }
 
@@ -243,6 +255,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         public void end(boolean interrupted) {
             intake.setRaiseIntakeSpeed(0);
+            resetPosition();
         }
     }
 
