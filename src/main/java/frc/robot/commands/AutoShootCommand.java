@@ -1,6 +1,10 @@
 package frc.robot.commands;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
+
+import org.apache.commons.cli.HelpFormatter;
+import org.photonvision.EstimatedRobotPose;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -16,6 +20,11 @@ public class AutoShootCommand extends CommandBase {
   private int level;
   private Translation3d target;
 
+  private double distance2d;
+  private double hightDifference;
+
+  private double Velocity;
+
   private boolean end = false;
 
   public AutoShootCommand(ShooterSubsystem _shooter, VisionSubsystem _vision, int _level) {
@@ -30,7 +39,25 @@ public class AutoShootCommand extends CommandBase {
   @Override
   public void initialize() {
     
-    
+    Optional<EstimatedRobotPose> photonPose = vision.photonPoseEstimator.update();
+
+    if  (!photonPose.isPresent()) {
+      end = true;
+    }
+    Pose3d botPose = photonPose.get().estimatedPose;
+    Pose3d targetPose = shooter.getNearestTarget(botPose.getTranslation(), level);
+
+    distance2d = Math.sqrt(
+      ((botPose.getX() - targetPose.getX()) * (botPose.getX() - targetPose.getX())) +
+      ((botPose.getY() - targetPose.getY()) * (botPose.getY() - targetPose.getY())) 
+    );
+
+    hightDifference = targetPose.getZ() - Constants.SHOOTER_FROM_GROUND - botPose.getZ();
+
+    Velocity = 0;
+
+    shooter.SetShooter(Velocity*Constants.VELOCITY_TO_SPEED);
+
     // Velocity = 0;
     // if (ShooterSubsystem.VariablesDefined) {
     //   double ShootingHeight = 0;

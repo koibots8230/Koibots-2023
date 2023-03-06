@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -50,11 +51,11 @@ public class ShooterSubsystem extends SubsystemBase {
     } else if (Level == 3) {
       return Constants.HIGH_SPOTS;
     }
-    
+
     return null;
   }
 
-  public Translation3d getNearestTarget(Translation3d Robot_Pose, int Level) {
+  public Pose3d getNearestTarget(Translation3d Robot_Pose, int Level) {
     
     Translation3d Closest = new Translation3d(0, 0, 0);
     double closestDistance = 0;
@@ -69,9 +70,9 @@ public class ShooterSubsystem extends SubsystemBase {
     }
 
     if (ClosestDistance > Constants.MAX_SHOOTER_RANGE) {
-      return new Translation3d(0, 0, 0);
+      return new Pose3d(0, 0, 0, new Rotation3d());
     }
-    return Closest;
+    return new Pose3d(Closest, new Rotation3d());
   }
 
   public double getShooterSpeed() {
