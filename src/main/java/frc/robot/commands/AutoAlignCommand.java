@@ -82,5 +82,3 @@ public class AutoAlignCommand extends CommandBase {
     return false;
   }
 }
-
-

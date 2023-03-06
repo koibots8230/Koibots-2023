@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -12,6 +15,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
   // Auto Shoot Variables
@@ -38,6 +42,36 @@ public class ShooterSubsystem extends SubsystemBase {
 
     shooterMotorL.setIdleMode(IdleMode.kBrake);
     shooterMotorR.setIdleMode(IdleMode.kBrake);
+  }
+
+  private List<Translation3d> getCubeList(int Level) {
+    if (Level == 2) {
+      return Constants.MIDDLE_SPOTS;
+    } else if (Level == 3) {
+      return Constants.HIGH_SPOTS;
+    }
+    
+    return null;
+  }
+
+  public Translation3d getNearestTarget(Translation3d Robot_Pose, int Level) {
+    
+    Translation3d Closest = new Translation3d(0, 0, 0);
+    double closestDistance = 0;
+    double Distance;
+    
+    for (int a = 0; a < 3; a++) {
+      Distance = Robot_Pose.getDistance(getCubeList(Level).get(a));
+      if (Distance > closestDistance) {
+        closestDistance = Distance;
+        Closest = getCubeList(Level).get(a);
+      }
+    }
+
+    if (ClosestDistance > Constants.MAX_SHOOTER_RANGE) {
+      return new Translation3d(0, 0, 0);
+    }
+    return Closest;
   }
 
   public double getShooterSpeed() {

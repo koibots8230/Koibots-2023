@@ -84,7 +84,7 @@ public class Constants {
   public static final double Y3 = 174.625 * 0.0254;
 
   public static final Translation3d MC1 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
-  public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
+  public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y2, MIDDLE_HEIGHT);
   public static final Translation3d MC3 = new Translation3d(MIDDLE_X, Y3, MIDDLE_HEIGHT);
 
   public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1, MC2, MC3);
@@ -93,10 +93,12 @@ public class Constants {
   public static final double HIGH_X = 12.25 * 0.0254;
 
   public static final Translation3d HC1 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
-  public static final Translation3d HC2 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
+  public static final Translation3d HC2 = new Translation3d(HIGH_X, Y2, HIGH_HEIGHT);
   public static final Translation3d HC3 = new Translation3d(HIGH_X, Y3, HIGH_HEIGHT);
 
   public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1, HC2, HC3);
+
+  public static final double MAX_SHOOTER_RANGE = 2;
 
   // Encoder Values
   public static final double RIGHT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
