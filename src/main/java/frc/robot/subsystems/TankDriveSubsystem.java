@@ -12,6 +12,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
@@ -167,8 +168,6 @@ public class TankDriveSubsystem extends SubsystemBase {
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
-        private SparkMaxPIDController m_rightPID;
-        private SparkMaxPIDController m_leftPID;
         private TankDriveSubsystem m_DriveSubsystem;
 
         public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed, TankDriveSubsystem subsystem) {
@@ -180,26 +179,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         
         @Override
         public void initialize() {
-            m_rightPID = m_DriveSubsystem.getRightPID();
-            m_leftPID = m_DriveSubsystem.getLeftPID();
 
-            m_rightPID.setOutputRange(-1, 1);
-            m_leftPID.setOutputRange(-1, 1);
-
-            m_rightPID.setP(6e-5);
-            m_leftPID.setP(6e-5);
-
-            m_rightPID.setI(0);
-            m_leftPID.setI(0);
-
-            m_rightPID.setD(0);
-            m_leftPID.setD(0);
         }
 
         @Override
         public void execute() {
-            m_leftPID.setReference(adjustForDeadzone(m_leftSpeed.getAsDouble())*speedCoefficient, CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(adjustForDeadzone(m_rightSpeed.getAsDouble())*speedCoefficient, CANSparkMax.ControlType.kDutyCycle);
+            m_DriveSubsystem.setMotor(
+                adjustForDeadzone(m_leftSpeed.getAsDouble()) * speedCoefficient, 
+                adjustForDeadzone(m_rightSpeed.getAsDouble()) * speedCoefficient);
         }
 
         private double adjustForDeadzone(double in) {
@@ -207,7 +194,7 @@ public class TankDriveSubsystem extends SubsystemBase {
                 return 0;
             }
             double sign = (in < 0) ? -Constants.MAX_DRIVETRAIN_SPEED : Constants.MAX_DRIVETRAIN_SPEED;
-            return sign*(in*in);
+            return sign*(in * in);
         }
     }
 
@@ -234,24 +221,6 @@ public class TankDriveSubsystem extends SubsystemBase {
         
         @Override
         public void initialize() {
-
-            m_initialPositions = m_DriveSubsystem.getEncoderPositions();
-            hasReachedEnd = false;
-
-            m_rightPID = m_DriveSubsystem.getRightPID();
-            m_leftPID = m_DriveSubsystem.getLeftPID();
-
-            m_rightPID.setOutputRange(-1, 1);
-            m_leftPID.setOutputRange(-1, 1);
-
-            m_rightPID.setP(6e-5);
-            m_leftPID.setP(6e-5);
-
-            m_rightPID.setI(0);
-            m_leftPID.setI(0);
-
-            m_rightPID.setD(0);
-            m_leftPID.setD(0);
         }
 
         @Override
@@ -282,5 +251,34 @@ public class TankDriveSubsystem extends SubsystemBase {
         }
     }
 
+    public class RelativeDrive extends CommandBase {
+        double m_finalAngle;
+        double m_offsetX;
+        double m_offsetY;
+    
 
+        TankDriveSubsystem m_drive;
+
+        RelativeDrive(double relativeX_in, double relativeY_in, double finalAngle_cc_deg, TankDriveSubsystem drive) {
+            m_drive = drive;
+
+        }
+
+        @Override
+        public void initialize() {
+            
+
+            m_drive.setMotor(temp, temp);
+        }
+        
+        @Override
+        public boolean isFinished() {
+            return true;
+        }
+        
+        @Override
+        public void end(boolean interrupted) {
+            
+        }
+    }
 }
