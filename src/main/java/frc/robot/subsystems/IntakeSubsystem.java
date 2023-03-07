@@ -24,10 +24,8 @@ import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
 import com.revrobotics.SparkMaxPIDController;
+
 import java.util.function.DoubleSupplier;
-
-import org.ejml.equation.IntegerSequence.For;
-
 
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
@@ -38,7 +36,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax leftStarWheelsMotor;
     private final CANSparkMax rightStarWheelsMotor;
 
-    // This motor raises and lowers the intake:
     private final CANSparkMax raiseIntakeMotor;
     private final RelativeEncoder raiseIntakeEncoder;
 
@@ -46,10 +43,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final AnalogInput topHallEffectSensor;
     private final AnalogInput bottomHallEffectSensor;
-    private IntakeState state;
+    
     private IntakeState previous_state;
 
     public IntakeSubsystem() {
+        // Motors
         intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
         intakeMotor.setInverted(false);
         intakeEncoder = intakeMotor.getEncoder();
@@ -63,7 +61,6 @@ public class IntakeSubsystem extends SubsystemBase {
         leftStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_R, MotorType.kBrushless);
         leftStarWheelsMotor.follow(rightStarWheelsMotor, true);
 
-        // raiseIntakeMotor:
         raiseIntakeMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
         raiseIntakeMotor.setInverted(false);
         raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
@@ -74,7 +71,13 @@ public class IntakeSubsystem extends SubsystemBase {
         topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
         bottomHallEffectSensor = new AnalogInput(1); // Change port numer when testing the code
 
-        state = IntakeState.TOP;
+    }
+
+    public void resetPosition() {
+        raiseIntakeEncoder.setPosition(0);
+        intakeEncoder.setPosition(0);
+        conveyerEncoder.setPosition(0);
+        rightStarWheelsMotor.getEncoder().setPosition(0);
     }
 
     enum IntakeState {
@@ -95,31 +98,29 @@ public class IntakeSubsystem extends SubsystemBase {
         double midCurrent = firstConveyer.getOutputCurrent();
         SmartDashboard.putNumber("Midtake Motor Current (A)", midCurrent);
         SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
-        state = getIntakeState();
 
     }
+    
+    // ================================Setters================================
 
-    public SparkMaxPIDController getIntakePID() {
-        return rightStarWheelsMotor.getPIDController();
+    public void ClearStickies() {
+        raiseIntakeMotor.clearFaults();
     }
 
-    public SparkMaxPIDController getMidtakePID() {
-        return intakeMotor.getPIDController();
+    public void setRaiseIntakeSpeed(double speed){
+        raiseIntakeMotor.set(speed);
     }
-
-    @Override
-    public void simulationPeriodic() {
-    }
-
     public void turnOn(Boolean Forwards) {
         if (Forwards){
-            intakeMotor.set(-Constants.RUNNING_SPEED);
-            firstConveyer.set(Constants.RUNNING_SPEED);
-            rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
+            intakeMotor.set(-Constants.INTAKE_RUNNING_SPEED);
+            firstConveyer.set(Constants.BELT_RUNNING_SPEED);
+            rightStarWheelsMotor.set(Constants.STARS_RUNNING_SPEED);
+            leftStarWheelsMotor.set(Constants.STARS_RUNNING_SPEED);
         } else {
-            intakeMotor.set(Constants.RUNNING_SPEED);
-            firstConveyer.set(-Constants.RUNNING_SPEED);
-            rightStarWheelsMotor.set(-Constants.RUNNING_SPEED);
+            intakeMotor.set(Constants.INTAKE_RUNNING_SPEED);
+            firstConveyer.set(-.15);
+            rightStarWheelsMotor.set(-.15);
+            leftStarWheelsMotor.set(-.15);
         }
     }
 
@@ -137,25 +138,14 @@ public class IntakeSubsystem extends SubsystemBase {
         return calculated_speed;
     }
 
+    // ================================Getters================================
+
     public double getRaiseMotorCurrent() {
         return raiseIntakeMotor.getOutputCurrent();
     }
 
     public double getIntakePosition() {
         return intakePosition;
-    }
-
-    public void setRaiseIntakeSpeed(double speed){
-        raiseIntakeMotor.set(approximateSpeed(raiseIntakeEncoder.getPosition()));
-        //check if weve reached the bottom or top and update position
-
-
-        //check if weve reached bottom or end
-        boolean EncoderPositionPassed = (Math.abs(getRaiseEncoder().getPosition()) >= Constants.INTAKE_CHANGE_POSITION);
-
-        if((getIntakeState() == IntakeState.BOTTOM || getIntakeState() == IntakeState.TOP) && (EncoderPositionPassed)) {
-            raiseIntakeEncoder.setPosition(0);  
-        }
     }
 
     public RelativeEncoder getRaiseEncoder() {
@@ -181,6 +171,16 @@ public class IntakeSubsystem extends SubsystemBase {
         }
         return IntakeState.MOVE;
     }
+
+    public SparkMaxPIDController getIntakePID() {
+        return rightStarWheelsMotor.getPIDController();
+    }
+
+    public SparkMaxPIDController getMidtakePID() {
+        return intakeMotor.getPIDController();
+    }
+    
+    // ================================Commands================================
 
     public class IntakeCommand extends CommandBase {
         private DoubleSupplier m_intakeSpeed;
@@ -225,6 +225,38 @@ public class IntakeSubsystem extends SubsystemBase {
                 return 0;
             }
             return in;
+        }
+    }
+
+    public class MoveIntakeByEncoder extends CommandBase {
+        IntakeSubsystem intake;
+        boolean end = false;
+
+        public MoveIntakeByEncoder(IntakeSubsystem _intake) {
+            addRequirements(_intake);
+            intake = _intake;
+        }
+
+        public void initialize() {
+            intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+            
+        }
+
+        public void periodic() {
+            if (intake.getRaiseEncoder().getPosition() >= 5) {
+                end = true;
+            } else if (intake.getRaiseMotorCurrent() >= 70) {
+                end = true;
+            }
+        }
+
+        public boolean isFinished() {
+            return end;
+        }
+
+        public void end(boolean interrupted) {
+            intake.setRaiseIntakeSpeed(0);
+            resetPosition();
         }
     }
 

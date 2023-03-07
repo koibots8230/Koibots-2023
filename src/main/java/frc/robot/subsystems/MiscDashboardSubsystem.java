@@ -1,16 +1,21 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 // import java.lang.invoke.ClassSpecializer.SpeciesData;
 import java.util.Map;
 
+import com.kauailabs.navx.frc.AHRS;
+
 public class MiscDashboardSubsystem extends SubsystemBase {
 
+    private AHRS gyro = new AHRS(Port.kMXP);
     // private int periodic_loop_counter = 0;
     private boolean voltage_alert = true;
     private double voltage = 11; // Voltage of the battery
@@ -40,22 +45,19 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         //main_tab.addNumber("Midtake Motor Speed (RPM)", () -> midSpeed).withPosition(3, 2).
         //withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
 
-        main_tab.addNumber("Raise Intake Motor Current (A)", () -> intake.getIntakeRaiseMotor().getOutputCurrent()).withPosition(0, 3).
-        withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
-
-        main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
-
-        main_tab.addNumber("Left Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
-
-        main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
         
-        main_tab.addNumber("Speed Difference", () -> drive.getLeftDriveSpeed()-drive.getRightDriveSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
 
+        main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 3).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
+
+        main_tab.addNumber("Left Drive Motor Speed (RPM)", () -> drive.getLeftDriveSpeed()*(68/30)).withPosition(0, 1).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -7500, "max", 7500));
+
+        main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getRightDriveSpeed()*(68/30)).withPosition(0, 2).
+        withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -7500, "max", 7500));
         
+
+
 
         // Cube or cone? Place your bets!!
         //main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
@@ -70,6 +72,8 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         }
         periodic_loop_counter += 1; */
 
+        SmartDashboard.putNumber("Gyro Roll", gyro.getRoll());
+        SmartDashboard.putNumber("Gyro Pitch", gyro.getPitch());
         voltage_alert = getBatteryVoltageAlert();
         voltage = getBatteryVoltage();
     }
@@ -93,10 +97,9 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     }
 
     public static boolean getBatteryVoltageAlert() {
-        if (RobotController.getInputVoltage() >= 12) {
+        if (RobotController.getInputVoltage() > 11) {
             return true;
         }
-
         return false;
 
         /* if (RobotController.getBatteryVoltage() >= 12) {

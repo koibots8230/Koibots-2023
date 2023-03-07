@@ -1,15 +1,11 @@
 package frc.robot.subsystems;
 
-import java.lang.System.Logger.Level;
-import java.util.Optional;
-import java.util.function.DoubleSupplier;
-
-import javax.swing.text.StyledEditorKit.BoldAction;
-
-import org.photonvision.EstimatedRobotPose;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -20,8 +16,10 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
+  // Auto Shoot Variables
   public static Pose3d Bot3d = null;
   public static boolean VariablesDefined = false;
   public static Translation3d Closest = new Translation3d(0, 0, 0);
@@ -33,6 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private double distance;
   private Translation2d Spot = new Translation2d(0, 0);
 
+  // Motors/Encoders
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
   private RelativeEncoder shooterEncoder;
@@ -41,6 +40,39 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
     shooterEncoder = shooterMotorL.getEncoder();
+
+    shooterMotorL.setIdleMode(IdleMode.kBrake);
+    shooterMotorR.setIdleMode(IdleMode.kBrake);
+  }
+
+  private List<Translation3d> getCubeList(int Level) {
+    if (Level == 2) {
+      return Constants.MIDDLE_SPOTS;
+    } else if (Level == 3) {
+      return Constants.HIGH_SPOTS;
+    }
+
+    return null;
+  }
+
+  public Pose3d getNearestTarget(Translation3d Robot_Pose, int Level) {
+    
+    Translation3d Closest = new Translation3d(0, 0, 0);
+    double closestDistance = 0;
+    double Distance;
+    
+    for (int a = 0; a < 3; a++) {
+      Distance = Robot_Pose.getDistance(getCubeList(Level).get(a));
+      if (Distance > closestDistance) {
+        closestDistance = Distance;
+        Closest = getCubeList(Level).get(a);
+      }
+    }
+
+    if (ClosestDistance > Constants.MAX_SHOOTER_RANGE) {
+      return new Pose3d(0, 0, 0, new Rotation3d());
+    }
+    return new Pose3d(Closest, new Rotation3d());
   }
 
   public double getShooterSpeed() {
@@ -48,16 +80,15 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   
   public void SetShooter(double Speed) {
-    shooterMotorR.set(Speed);
-    shooterMotorL.set(-Speed);
+    shooterMotorR.set(-Speed);
+    shooterMotorL.set(Speed);
   }
   
-  public Pose3d getPose() {
+  public Pose3d g54jetPose() {
     return Bot3d;
   }
 
   public class CommunityShotCommand extends CommandBase {
-    private DoubleSupplier m_Trigger;
     private ShooterSubsystem shooter;
 
     public CommunityShotCommand(ShooterSubsystem m_ShooterSubsystem) {
@@ -98,36 +129,36 @@ public class ShooterSubsystem extends SubsystemBase {
       shooter.SetShooter(0);
     }
   }
-
-  @Override
-  public void simulationPeriodic() {
-
-  }
-
-    
+   
   public class ShootTimeCommand extends CommandBase {
     private ShooterSubsystem shooter;
     private Timer shootTimer;
     private double shootLimit;
     private boolean hasFinished;
+    private double shootSpeed;
 
-    public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, double ShootTime) {
+    public ShootTimeCommand(ShooterSubsystem subsystem, double time) {
+      this(subsystem, time, 0.6);
+    }
+
+    public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, double ShootTime, double speed) {
         addRequirements(m_ShooterSubsystem);
         shooter = m_ShooterSubsystem;
         shootTimer = new Timer();
         shootLimit = ShootTime;
         hasFinished = false;
+       shootSpeed = speed;
     }
 
     @Override
     public void initialize() {
       shootTimer.start();
-      shooter.SetShooter(Constants.L1_SHOOTER_SPEED);
+      shooter.SetShooter(shootSpeed);
     }
 
     @Override
     public void execute() {
-      //if weve run the shooter for long enough
+      // Check for time
       if (shootTimer.get() >= shootLimit) {
         hasFinished = true;
       }
@@ -143,9 +174,4 @@ public class ShooterSubsystem extends SubsystemBase {
       return hasFinished;
     }
   }
-
-  
-
-  // Put methods for controlling this subsystem
-  // here. Call these from Commands.
 }

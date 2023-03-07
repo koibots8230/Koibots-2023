@@ -4,16 +4,17 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants;
 import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
-import com.kauailabs.navx.frc.AHRS;
+import frc.robot.subsystems.IntakeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class shootAutobalance extends SequentialCommandGroup {
+public class ShootMoveOnly extends SequentialCommandGroup {
 
   TankDriveSubsystem m_tankDriveSubsystem;
   ShooterSubsystem m_ShooterSubsystem;
@@ -25,36 +26,29 @@ public class shootAutobalance extends SequentialCommandGroup {
   double m_leftSpeed;
   double m_rightSpeed;
 
-  AHRS m_Gyro;
-
-  /** Creates a new shootAutobalance. */
-  public shootAutobalance(
-      TankDriveSubsystem tankDriveSubsystem,
+  /** Creates a new shootMove. */
+  public ShootMoveOnly(TankDriveSubsystem tankDriveSubsystem,
       ShooterSubsystem shooterSubsystem,
+      IntakeSubsystem intakeSubsystem,
       double ShootTime,
       double EncoderDistance,
       double leftSpeed,
-      double rightSpeed,
-      AHRS Gyro,
-      IntakeSubsystem intakeSubsystem) {
+      double rightSpeed) {
 
     m_tankDriveSubsystem = tankDriveSubsystem;
     m_ShooterSubsystem = shooterSubsystem;
+    m_IntakeSubsystem = intakeSubsystem;
     m_EncoderDistance = EncoderDistance;
     m_ShootTime = ShootTime;
     m_leftSpeed = leftSpeed;
     m_rightSpeed = rightSpeed;
-    m_IntakeSubsystem = intakeSubsystem;
-    m_Gyro = Gyro;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> m_IntakeSubsystem.turnOn(true), m_IntakeSubsystem),
-      m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
-      new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
-      m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, m_EncoderDistance, tankDriveSubsystem),
-      new InstantCommand(() -> m_tankDriveSubsystem.setBrake()),
-      new AutoBalanceCommand(Gyro, tankDriveSubsystem)
-    );
+        new InstantCommand(() -> m_IntakeSubsystem.turnOn(true), m_IntakeSubsystem),
+        m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
+        new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
+        m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, m_EncoderDistance, tankDriveSubsystem)
+    ); 
   }
 }
