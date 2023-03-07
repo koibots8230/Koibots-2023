@@ -12,7 +12,6 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
@@ -252,23 +251,33 @@ public class TankDriveSubsystem extends SubsystemBase {
     }
 
     public class RelativeDrive extends CommandBase {
-        double m_finalAngle;
-        double m_offsetX;
-        double m_offsetY;
-    
+        double leftSideDistance;
+        double rightSideDistance;
+        double leftSpeed;
+        double rightSpeed;
 
         TankDriveSubsystem m_drive;
 
-        RelativeDrive(double relativeX_in, double relativeY_in, double finalAngle_cc_deg, TankDriveSubsystem drive) {
+        RelativeDrive(double relativeX_m, double relativeY_m, double finalAngle_deg, TankDriveSubsystem drive) {
             m_drive = drive;
 
+            double x = relativeX_m - (Constants.ROBOT_WIDTH_m / 2);
+            double y = relativeY_m - ((Constants.ROBOT_WIDTH_m / 2) * Math.sin(Math.toRadians(finalAngle_deg)));
+            rightSideDistance = (Math.PI * (3 * (x + y)) - Math.sqrt(((3 * x) + y) * (x + (3 * y))));
+
+            double theta = Math.toRadians(finalAngle_deg);
+            x = relativeX_m + (Constants.ROBOT_WIDTH_m / 2);
+            y = relativeY_m + (Constants.ROBOT_WIDTH_m / 2);
+            
+            double h = Math.pow(x - y, 2) / Math.pow(x + y, 2);
+            double perimeter = Math.PI * (x + y) * (1 + ((3 * h) / (10 + Math.sqrt(4 - 3 * h))));
+            leftSideDistance = perimeter * (theta / (2 * Math.PI));
         }
 
         @Override
         public void initialize() {
-            
 
-            m_drive.setMotor(temp, temp);
+            m_drive.setMotor(0, 0);
         }
         
         @Override
@@ -280,5 +289,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         public void end(boolean interrupted) {
             
         }
+
+
     }
 }
