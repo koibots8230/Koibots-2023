@@ -106,10 +106,6 @@ public class RobotContainer {
 
     Trigger operatorSpeedUp = m_operatorHID.cross();
     Trigger operatorSpeedDown = m_operatorHID.circle();
-    Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.DEADZONE);
-    Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.DEADZONE);
-    rightTrigger_op.onTrue(new setLedColor(LEDstrips,Constants.Shape.CUBE));
-    leftTrigger_op.onTrue(new setLedColor(LEDstrips,Constants.Shape.CONE));
 
     Trigger slowMode = m_operatorHID.triangle();
     slowMode.onTrue(new InstantCommand(() -> m_tankDriveSubsystem.SlowDrive()));
@@ -122,13 +118,16 @@ public class RobotContainer {
     //operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
     //operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
 
-    // LED
+    // old LED
     // Trigger leftTrigger_op =
     // m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value,
     // Constants.DEADZONE);
     // Trigger rightTrigger_op =
     // m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value,
     // Constants.DEADZONE);
+
+    //new LED
+    new setLedColor(LEDstrips,Constants.Shape.CUBE);
 
     // Shooting
     Trigger shootL2 = m_operatorHID.L1();
@@ -233,7 +232,7 @@ public class RobotContainer {
     // m_gyro,
     // m_intake
     // ));
-
+    
     m_autoChooser.addOption(("NO AUTO"), null);
     configureButtonBindings();
     ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");

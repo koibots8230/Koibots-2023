@@ -7,12 +7,10 @@ import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
   public enum Shape{
-      CUBE,
-      CONE,
-      NONE
-  }
-
-public class Constants {
+    CUBE,
+    CONE,
+    NONE
+}
 
   // Constants for auto
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
