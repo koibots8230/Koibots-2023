@@ -131,7 +131,7 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public double[] getEncoderPositions(){
         //get the in between of both encoders
-        return (new double[] {primaryLeftEncoder.getPosition(),primaryRightEncoder.getPosition()});
+        return (new double[] {primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition()});
     }
 
     // ================================Setters================================
@@ -256,40 +256,76 @@ public class TankDriveSubsystem extends SubsystemBase {
         double leftSpeed;
         double rightSpeed;
 
+        double distanceSoFarLeft;
+        double distanceSoFarRight;
+
         TankDriveSubsystem m_drive;
 
         RelativeDrive(double relativeX_m, double relativeY_m, double finalAngle_deg, TankDriveSubsystem drive) {
             m_drive = drive;
 
-            double x = relativeX_m - (Constants.ROBOT_WIDTH_m / 2);
-            double y = relativeY_m - ((Constants.ROBOT_WIDTH_m / 2) * Math.sin(Math.toRadians(finalAngle_deg)));
-            rightSideDistance = (Math.PI * (3 * (x + y)) - Math.sqrt(((3 * x) + y) * (x + (3 * y))));
-
-            double theta = Math.toRadians(finalAngle_deg);
-            x = relativeX_m + (Constants.ROBOT_WIDTH_m / 2);
-            y = relativeY_m + (Constants.ROBOT_WIDTH_m / 2);
+            double n = (- (relativeX_m * Math.tan(Math.toRadians(finalAngle_deg)) - relativeY_m));
+            double a = (n / Math.tan(finalAngle_deg)) + Constants.ROBOT_WIDTH_m / 2;
+            rightSideDistance = ellipticArc(
+                a,
+                solveEllipseHeight(relativeX_m + (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), relativeY_m + (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), a, n),
+                finalAngle_deg
+            );
             
-            double h = Math.pow(x - y, 2) / Math.pow(x + y, 2);
-            double perimeter = Math.PI * (x + y) * (1 + ((3 * h) / (10 + Math.sqrt(4 - 3 * h))));
-            leftSideDistance = perimeter * (theta / (2 * Math.PI));
+            a -= Constants.ROBOT_WIDTH_m;
+            leftSideDistance = ellipticArc(
+                a,
+                solveEllipseHeight(relativeX_m - (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), relativeY_m - (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), a, n),
+                finalAngle_deg
+            );
+            
+        leftSpeed = (leftSpeed / rightSpeed) * Constants.AUTO_MAX_SPEED;
+        rightSpeed = (rightSpeed / leftSpeed) * Constants.AUTO_MAX_SPEED;
+        }
+
+        public double solveEllipseHeight(double x, double y, double a, double h) {
+            return (a * Math.sqrt((a + x - h) * (a - x + h)) * y) / ((a + x - h) * (a - x + h));
+        }
+
+        public double ellipticArc(double a, double b, double theta) {
+            double h = Math.pow(a - b, 2) / Math.pow(a + b, 2);
+            double perimeter = Math.PI * (a + b) * (1 + ((3 * h) / (10 + Math.sqrt(4 - 3 * h))));
+            return perimeter * (theta / (2 * Math.PI));
+        }
+
+        public double EncoderToDistance_cm(double x) {
+            return x * 5;
         }
 
         @Override
         public void initialize() {
+            distanceSoFarLeft = EncoderToDistance_cm(m_drive.getEncoderPositions()[0]);
+            distanceSoFarRight = EncoderToDistance_cm(m_drive.getEncoderPositions()[1]);
 
-            m_drive.setMotor(0, 0);
+            leftSideDistance += distanceSoFarLeft;
+            rightSideDistance += distanceSoFarRight;
+
+            m_drive.setMotor(leftSpeed, rightSpeed);
         }
-        
+
+        @Override
+        public void execute() {
+            
+            leftSideDistance = (m_drive.getEncoderPositions()[0] - distanceSoFarLeft) * Math.cos(gyro.getRoll());
+            rightSideDistance = (m_drive.getEncoderPositions()[1] - distanceSoFarRight) * Math.cos(gyro.getRoll());
+        }
+
         @Override
         public boolean isFinished() {
-            return true;
+            if (leftSideDistance > distanceSoFarLeft) {
+                return true;
+            }
+            return false;
         }
         
         @Override
         public void end(boolean interrupted) {
-            
+            m_drive.setMotor(0, 0);
         }
-
-
     }
 }

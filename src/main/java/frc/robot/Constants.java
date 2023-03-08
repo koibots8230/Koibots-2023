@@ -13,7 +13,7 @@ public class Constants {
   // WHAT YOU ARE DOING.
 
   public static final double AUTO_MAX_SPEED = 0.5;
-  public static final double DISTANCE_PER_ENCODER_IN = 0.4;
+  public static final double DISTANCE_PER_ENCODER_m = 0.4;
   public static final double ROBOT_WIDTH_m = 12;
 
   public static final double AUTOBALANCE_MOVE_LIMIT = 85;
