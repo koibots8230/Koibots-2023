@@ -55,6 +55,8 @@ private Constants.color currentcolor= Constants.color.BLACK;
             setLEDs(255,255,0);
         } else if(color==Constants.color.BLACK){
             setLEDs(0,0,0);
+        } else if(color==Constants.color.GREEN){
+            setLEDs(0,255,0);
         } else {
             System.err.println("ERROR: ATTEMPTED TO SET LED TO NONEXISTANT SHAPE.");
         }
@@ -67,14 +69,6 @@ private Constants.color currentcolor= Constants.color.BLACK;
             buffer.setRGB(i, R, G, B);
         }
     }
-    // public void turnOff(){//moved to setColor
-    //     currentShape=Constants.Shape.NONE;
-    //     for (var i = 0; i < buffer.getLength(); i++) {
-    //         // Sets the specified LED to the RGB values for black
-    //         buffer.setRGB(i, 0, 0, 0);
-    //     }
-    //     strip1.setData(buffer);
-    // }
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
