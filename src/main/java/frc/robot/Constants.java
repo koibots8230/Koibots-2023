@@ -10,7 +10,10 @@ public class Constants {
     PURPLE,
     YELLOW,
     BLACK,
-    GREEN
+    GREEN,
+    ALLYR,//red alliance
+    ALLYB,//blue alliance
+    ORANGE
 }
 
   // Constants for auto

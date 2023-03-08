@@ -45,10 +45,13 @@ private Constants.color currentcolor= Constants.color.BLACK;
         // This method will be called once per scheduler run
 
     }
+    private final int[][]redAlliance={{255,165,0},{255,0,255},{255,0,0}};
+    private final int[][]blueAlliance={{255,165,0},{255,0,255},{0,0,255}};
     public void setColor(Constants.color color){
         if(color==currentcolor){//no need to set the LEDs if we're just trying to set them to what they are.
             return;
         }
+        //Orange = 255,165,0
         if(color==Constants.color.PURPLE){
             setLEDs(255,0,255);
         } else if(color==Constants.color.YELLOW){
@@ -57,7 +60,13 @@ private Constants.color currentcolor= Constants.color.BLACK;
             setLEDs(0,0,0);
         } else if(color==Constants.color.GREEN){
             setLEDs(0,255,0);
-        } else {
+        } else if(color==Constants.color.ALLYR){
+            setPattern(redAlliance);
+        } else if(color==Constants.color.ALLYB){
+            setPattern(blueAlliance);
+        } else if(color==Constants.color.ORANGE){
+            setLEDs(255,165,0);
+        }else {
             System.err.println("ERROR: ATTEMPTED TO SET LED TO NONEXISTANT SHAPE.");
         }
         color=currentcolor;
