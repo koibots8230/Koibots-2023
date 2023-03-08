@@ -69,6 +69,17 @@ private Constants.color currentcolor= Constants.color.BLACK;
             buffer.setRGB(i, R, G, B);
         }
     }
+    public void setPattern(int[][] pattern){//the length of the inner arrays is always 3.
+        if(Constants.LED_STRIP_LENGTH/pattern.length==(double)Constants.LED_STRIP_LENGTH/pattern.length){
+            //TL;DR of this if statement: is the number of LEDs divisible by the length of the pattern.
+            System.err.println("WARNING: Pattern can not be displayed properly on LEDs");
+            return;//might want to change this to throw an exception and have the original command catch it.
+        }
+        for (var i = 0; i < buffer.getLength(); i++) {//think this will work.
+            int[] colors=pattern[i];
+            buffer.setRGB(i, colors[0], colors[1], colors[2]);
+        }
+    }
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
