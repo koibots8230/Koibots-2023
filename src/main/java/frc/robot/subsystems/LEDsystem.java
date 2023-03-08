@@ -46,30 +46,26 @@ private Constants.Shape currentShape = Constants.Shape.NONE;
 
     }
     public void setColor(Constants.Shape shape){
-        if(shape==currentShape){
+        if(shape==currentShape){//no need to set the LEDs if we're just trying to set them to what they are.
             return;
         }
         if(shape==Constants.Shape.CUBE){
-            for (var i = 0; i < buffer.getLength(); i++) {
-                // Sets the specified LED to the RGB values for purple
-                buffer.setRGB(i, 255, 0, 255);
-            }
+            setLEDs(255,0,255);
         } else if(shape==Constants.Shape.CONE){
-            for (var i = 0; i < buffer.getLength(); i++) {
-                // Sets the specified LED to the RGB values for yellow
-                buffer.setRGB(i, 255, 255, 0);
-            }
+            setLEDs(255,255,0);
         } else if(shape==Constants.Shape.NONE){
-            for (var i = 0; i < buffer.getLength(); i++) {
-                // Sets the specified LED to the RGB values for black
-                buffer.setRGB(i, 0, 0, 0);
-            }
+            setLEDs(0,0,0);
         } else {
             System.err.println("ERROR: ATTEMPTED TO SET LED TO NONEXISTANT SHAPE.");
         }
         shape=currentShape;
         strip1.setData(buffer);
         //strip2.setData(buffer);
+    }
+    public void setLEDs(int R, int G, int B){//sets all the LEDs to the given RGB color
+        for (var i = 0; i < buffer.getLength(); i++) {
+            buffer.setRGB(i, R, G, B);
+        }
     }
     // public void turnOff(){//moved to setColor
     //     currentShape=Constants.Shape.NONE;
