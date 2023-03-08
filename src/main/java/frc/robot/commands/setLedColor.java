@@ -15,12 +15,12 @@ import frc.robot.subsystems.LEDsystem;
 
 public class setLedColor extends CommandBase {
     private final LEDsystem sys;
-    private final Constants.Shape setShape;
+    private final Constants.color setColor;
 
-    public setLedColor(LEDsystem strips, Constants.Shape hold) {
+    public setLedColor(LEDsystem strips, Constants.color hold) {
         sys = strips;
 
-        setShape = hold;
+        setColor = hold;
         addRequirements(sys);
     }
 
@@ -33,7 +33,7 @@ public class setLedColor extends CommandBase {
     @Override
     public void execute() {
         // check for if one of the triggers is active
-        sys.setColor(setShape);
+        sys.setColor(setColor);
     }
 
     // Called once the command ends or is interrupted.

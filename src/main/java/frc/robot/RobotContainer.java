@@ -127,7 +127,7 @@ public class RobotContainer {
     // Constants.DEADZONE);
 
     //new LED
-    new setLedColor(LEDstrips,Constants.Shape.CUBE);
+    new setLedColor(LEDstrips,Constants.color.PURPLE);
 
     // Shooting
     Trigger shootL2 = m_operatorHID.L1();

@@ -6,10 +6,11 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
-  public enum Shape{
-    CUBE,
-    CONE,
-    NONE
+  public enum color{
+    PURPLE,
+    YELLOW,
+    BLACK,
+    GREEN
 }
 
   // Constants for auto
