@@ -100,11 +100,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        m_robotContainer.getDrive().setCoast();
     }
 
     @Override
     public void teleopInit() {
+        //enable coast
+        m_robotContainer.getDrive().setCoast();
         //start camera
         CameraServer.startAutomaticCapture();
         m_robotContainer.ResetPositions();
