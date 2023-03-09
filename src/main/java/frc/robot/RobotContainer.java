@@ -50,13 +50,14 @@ import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
 
+  SendableChooser<Boolean> m_sideChooser = new SendableChooser<>();
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
 
-  public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
-  // public final VisionSubsystem m_VisionSubsystem = new
-  // VisionSubsystem(m_sideChooser.getSelected());
+  public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
+
+  public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem(m_tankDriveSubsystem, m_VisionSubsystem);
   private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
 
   // Controlers
@@ -103,11 +104,11 @@ public class RobotContainer {
     slowMode.onFalse(new InstantCommand(() -> m_tankDriveSubsystem.UnslowDrive()));
 
     // Shooting
-    Trigger shootL2 = m_operatorHID.L1();
-    Trigger shootL3 = m_operatorHID.R1();
+    Trigger shootL1 = m_operatorHID.L1();
+    Trigger shootL2 = m_operatorHID.R1();
 
-    shootL2.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 2));
-    shootL3.whileTrue(m_ShooterSubsystem.new LevelShootCommand(m_ShooterSubsystem, 3));
+    shootL1.whileTrue(new AutoShootCommand(m_ShooterSubsystem, m_tankDriveSubsystem, m_VisionSubsystem, 1));
+    shootL2.whileTrue(new AutoShootCommand(m_ShooterSubsystem, m_tankDriveSubsystem, m_VisionSubsystem, 2));
 
     // Manual Intake Up/Down
     Trigger intakeMoveUp = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -.3);
@@ -171,6 +172,9 @@ public class RobotContainer {
     m_autoChooser.addOption("Exit Community + Balance", 3);
     m_autoChooser.addOption("Only Shoot Move", 4);
     m_customAuto = new SendableChooser<Boolean>();
+
+    m_sideChooser.addOption("Red", true);
+    m_sideChooser.addOption("Blue", false);
     // integer representes which auto we get
     m_customChooser = new SendableChooser<Integer>();
     // chosing parameters of auto

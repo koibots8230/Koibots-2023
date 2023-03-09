@@ -1,7 +1,11 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -9,6 +13,7 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,23 +25,20 @@ import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
   // Auto Shoot Variables
-  public static Pose3d Bot3d = null;
-  public static boolean VariablesDefined = false;
-  public static Translation3d Closest = new Translation3d(0, 0, 0);
-  public static double ClosestDistance = 0;
-  private int count = 0;
-  private int ShootLevel = 2;
-  private double xDistance;
-  private double yDistance;
-  private double distance;
-  private Translation2d Spot = new Translation2d(0, 0);
+
 
   // Motors/Encoders
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
   private RelativeEncoder shooterEncoder;
 
-  public ShooterSubsystem() {
+  private TankDriveSubsystem drive;
+  private VisionSubsystem vision;
+
+  public ShooterSubsystem(TankDriveSubsystem _drive, VisionSubsystem _vision) {
+    vision = _vision;
+    drive = _drive;
+
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
     shooterEncoder = shooterMotorL.getEncoder();
@@ -44,6 +46,8 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorL.setIdleMode(IdleMode.kBrake);
     shooterMotorR.setIdleMode(IdleMode.kBrake);
   }
+
+  // ================================Getters================================
 
   private List<Translation3d> getCubeList(int Level) {
     if (Level == 2) {
@@ -55,38 +59,58 @@ public class ShooterSubsystem extends SubsystemBase {
     return null;
   }
 
-  public Pose3d getNearestTarget(Translation3d Robot_Pose, int Level) {
+  public Pose3d getBotPose() {
+    Optional<EstimatedRobotPose> photonPose = vision.photonPoseEstimator.update();
+    if (photonPose.isPresent()) {
+      return photonPose.get().estimatedPose;
+    } else {
+      return new Pose3d(drive.getOdometryPose());
+    }
+  }
+
+  /**
+   * 
+   * @param Robot_Pose
+   * @param Level
+   * @return
+   */
+  public Optional<Pose3d> getNearestTarget(Translation3d Robot_Pose, int Level) {
     
-    Translation3d Closest = new Translation3d(0, 0, 0);
-    double closestDistance = 0;
+    double closestDistance = 100.0;
     double Distance;
-    
+
+    Optional<Pose3d> Closest = Optional.empty();
+
     for (int a = 0; a < 3; a++) {
       Distance = Robot_Pose.getDistance(getCubeList(Level).get(a));
-      if (Distance > closestDistance) {
+      if (Distance < closestDistance) {
         closestDistance = Distance;
-        Closest = getCubeList(Level).get(a);
+        Closest = Optional.of(new Pose3d(getCubeList(Level).get(a), new Rotation3d(0, 0, 0)));
       }
     }
-
-    if (ClosestDistance > Constants.MAX_SHOOTER_RANGE) {
-      return new Pose3d(0, 0, 0, new Rotation3d());
+    if (closestDistance > Constants.MAX_SHOOTER_RANGE) {
+      return Optional.empty();
     }
-    return new Pose3d(Closest, new Rotation3d());
+
+    return Closest;
   }
 
   public double getShooterSpeed() {
     return shooterEncoder.getVelocity();
   }
-  
+
+  // ================================Setters================================
+
   public void SetShooter(double Speed) {
-    shooterMotorR.set(-Speed);
     shooterMotorL.set(Speed);
+    shooterMotorR.set(-Speed);
   }
-  
-  public Pose3d g54jetPose() {
-    return Bot3d;
+
+  public void SetShooterVelocity(double velocityMetersPerSecond) {
+    shooterMotorL.set(velocityMetersPerSecond*Constants.SHOOTER_VELOCITY_TO_SPEED);
+    shooterMotorR.set(-velocityMetersPerSecond*Constants.SHOOTER_VELOCITY_TO_SPEED);
   }
+
 
   public class CommunityShotCommand extends CommandBase {
     private ShooterSubsystem shooter;
