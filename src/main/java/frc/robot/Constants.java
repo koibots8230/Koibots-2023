@@ -6,7 +6,7 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
-  // ===============================In-Use Values===============================
+  // =============================== In-Use Values =============================== \\
 
   // Constants for auto
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
@@ -14,7 +14,7 @@ public class Constants {
 
   public static final double AUTO_MAX_SPEED = 0.5;
   public static final double DISTANCE_PER_ENCODER_m = 0.4;
-  public static final double ROBOT_WIDTH_m = 12;
+  public static final double ROBOT_WIDTH_m = 0.6;
 
   public static final double AUTOBALANCE_MOVE_LIMIT = 85;
   public static final double SHOOT_MOVE_LIMIT = 140;

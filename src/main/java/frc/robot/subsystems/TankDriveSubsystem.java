@@ -12,6 +12,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
@@ -310,7 +312,6 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
-            
             leftSideDistance = (m_drive.getEncoderPositions()[0] - distanceSoFarLeft) * Math.cos(gyro.getRoll());
             rightSideDistance = (m_drive.getEncoderPositions()[1] - distanceSoFarRight) * Math.cos(gyro.getRoll());
         }
