@@ -44,7 +44,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        m_robotContainer = RobotContainer.getInstance();
+  
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
     }
 
@@ -81,8 +81,7 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void autonomousInit() {
-        m_robotContainer.ResetPositions();
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+     
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
@@ -99,12 +98,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        m_robotContainer.getDrive().setCoast();
+     
     }
 
     @Override
     public void teleopInit() {
-        m_robotContainer.ResetPositions();
+     
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
@@ -123,7 +122,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopExit() {
-        m_robotContainer.getDrive().setBrake();
+     
     }
 
     @Override
