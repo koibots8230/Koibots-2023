@@ -42,8 +42,6 @@ public class CommunityBalance extends SequentialCommandGroup {
     m_ShootTime = ShootTime;
     m_leftSpeed = leftSpeed;
     m_rightSpeed = rightSpeed;
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> m_IntakeSubsystem.turnOn(true), m_IntakeSubsystem),
       m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),

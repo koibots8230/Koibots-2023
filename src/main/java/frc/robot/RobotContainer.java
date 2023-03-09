@@ -110,21 +110,6 @@ public class RobotContainer {
     Trigger slowMode = m_operatorHID.triangle();
     slowMode.onTrue(new InstantCommand(() -> m_tankDriveSubsystem.SlowDrive()));
     slowMode.onFalse(new InstantCommand(() -> m_tankDriveSubsystem.UnslowDrive()));
-    
-    // Speed Up/Down
-    //Trigger operatorSpeedUp = m_operatorHID.cross();
-    //Trigger operatorSpeedDown = m_operatorHID.circle();
-
-    //operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-    //operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
-
-    // old LED
-    // Trigger leftTrigger_op =
-    // m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value,
-    // Constants.DEADZONE);
-    // Trigger rightTrigger_op =
-    // m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value,
-    // Constants.DEADZONE);
 
     //new LED
     new setLedColor(LEDstrips,Constants.color.PURPLE);
@@ -216,23 +201,6 @@ public class RobotContainer {
     autobal_limit = m_autotab.add("ShootAutobalance Encoder Limit", Constants.AUTOBALANCE_MOVE_LIMIT).getEntry();
     shoot_limit = m_autotab.add("ShootMove EncoderLimit", Constants.SHOOT_MOVE_LIMIT).getEntry();
 
-    // m_autoChooser.setDefaultOption("Shoot->Move", new
-    // shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
-    // Constants.SHOOT_SECONDS,
-    // Constants.SHOOT_MOVE_LIMIT,
-    // Constants.SHOOT_LEFT_SPEED,
-    // Constants.SHOOT_RIGHT_SPEED));
-    // m_autoChooser.addOption("Shoot->Autobalance", new shootAutobalance(
-    // m_tankDriveSubsystem,
-    // m_ShooterSubsystem,
-    // Constants.SHOOT_SECONDS,
-    // Constants.AUTOBALANCE_MOVE_LIMIT,
-    // Constants.AUTO_LEFT_SPEED,
-    // Constants.AUTO_RIGHT_SPEED,
-    // m_gyro,
-    // m_intake
-    // ));
-    
     m_autoChooser.addOption(("NO AUTO"), null);
     configureButtonBindings();
     ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");
