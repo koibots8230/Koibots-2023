@@ -75,8 +75,6 @@ public class Constants {
   // for LED system
   public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
   public static final int LEDPort1=0;
-  // public static final int LEDPort2=0;//neither of these are known currently,
-  // but they can be uncommented once we know the port numbers.
 
   // Auto Shooting
   public static final double SHOOTER_ANGLE = 45; // To be changed
