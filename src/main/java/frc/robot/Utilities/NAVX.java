@@ -64,6 +64,8 @@ public class NAVX extends AHRS{
                 rightSpeed *= -1;
             }
 
+            m_x = forwardsDistance_m;
+            m_y = horizontalDistance_m;
             m_theta = theta;
             m_drive = drive;
             addRequirements(drive);
