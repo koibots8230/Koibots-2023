@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.cameraserver.CameraServer;
+import frc.robot.commands.setLedColor;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -82,6 +83,9 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void autonomousInit() {
+        //set LED colors
+        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.PURPLE);
+        hold.schedule();
         m_robotContainer.ResetPositions();
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -108,6 +112,10 @@ public class Robot extends TimedRobot {
         //start camera
         CameraServer.startAutomaticCapture();
         m_robotContainer.ResetPositions();
+        //set LED colors
+        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.PURPLE);
+        //This should just be in auto init but that is crashing, so I'm putting it here.
+        hold.schedule();
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove

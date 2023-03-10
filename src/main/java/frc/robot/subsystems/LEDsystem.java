@@ -67,7 +67,8 @@ private Constants.color currentcolor= Constants.color.BLACK;
         } else if(color==Constants.color.ORANGE){
             setLEDs(255,165,0);
         }else {
-            System.err.println("ERROR: ATTEMPTED TO SET LED TO NONEXISTANT SHAPE.");
+            System.err.println("ERROR: ATTEMPTED TO SET LED TO MAGENTA.");
+            //looks you "does magenta exist" if you don't get it.
         }
         color=currentcolor;
         strip1.setData(buffer);

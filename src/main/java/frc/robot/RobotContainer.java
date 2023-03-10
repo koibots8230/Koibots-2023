@@ -111,9 +111,6 @@ public class RobotContainer {
     slowMode.onTrue(new InstantCommand(() -> m_tankDriveSubsystem.SlowDrive()));
     slowMode.onFalse(new InstantCommand(() -> m_tankDriveSubsystem.UnslowDrive()));
 
-    //new LED
-    new setLedColor(LEDstrips,Constants.color.PURPLE);
-
     // Shooting
     Trigger shootL2 = m_operatorHID.L1();
     Trigger shootL3 = m_operatorHID.R1();
@@ -222,6 +219,9 @@ public class RobotContainer {
 
   public TankDriveSubsystem getDrive() {
     return m_tankDriveSubsystem;
+  }
+  public LEDsystem getLEDs(){
+    return LEDstrips;
   }
 
   /**
