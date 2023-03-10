@@ -18,6 +18,7 @@ public class NAVX extends AHRS{
     public static NAVX getGyro() {
         return gyro;
     }
+    
 
     
     public static class RelativeDrive extends CommandBase {
@@ -79,7 +80,7 @@ public class NAVX extends AHRS{
             NAVX.getGyro().resetDisplacement();
             m_drive.setMotor(leftSpeed, rightSpeed);
         }
-        
+
         @Override
         public void execute() {
             if (
