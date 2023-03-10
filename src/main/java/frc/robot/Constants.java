@@ -6,7 +6,15 @@ import java.util.List;
 import edu.wpi.first.math.geometry.Translation3d;
 
 public class Constants {
-  // ===============================In-Use Values===============================
+  public enum color{
+    PURPLE,
+    YELLOW,
+    BLACK,
+    GREEN,
+    ALLYR,//red alliance
+    ALLYB,//blue alliance
+    ORANGE
+}
 
   // Constants for auto
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
@@ -40,6 +48,7 @@ public class Constants {
 
   public static final double DEADZONE = 0.15; // Probably don't change this
 
+
   // Hardware Ports
   public static final int LEFT_DRIVE_MOTOR_1 = 15;
   public static final int LEFT_DRIVE_MOTOR_2 = 14;
@@ -56,8 +65,6 @@ public class Constants {
   public static final int STAR_WHEELS_MOTOR_L = 8;
   public static final int STAR_WHEELS_MOTOR_R = 9;
 
-  // ===============================Unused Values===============================
-
   public static final double RAISE_SPEED = 0.8;
   public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
   public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
@@ -67,9 +74,7 @@ public class Constants {
 
   // for LED system
   public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
-  // public static final int LEDPort1=0;
-  // public static final int LEDPort2=0;//neither of these are known currently,
-  // but they can be uncommented once we know the port numbers.
+  public static final int LEDPort1=0;
 
   // Auto Shooting
   public static final double SHOOTER_ANGLE = 45; // To be changed
