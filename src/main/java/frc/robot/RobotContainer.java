@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.cscore.VideoSource.ConnectionStrategy;
 import edu.wpi.first.networktables.GenericEntry;
 
 import java.util.function.DoubleSupplier;
@@ -57,15 +58,16 @@ public class RobotContainer {
   private final CommandXboxController m_operatorHID = new CommandXboxController(0);
   private LEDsystem m_LeDsystem = new LEDsystem(0);
 
+
   // LED
   Trigger leftTrigger_op = m_operatorHID.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, Constants.DEADZONE);
   Trigger rightTrigger_op = m_operatorHID.axisGreaterThan(XboxController.Axis.kRightTrigger.value, Constants.DEADZONE);
 
   private RobotContainer() {
     leftTrigger_op.onTrue(
-      new InstantCommand( () -> m_LeDsystem.setColor(Constants.color.PURPLE) ,m_LeDsystem));
+      new InstantCommand( () -> m_LeDsystem.setColor(Constants.color.ALLYR) ,m_LeDsystem));
     rightTrigger_op.onTrue(//might have these backwards but these will tell the code.
-       new InstantCommand( () -> m_LeDsystem.setColor(Constants.color.ORANGE) ,m_LeDsystem ));
+       new InstantCommand( () -> m_LeDsystem.setColor(Constants.color.ALLYB), m_LeDsystem));
 
   }
 
@@ -80,6 +82,9 @@ public class RobotContainer {
   // }
   public LEDsystem getLEDs(){
     return m_LeDsystem;
+  }
+  public static RobotContainer getInstance() {
+    return m_robotContainer;
   }
 }
 // Manual Intake Up/Down
@@ -135,9 +140,6 @@ public class RobotContainer {
 
 // }
 
-// // public static RobotContainer getInstance() {
-// // return m_robotContainer;
-// }
 
 // /**
 // * The container for the robot. Contains subsystems, OI devices, and commands.
