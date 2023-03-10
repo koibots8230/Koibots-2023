@@ -12,23 +12,24 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Twist2d;
-import edu.wpi.first.math.geometry.Twist3d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -45,19 +46,23 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     DifferentialDrive drivetrain;
     DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
-    
+
     private final RelativeEncoder primaryRightEncoder;
     private final RelativeEncoder primaryLeftEncoder;
 
+    private final SparkMaxAbsoluteEncoder leftAbsoluteEncoder;
+    private final SparkMaxAbsoluteEncoder rightAbsoluteEncoder;
+
     private DifferentialDriveOdometry m_Odometry;
     private Pose2d OdometryPose;
-    
+
     public TankDriveSubsystem() {
 
         // Motors
         primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
         primaryRightMotor.setInverted(true);
 
+        primaryLeftMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition();
         secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
 
@@ -66,33 +71,38 @@ public class TankDriveSubsystem extends SubsystemBase {
         secondaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
-        //drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
+        // drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
 
         // Encoders
         primaryRightEncoder = primaryRightMotor.getEncoder();
         primaryLeftEncoder = primaryLeftMotor.getEncoder();
 
+        leftAbsoluteEncoder = primaryLeftMotor.getAbsoluteEncoder(Type.kDutyCycle);
+        rightAbsoluteEncoder = primaryRightMotor.getAbsoluteEncoder(Type.kDutyCycle);
+
         primaryLeftEncoder.setPositionConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
         primaryRightEncoder.setPositionConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
-        
+
         primaryLeftEncoder.setVelocityConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
         primaryRightEncoder.setVelocityConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
 
-        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw()+180), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
+        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw() + 180),
+                primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
     }
 
     @Override
     public void periodic() {
-        wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(), primaryRightEncoder.getVelocity());
+        wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(),
+                primaryRightEncoder.getVelocity());
         OdometryPose = m_Odometry.update(
-            new Rotation2d(gyro.getYaw()+180),
-            primaryLeftEncoder.getPosition(),
-            primaryRightEncoder.getPosition());
+                new Rotation2d(gyro.getYaw() + 180),
+                primaryLeftEncoder.getPosition(),
+                primaryRightEncoder.getPosition());
         // This method will be called once per scheduler run
     }
 
     // ================================Getters================================
-    
+
     public void setBrake() {
         primaryLeftMotor.setIdleMode(IdleMode.kBrake);
         primaryRightMotor.setIdleMode(IdleMode.kBrake);
@@ -100,14 +110,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         secondaryRightMotor.setIdleMode(IdleMode.kBrake);
     }
 
-    public void setCoast() { 
+    public void setCoast() {
         primaryLeftMotor.setIdleMode(IdleMode.kCoast);
         primaryRightMotor.setIdleMode(IdleMode.kCoast);
         secondaryLeftMotor.setIdleMode(IdleMode.kCoast);
         secondaryRightMotor.setIdleMode(IdleMode.kCoast);
     }
 
-    public DifferentialDriveWheelSpeeds getWheelSpeeds(){
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         return wheelSpeeds;
     }
 
@@ -131,9 +141,9 @@ public class TankDriveSubsystem extends SubsystemBase {
         return primaryRightMotor.getPIDController();
     }
 
-    public double[] getEncoderPositions(){
-        //get the in between of both encoders
-        return (new double[] {primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition()});
+    public double[] getEncoderPositions() {
+        // get the in between of both encoders
+        return (new double[] { primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition() });
     }
 
     // ================================Setters================================
@@ -142,14 +152,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryLeftEncoder.setPosition(0);
         primaryRightEncoder.setPosition(0);
         m_Odometry.resetPosition(
-            gyro.getRotation2d(), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition(), pose);
-      }
+                gyro.getRotation2d(), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition(), pose);
+    }
 
     public void setMotor(double leftSpeed, double rightSpeed) {
         primaryLeftMotor.set(leftSpeed);
         primaryRightMotor.set(rightSpeed);
     }
-    
+
     public void SlowDrive() {
         speedCoefficient = .33;
     }
@@ -163,7 +173,15 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryLeftMotor.setVoltage(leftVoltage);
         drivetrain.feed();
     }
-    
+
+    public SparkMaxAbsoluteEncoder getLeftAbsoluteEncoder() {
+        return leftAbsoluteEncoder;
+    }
+
+    public SparkMaxAbsoluteEncoder getRightAbsoluteEncoder() {
+        return rightAbsoluteEncoder;
+    }
+
     // ================================Commands================================
 
     public class driveMotorCommand extends CommandBase {
@@ -177,7 +195,7 @@ public class TankDriveSubsystem extends SubsystemBase {
             m_DriveSubsystem = subsystem;
             addRequirements(subsystem);
         }
-        
+
         @Override
         public void initialize() {
 
@@ -186,8 +204,8 @@ public class TankDriveSubsystem extends SubsystemBase {
         @Override
         public void execute() {
             m_DriveSubsystem.setMotor(
-                adjustForDeadzone(m_leftSpeed.getAsDouble()) * speedCoefficient, 
-                adjustForDeadzone(m_rightSpeed.getAsDouble()) * speedCoefficient);
+                    adjustForDeadzone(m_leftSpeed.getAsDouble()) * speedCoefficient,
+                    adjustForDeadzone(m_rightSpeed.getAsDouble()) * speedCoefficient);
         }
 
         private double adjustForDeadzone(double in) {
@@ -195,10 +213,9 @@ public class TankDriveSubsystem extends SubsystemBase {
                 return 0;
             }
             double sign = (in < 0) ? -Constants.MAX_DRIVETRAIN_SPEED : Constants.MAX_DRIVETRAIN_SPEED;
-            return sign*(in * in);
+            return sign * (in * in);
         }
     }
-
 
     public class driveDistanceCommand extends CommandBase {
         private double m_rightSpeed;
@@ -210,16 +227,17 @@ public class TankDriveSubsystem extends SubsystemBase {
         private boolean hasReachedEnd;
         private double m_encoderLimit;
 
-
-        //Direction should be from -1 to 1 to indicate direction; 0 is Balanced, -1 is full left, 1 is full right
-        public driveDistanceCommand(double leftSpeed, double rightSpeed, double encoder_limit, TankDriveSubsystem subsystem) {
+        // Direction should be from -1 to 1 to indicate direction; 0 is Balanced, -1 is
+        // full left, 1 is full right
+        public driveDistanceCommand(double leftSpeed, double rightSpeed, double encoder_limit,
+                TankDriveSubsystem subsystem) {
             m_DriveSubsystem = subsystem;
             m_encoderLimit = encoder_limit;
             m_leftSpeed = leftSpeed;
             m_rightSpeed = rightSpeed;
             addRequirements(subsystem);
         }
-        
+
         @Override
         public void initialize() {
         }
@@ -232,101 +250,23 @@ public class TankDriveSubsystem extends SubsystemBase {
             // End Check
             double[] current_positions = m_DriveSubsystem.getEncoderPositions();
             double l_dif = (current_positions[0] - m_initialPositions[0]);
-            double r_dif = (current_positions[1] - m_initialPositions[1]); 
+            double r_dif = (current_positions[1] - m_initialPositions[1]);
 
-            if (Math.abs(l_dif + r_dif)>= m_encoderLimit) {
+            if (Math.abs(l_dif + r_dif) >= m_encoderLimit) {
                 System.out.println("Reached end condition for DriveDistance");
                 hasReachedEnd = true;
             }
         }
-        
-        @Override 
+
+        @Override
         public boolean isFinished() {
             return hasReachedEnd;
         }
 
-        @Override 
-        public void end(boolean isInterrupted){
+        @Override
+        public void end(boolean isInterrupted) {
             m_leftPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
             m_rightPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
-        }
-    }
-
-    public class RelativeDrive extends CommandBase {
-        double leftSideDistance;
-        double rightSideDistance;
-        double leftSpeed;
-        double rightSpeed;
-
-        double distanceSoFarLeft;
-        double distanceSoFarRight;
-
-        TankDriveSubsystem m_drive;
-
-        RelativeDrive(double relativeX_m, double relativeY_m, double finalAngle_deg, TankDriveSubsystem drive) {
-            m_drive = drive;
-
-            double n = (- (relativeX_m * Math.tan(Math.toRadians(finalAngle_deg)) - relativeY_m));
-            double a = (n / Math.tan(finalAngle_deg)) + Constants.ROBOT_WIDTH_m / 2;
-            rightSideDistance = ellipticArc(
-                a,
-                solveEllipseHeight(relativeX_m + (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), relativeY_m + (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), a, n),
-                finalAngle_deg
-            );
-            
-            a -= Constants.ROBOT_WIDTH_m;
-            leftSideDistance = ellipticArc(
-                a,
-                solveEllipseHeight(relativeX_m - (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), relativeY_m - (Constants.ROBOT_WIDTH_m / 2) * Math.cos(finalAngle_deg), a, n),
-                finalAngle_deg
-            );
-            
-        leftSpeed = (leftSpeed / rightSpeed) * Constants.AUTO_MAX_SPEED;
-        rightSpeed = (rightSpeed / leftSpeed) * Constants.AUTO_MAX_SPEED;
-        }
-
-        public double solveEllipseHeight(double x, double y, double a, double h) {
-            return (a * Math.sqrt((a + x - h) * (a - x + h)) * y) / ((a + x - h) * (a - x + h));
-        }
-
-        public double ellipticArc(double a, double b, double theta) {
-            double h = Math.pow(a - b, 2) / Math.pow(a + b, 2);
-            double perimeter = Math.PI * (a + b) * (1 + ((3 * h) / (10 + Math.sqrt(4 - 3 * h))));
-            return perimeter * (theta / (2 * Math.PI));
-        }
-
-        public double EncoderToDistance_cm(double x) {
-            return x * 5;
-        }
-
-        @Override
-        public void initialize() {
-            distanceSoFarLeft = EncoderToDistance_cm(m_drive.getEncoderPositions()[0]);
-            distanceSoFarRight = EncoderToDistance_cm(m_drive.getEncoderPositions()[1]);
-
-            leftSideDistance += distanceSoFarLeft;
-            rightSideDistance += distanceSoFarRight;
-
-            m_drive.setMotor(leftSpeed, rightSpeed);
-        }
-
-        @Override
-        public void execute() {
-            leftSideDistance = (m_drive.getEncoderPositions()[0] - distanceSoFarLeft) * Math.cos(gyro.getRoll());
-            rightSideDistance = (m_drive.getEncoderPositions()[1] - distanceSoFarRight) * Math.cos(gyro.getRoll());
-        }
-
-        @Override
-        public boolean isFinished() {
-            if (leftSideDistance > distanceSoFarLeft) {
-                return true;
-            }
-            return false;
-        }
-        
-        @Override
-        public void end(boolean interrupted) {
-            m_drive.setMotor(0, 0);
         }
     }
 }

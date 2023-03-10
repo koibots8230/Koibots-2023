@@ -12,6 +12,7 @@ public class Constants {
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
   // WHAT YOU ARE DOING.
 
+  public static final double TURN_SPEED = 0.5;
   public static final double AUTO_MAX_SPEED = 0.5;
   public static final double DISTANCE_PER_ENCODER_m = 0.4;
   public static final double ROBOT_WIDTH_m = 0.6;
