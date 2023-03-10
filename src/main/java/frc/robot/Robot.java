@@ -86,8 +86,8 @@ public class Robot extends TimedRobot {
         //set LED colors
         setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.PURPLE);
         hold.schedule();
-        m_robotContainer.ResetPositions();
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        //m_robotContainer.ResetPositions();
+        //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
