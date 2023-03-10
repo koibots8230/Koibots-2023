@@ -63,9 +63,9 @@ public class RobotContainer {
 
   private RobotContainer() {
     leftTrigger_op.onTrue(
-      new InstantCommand( () -> m_LeDsystem.setColor(true) ,m_LeDsystem));
-    rightTrigger_op.onTrue(
-       new InstantCommand( () -> m_LeDsystem.setColor(false) ,m_LeDsystem ));
+      new InstantCommand( () -> m_LeDsystem.setColor(Constants.color.PURPLE) ,m_LeDsystem));
+    rightTrigger_op.onTrue(//might have these backwards but these will tell the code.
+       new InstantCommand( () -> m_LeDsystem.setColor(Constants.color.ORANGE) ,m_LeDsystem ));
 
   }
 
