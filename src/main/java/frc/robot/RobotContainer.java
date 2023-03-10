@@ -11,6 +11,7 @@ it from being updated in the future.
 ROBOTBUILDER TYPE: RobotContainer. */
 
 package frc.robot;
+import java.util.Random;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -198,7 +199,25 @@ public class RobotContainer {
     m_shuffleboard.addNumber("Encoder Left", () -> m_tankDriveSubsystem.getEncoderPositions()[0]);
     m_shuffleboard.addNumber("Encoder Right", () -> m_tankDriveSubsystem.getEncoderPositions()[1]);
 
+    String[] Quotes = {
+      "\"The only way to do great work is to love what you do.\" - Steve Jobs",
+      "\"Believe you can and you're halfway there.\" - Theodore Roosevelt",
+      "\"Success is not final, failure is not fatal: it is the courage to continue that counts.\" - Winston Churchill",
+      "\"It does not matter how slowly you go as long as you do not stop.\" - Confucius",
+      "\"If you want to live a happy life, tie it to a goal, not to people or things.\" - Albert Einstein",
+      "\"The greatest glory in living lies not in never falling, but in rising every time we fall.\" - Nelson Mandela",
+      "\"You miss 100% of the shots you don't take.\" - Wayne Gretzky",
+      "\"Happiness is not something ready made. It comes from your own actions.\" - Dalai Lama",
+      "\"Don't watch the clock; do what it does. Keep going.\" - Sam Levenson",
+      "\"In three words I can sum up everything I've learned about life: it goes on.\" - Robert Frost",
+      "\"Robots can't do math\" - Kellen Dick"
+    };
+    Random rand = new Random();
+    String randomQuote = Quotes[rand.nextInt(Quotes.length)];
+    Shuffleboard.getTab("Main")
+    .add("Random Quote", randomQuote);
   }
+
 
   public CommandGenericHID getController() {
     return m_driverHID;
