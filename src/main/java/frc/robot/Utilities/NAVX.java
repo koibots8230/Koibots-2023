@@ -19,8 +19,6 @@ public class NAVX extends AHRS{
         return gyro;
     }
     
-
-    
     public static class RelativeDrive extends CommandBase {
         double leftSpeed;
         double rightSpeed;
@@ -40,18 +38,18 @@ public class NAVX extends AHRS{
         /**
          * Create a new object to control a SPARK MAX motor Controller
          *
-         * @param x        The distance (in meters) the robot drives forward or backwards. Must be positive
-         * @param y        The distance (in meters) the robot drives left or right. Must be positive
+         * @param forwardsDistance_m        The distance (in meters) the robot drives forward or backwards. Must be positive
+         * @param horizontalDistance_m        The distance (in meters) the robot drives left or right. Must be positive
          * @param omega    The gyro angle the robot should be at once the command has finished
          * @param reflectX Along with reflectY controlls the relative quadrant the bot ends up in
          * @param reflectY 
          */
-        RelativeDrive(double x, double y, double theta, boolean reflectX, boolean reflectY, TankDriveSubsystem drive) {
+        RelativeDrive(double forwardsDistance_m, double horizontalDistance_m, double theta, boolean reflectX, boolean reflectY, TankDriveSubsystem drive) {
             leftAbsoluteEncoder = drive.getLeftAbsoluteEncoder();
             rightAbsoluteEncoder = drive.getRightAbsoluteEncoder();
 
-            leftDistance = ellipseCircumference(x + halfRobotWidth,  y + halfRobotWidth);
-            rightDistance = ellipseCircumference(x - halfRobotWidth, y - halfRobotWidth);
+            leftDistance = ellipseCircumference(forwardsDistance_m + halfRobotWidth,  horizontalDistance_m + halfRobotWidth);
+            rightDistance = ellipseCircumference(forwardsDistance_m - halfRobotWidth, horizontalDistance_m - halfRobotWidth);
 
             leftSpeed = leftDistance / rightDistance;
             rightSpeed = rightDistance / leftDistance;
@@ -71,8 +69,8 @@ public class NAVX extends AHRS{
             addRequirements(drive);
         }
 
-        RelativeDrive(double x, double y, double omega, TankDriveSubsystem drive) {
-            this(x, y, omega, false, false, drive);
+        RelativeDrive(double forwardsDistance_m, double horizontalDistance_m, double omega, TankDriveSubsystem drive) {
+            this(forwardsDistance_m, horizontalDistance_m, omega, false, false, drive);
         }
 
         @Override
