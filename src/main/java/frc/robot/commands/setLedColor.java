@@ -22,28 +22,32 @@ public class setLedColor extends CommandBase {
 
         setColor = hold;
         addRequirements(sys);
+        System.out.println("A");
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        sys.setColor(setColor);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute() {
         // check for if one of the triggers is active
-        sys.setColor(setColor);
+        // sys.setColor(setColor);
     }
 
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        System.out.println("B");
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
+        System.out.println("C");
         return true;
     }
 
