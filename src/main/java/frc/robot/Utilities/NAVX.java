@@ -54,6 +54,9 @@ public class NAVX extends AHRS{
             leftSpeed = leftDistance / rightDistance;
             rightSpeed = rightDistance / leftDistance;
 
+            leftSpeed *= Constants.RELATIVE_DRIVE_SPEED;
+            rightSpeed *= Constants.RELATIVE_DRIVE_SPEED;
+
             if (reflectY) {
                 leftSpeed += rightSpeed;
                 rightSpeed = leftSpeed - rightSpeed;
