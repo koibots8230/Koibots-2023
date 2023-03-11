@@ -35,7 +35,6 @@ public class AutoShootCommand extends CommandBase {
     shooter = _shooter;
     addRequirements(shooter);
     vision = _vision;
-
     level = _level;
   }
 

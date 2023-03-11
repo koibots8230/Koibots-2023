@@ -18,12 +18,27 @@ public class AutoAlignCommand extends CommandBase {
 
   private boolean end = false;
 
+  private double angleDeadzone;
+
 
   public AutoAlignCommand(TankDriveSubsystem _drive, ShooterSubsystem _shooter) {
     drive = _drive;
     shooter = _shooter;
 
     addRequirements(drive);
+  }
+
+  public double getAngleDeadzone(Pose3d botPose, Pose3d targetPose) {
+    double angle1 = Math.atan(
+      (botPose.getX()-targetPose.getX()) / 
+      (Math.abs(botPose.getY()-targetPose.getY()) + 
+      (Constants.AVAILABLE_CUBE_NODE_SPACE/2))
+    );
+    double angle2 = Math.atan(
+      Math.abs(botPose.getY()-targetPose.getY()) / 
+      (botPose.getX()-targetPose.getX())
+    );
+    return 90 - (angle1 + angle2);
   }
 
   public double getRotationToTarget(Pose3d botPose, Pose3d targetPose) {
@@ -44,17 +59,19 @@ public class AutoAlignCommand extends CommandBase {
       end = true;
     }
     targetPose = mabyeTargetPose.get();
+
+    angleDeadzone = getAngleDeadzone(botPose, targetPose);
   }
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     rotationToTarget = getRotationToTarget(botPose, targetPose);
-    if (Math.abs(rotationToTarget) < 3){
+    if (Math.abs(rotationToTarget) < angleDeadzone){
       end = true;
     } else if (rotationToTarget > 0) {
-      drive.setMotor(-.5, .5);
+      drive.setMotor(Constants.ALIGN_DRIVE_SPEED, Constants.ALIGN_DRIVE_SPEED);
     } else if (rotationToTarget < 0) {
-      drive.setMotor(.5, -.5);
+      drive.setMotor(Constants.ALIGN_DRIVE_SPEED, Constants.ALIGN_DRIVE_SPEED);
     }
   }
 

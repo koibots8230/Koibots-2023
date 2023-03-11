@@ -82,10 +82,10 @@ public class ShooterSubsystem extends SubsystemBase {
     Optional<Pose3d> Closest = Optional.empty();
 
     for (int a = 0; a < 3; a++) {
-      Distance = Robot_Pose.getDistance(getCubeList(Level).get(a));
+      Distance = Robot_Pose.toTranslation2d().getDistance(getCubeList(Level).get(a).toTranslation2d());
       if (Distance < closestDistance) {
         closestDistance = Distance;
-        Closest = Optional.of(new Pose3d(getCubeList(Level).get(a), new Rotation3d(0, 0, 0)));
+        Closest = Optional.of(new Pose3d(getCubeList(Level).get(a), new Rotation3d()));
       }
     }
     if (closestDistance > Constants.MAX_SHOOTER_RANGE) {
