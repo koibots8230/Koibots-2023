@@ -13,7 +13,12 @@ public class Constants {
     GREEN,
     ALLYR,//red alliance
     ALLYB,//blue alliance
-    ORANGE
+    ORANGE,
+    NONE, //placeholder moment.
+}
+public enum moving{
+  DOT1,
+  NONE
 }
 
   // Constants for auto

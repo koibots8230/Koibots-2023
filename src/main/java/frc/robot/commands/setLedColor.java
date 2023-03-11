@@ -16,19 +16,29 @@ import frc.robot.subsystems.LEDsystem;
 public class setLedColor extends CommandBase {
     private final LEDsystem sys;
     private final Constants.color setColor;
+    private final Constants.moving movingPattern;
 
     public setLedColor(LEDsystem strips, Constants.color hold) {
         sys = strips;
-
+        movingPattern = Constants.moving.NONE;
         setColor = hold;
         addRequirements(sys);
-        System.out.println("A");
+    }
+    public setLedColor(LEDsystem strips, Constants.moving hold) {
+        sys = strips;
+        setColor = Constants.color.NONE;
+        movingPattern = hold;
+        addRequirements(sys);
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        sys.setColor(setColor);
+        if(setColor!=Constants.color.NONE){
+            sys.setColor(setColor);
+        } else {
+            sys.setColor(movingPattern);
+        }
     }
 
     // Called every time the scheduler runs while the command is scheduled.
