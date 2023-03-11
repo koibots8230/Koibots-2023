@@ -276,13 +276,13 @@ public class IntakeSubsystem extends SubsystemBase {
         double m_speed;
         Timer timer;
         
-        public setMidtake(double speed, double encoder_limit, IntakeSubsystem m_intake){
+        public setMidtake(IntakeSubsystem m_intake, double speed, double encoder_limit){
             m_limit = encoder_limit;
             hasFinished = false;
             encoderOrTime = true;
             m_speed = speed;
         }
-        public setMidtake(double speed, double limit, boolean is_time, IntakeSubsystem m_intake){
+        public setMidtake( IntakeSubsystem m_intake, double speed, double limit, boolean is_time){
             m_limit = limit;
             hasFinished = false;
             encoderOrTime = !(is_time);
