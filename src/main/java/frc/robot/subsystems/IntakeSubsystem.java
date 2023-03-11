@@ -22,7 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
-
+import edu.wpi.first.wpilibj.Timer;
 import com.revrobotics.SparkMaxPIDController;
 
 import java.util.function.DoubleSupplier;
@@ -38,6 +38,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final CANSparkMax raiseIntakeMotor;
     private final RelativeEncoder raiseIntakeEncoder;
+    private final RelativeEncoder midtakeEncoder;
 
     private double intakePosition; // This variable refers to the incline of the intake IN DEGREES
 
@@ -60,12 +61,12 @@ public class IntakeSubsystem extends SubsystemBase {
         rightStarWheelsMotor.setInverted(true);
         leftStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_R, MotorType.kBrushless);
         leftStarWheelsMotor.follow(rightStarWheelsMotor, true);
-
+        midtakeEncoder = rightStarWheelsMotor.getEncoder();
+        
         raiseIntakeMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
         raiseIntakeMotor.setInverted(false);
         raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
         raiseIntakeEncoder.setPosition(0);
-        intakePosition = 0;
 
         // Hall effect sensors
         topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
@@ -179,6 +180,10 @@ public class IntakeSubsystem extends SubsystemBase {
     public SparkMaxPIDController getMidtakePID() {
         return intakeMotor.getPIDController();
     }
+
+    public double getMidtakePosition(){
+        return midtakeEncoder.getPosition();
+    }
     
     // ================================Commands================================
 
@@ -257,6 +262,67 @@ public class IntakeSubsystem extends SubsystemBase {
         public void end(boolean interrupted) {
             intake.setRaiseIntakeSpeed(0);
             resetPosition();
+        }
+    }
+
+    public class setMidtake extends CommandBase {
+        IntakeSubsystem m_intake;
+        boolean hasFinished; 
+        double m_limit;
+        //true for encoder
+        //false for time
+        boolean encoderOrTime;
+        double initial_position;
+        double m_speed;
+        Timer timer;
+        
+        public setMidtake(double speed, double encoder_limit, IntakeSubsystem m_intake){
+            m_limit = encoder_limit;
+            hasFinished = false;
+            encoderOrTime = true;
+            m_speed = speed;
+        }
+        public setMidtake(double speed, double limit, boolean is_time, IntakeSubsystem m_intake){
+            m_limit = limit;
+            hasFinished = false;
+            encoderOrTime = !(is_time);
+            timer = new Timer();
+            m_speed = speed;
+        }
+
+        @Override
+        public void initialize() {
+            m_intake.getMidtakePID().setReference(intakePosition, CANSparkMax.ControlType.kDutyCycle);
+            if (encoderOrTime) {
+                initial_position = m_intake.getMidtakePosition();
+            } else {
+                //we don't have to worry about null because this should never be run if not is_time is true
+                initial_position = 0; //zero seconds
+                timer.start();
+            }
+        }
+
+        @Override
+        public void execute() {
+            double curr_pos;
+            if (encoderOrTime) {
+                curr_pos = m_intake.getMidtakePosition();
+            } else {
+                curr_pos = timer.get();
+            }
+            if (Math.abs(initial_position - curr_pos) >= m_limit) {
+                hasFinished = true;
+            }
+        }
+
+        @Override 
+        public void end(boolean isInterrupted) {
+            m_intake.getMidtakePID().setReference(0, CANSparkMax.ControlType.kDutyCycle);
+        }
+
+        @Override 
+        public boolean isFinished(){
+            return hasFinished;
         }
     }
 
