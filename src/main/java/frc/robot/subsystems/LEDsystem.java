@@ -57,7 +57,8 @@ private Constants.color currentcolor= Constants.color.BLACK;
         } else if(color==Constants.color.YELLOW){
             setLEDs(255,255,0);
         } else if(color==Constants.color.BLACK){
-            setLEDs(0,0,0);
+            //setLEDs(0,0,0);
+            setLEDs(0, 0, 0);
         } else if(color==Constants.color.GREEN){
             setLEDs(0,255,0);
         } else if(color==Constants.color.ALLYR){
@@ -65,12 +66,12 @@ private Constants.color currentcolor= Constants.color.BLACK;
         } else if(color==Constants.color.ALLYB){
             setPattern(blueAlliance);
         } else if(color==Constants.color.ORANGE){
-            setLEDs(255,165,0);
+            setLEDs(255,155,0);
         }else {
             System.err.println("ERROR: ATTEMPTED TO SET LED TO MAGENTA.");
             //looks you "does magenta exist" if you don't get it.
         }
-        color=currentcolor;
+        currentcolor=color;
         strip1.setData(buffer);
         //strip2.setData(buffer);
     }
@@ -80,15 +81,18 @@ private Constants.color currentcolor= Constants.color.BLACK;
         }
     }
     public void setPattern(int[][] pattern){//the length of the inner arrays is always 3.
-        if(Constants.LED_STRIP_LENGTH/pattern.length==(double)Constants.LED_STRIP_LENGTH/pattern.length){
+        if(Constants.LED_STRIP_LENGTH/pattern.length!=(double)Constants.LED_STRIP_LENGTH/pattern.length){
             //TL;DR of this if statement: is the number of LEDs divisible by the length of the pattern.
             System.err.println("WARNING: Pattern can not be displayed properly on LEDs");
             return;//might want to change this to throw an exception and have the original command catch it.
         }
         for (var i = 0; i < buffer.getLength(); i++) {//think this will work.
-            int[] colors=pattern[i];
+            int[] colors=pattern[i%(pattern.length)];
             buffer.setRGB(i, colors[0], colors[1], colors[2]);
         }
+    }
+    public void turnOff(){
+        strip1.stop();
     }
     @Override
     public void simulationPeriodic() {

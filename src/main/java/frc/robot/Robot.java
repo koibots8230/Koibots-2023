@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.commands.setLedColor;
+import frc.robot.commands.turnOffLED;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -72,6 +73,7 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void disabledInit() {
+
     }
 
     @Override
@@ -86,8 +88,8 @@ public class Robot extends TimedRobot {
         //set LED colors
         setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.PURPLE);
         hold.schedule();
-        m_robotContainer.ResetPositions();
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        //m_robotContainer.ResetPositions();
+        //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
@@ -104,14 +106,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        m_robotContainer.getDrive().setCoast();
+        m_robotContainer.getLEDs().turnOff();
     }
 
     @Override
     public void teleopInit() {
         //start camera
         CameraServer.startAutomaticCapture();
-        m_robotContainer.ResetPositions();
+        //m_robotContainer.ResetPositions();
         //set LED colors
         setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.PURPLE);
         //This should just be in auto init but that is crashing, so I'm putting it here.
@@ -130,17 +132,20 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopPeriodic() {
+
     }
 
     @Override
     public void teleopExit() {
-        m_robotContainer.getDrive().setBrake();
+
     }
 
     @Override
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+
+        
     }
 
     /**
