@@ -23,6 +23,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import frc.robot.Constants;
 
+import com.revrobotics.SparkMaxPIDController;
+
+import java.util.function.DoubleSupplier;
+
 public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax intakeMotor;
     private final RelativeEncoder intakeEncoder;
@@ -32,7 +36,6 @@ public class IntakeSubsystem extends SubsystemBase {
     private final CANSparkMax leftStarWheelsMotor;
     private final CANSparkMax rightStarWheelsMotor;
 
-    // This motor raises and lowers the intake:
     private final CANSparkMax raiseIntakeMotor;
     private final RelativeEncoder raiseIntakeEncoder;
 
@@ -40,9 +43,11 @@ public class IntakeSubsystem extends SubsystemBase {
 
     private final AnalogInput topHallEffectSensor;
     private final AnalogInput bottomHallEffectSensor;
-    private IntakeState state;
+    
+    private IntakeState previous_state;
 
     public IntakeSubsystem() {
+        // Motors
         intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
         intakeMotor.setInverted(false);
         intakeEncoder = intakeMotor.getEncoder();
@@ -54,10 +59,8 @@ public class IntakeSubsystem extends SubsystemBase {
         rightStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_L, MotorType.kBrushless);
         rightStarWheelsMotor.setInverted(true);
         leftStarWheelsMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_R, MotorType.kBrushless);
-        leftStarWheelsMotor.setInverted(true);
-        leftStarWheelsMotor.follow(rightStarWheelsMotor);
+        leftStarWheelsMotor.follow(rightStarWheelsMotor, true);
 
-        // raiseIntakeMotor:
         raiseIntakeMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
         raiseIntakeMotor.setInverted(false);
         raiseIntakeEncoder = raiseIntakeMotor.getEncoder();
@@ -68,7 +71,13 @@ public class IntakeSubsystem extends SubsystemBase {
         topHallEffectSensor = new AnalogInput(0); // Change port number when testing the code
         bottomHallEffectSensor = new AnalogInput(1); // Change port numer when testing the code
 
-        state = IntakeState.TOP;
+    }
+
+    public void resetPosition() {
+        raiseIntakeEncoder.setPosition(0);
+        intakeEncoder.setPosition(0);
+        conveyerEncoder.setPosition(0);
+        rightStarWheelsMotor.getEncoder().setPosition(0);
     }
 
     enum IntakeState {
@@ -89,23 +98,29 @@ public class IntakeSubsystem extends SubsystemBase {
         double midCurrent = firstConveyer.getOutputCurrent();
         SmartDashboard.putNumber("Midtake Motor Current (A)", midCurrent);
         SmartDashboard.putNumber("Midtake Motor Speed (RPM)", midVelocity);
-        state = getIntakeState();
 
     }
+    
+    // ================================Setters================================
 
-    @Override
-    public void simulationPeriodic() {
+    public void ClearStickies() {
+        raiseIntakeMotor.clearFaults();
     }
 
+    public void setRaiseIntakeSpeed(double speed){
+        raiseIntakeMotor.set(speed);
+    }
     public void turnOn(Boolean Forwards) {
         if (Forwards){
-            intakeMotor.set(-Constants.RUNNING_SPEED);
-            firstConveyer.set(Constants.RUNNING_SPEED);
-            rightStarWheelsMotor.set(Constants.RUNNING_SPEED);
+            intakeMotor.set(-Constants.INTAKE_RUNNING_SPEED);
+            firstConveyer.set(Constants.BELT_RUNNING_SPEED);
+            rightStarWheelsMotor.set(Constants.STARS_RUNNING_SPEED);
+            leftStarWheelsMotor.set(Constants.STARS_RUNNING_SPEED);
         } else {
-            intakeMotor.set(Constants.RUNNING_SPEED);
-            firstConveyer.set(-Constants.RUNNING_SPEED);
-            rightStarWheelsMotor.set(-Constants.RUNNING_SPEED);
+            intakeMotor.set(Constants.INTAKE_RUNNING_SPEED);
+            firstConveyer.set(-.15);
+            rightStarWheelsMotor.set(-.15);
+            leftStarWheelsMotor.set(-.15);
         }
     }
 
@@ -115,9 +130,15 @@ public class IntakeSubsystem extends SubsystemBase {
         rightStarWheelsMotor.set(0);
     }
 
-    public void setRaiseIntakeSpeed(double speed) {
-        
+    private double approximateSpeed(double Position){
+        double calculated_speed = Constants.RAISE_SPEED * Math.pow(4, -(Math.abs(Position)/20));
+        if (calculated_speed < 0.10) {
+            return 0.10;
+        }
+        return calculated_speed;
     }
+
+    // ================================Getters================================
 
     public double getRaiseMotorCurrent() {
         return raiseIntakeMotor.getOutputCurrent();
@@ -125,10 +146,6 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public double getIntakePosition() {
         return intakePosition;
-    }
-
-    public void setRaiseIntakeSpeed(double speed){
-        raiseIntakeMotor.set(speed);
     }
 
     public RelativeEncoder getRaiseEncoder() {
@@ -155,6 +172,94 @@ public class IntakeSubsystem extends SubsystemBase {
         return IntakeState.MOVE;
     }
 
+    public SparkMaxPIDController getIntakePID() {
+        return rightStarWheelsMotor.getPIDController();
+    }
+
+    public SparkMaxPIDController getMidtakePID() {
+        return intakeMotor.getPIDController();
+    }
+    
+    // ================================Commands================================
+
+    public class IntakeCommand extends CommandBase {
+        private DoubleSupplier m_intakeSpeed;
+        private SparkMaxPIDController m_intakePID;
+        private SparkMaxPIDController m_midtakePID;
+        private IntakeSubsystem m_intakeSubsystem;
+
+        public IntakeCommand(DoubleSupplier intakeSpeed, IntakeSubsystem subsystem) {
+            m_intakeSpeed = intakeSpeed;
+            m_intakeSubsystem = subsystem;
+            addRequirements(subsystem);
+        }
+        
+        @Override
+        public void initialize() {
+            m_intakePID = m_intakeSubsystem.getIntakePID();
+            m_midtakePID = m_intakeSubsystem.getMidtakePID();
+
+            m_intakePID.setOutputRange(-1, 1);
+            m_midtakePID.setOutputRange(-1, 1);
+
+            m_intakePID.setP(6e-5);
+            m_midtakePID.setP(6e-5);
+
+            m_intakePID.setI(0);
+            m_midtakePID.setI(0);
+
+            m_intakePID.setD(0);
+            m_midtakePID.setD(0);
+        }
+
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            // Here's the invert drivetrain invert feature:
+            m_intakePID.setReference(adjustForDeadzone(m_intakeSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+            m_midtakePID.setReference(adjustForDeadzone(m_intakeSpeed.getAsDouble()), CANSparkMax.ControlType.kDutyCycle);
+        }
+
+        private double adjustForDeadzone(double in) {
+            if (Math.abs(in) < Constants.DEADZONE) {
+                return 0;
+            }
+            return in;
+        }
+    }
+
+    public class MoveIntakeByEncoder extends CommandBase {
+        IntakeSubsystem intake;
+        boolean end = false;
+
+        public MoveIntakeByEncoder(IntakeSubsystem _intake) {
+            addRequirements(_intake);
+            intake = _intake;
+        }
+
+        public void initialize() {
+            intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
+            
+        }
+
+        public void periodic() {
+            if (intake.getRaiseEncoder().getPosition() >= 5) {
+                end = true;
+            } else if (intake.getRaiseMotorCurrent() >= 70) {
+                end = true;
+            }
+        }
+
+        public boolean isFinished() {
+            return end;
+        }
+
+        public void end(boolean interrupted) {
+            intake.setRaiseIntakeSpeed(0);
+            resetPosition();
+        }
+    }
+
     public class FlipIntake extends CommandBase {
         IntakeSubsystem m_intake;
         boolean end = false;
@@ -166,42 +271,70 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void initialize() {
-            IntakeState top;
             System.out.println("Intake is moving");
-            top = m_intake.getIntakeState();
+            previous_state = m_intake.getIntakeState();
             //use get just incase intake isnt run
-            switch(top){
+            switch(previous_state){
                 case TOP:
                     m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
                     hallEffectSensor = getBottomHallEffectSensor();
+                    break;
                 case BOTTOM:
                     m_intake.setRaiseIntakeSpeed(Constants.RAISE_SPEED);
                     hallEffectSensor = getTopHallEffectSensor();
+                    break;
                 case MOVE:
                     //dont use this command if we're in a move state, so just end
                     //leaving this in case we need it in future challenges
                     end = true;
+                    break;
                 case CALIBRATE:
                     //move down to calibrate if we dont know our position
                     m_intake.setRaiseIntakeSpeed(-Constants.RAISE_SPEED);
                     hallEffectSensor = getBottomHallEffectSensor();
+                    break;
             }
         }
 
         @Override
         public void execute() {
-            if (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED) {
-                if (m_intake.getRaiseEncoder().getPosition() > Constants.INTAKE_UP_POSITION || m_intake.getRaiseEncoder().getPosition() < Constants.INTAKE_DOWN_POSITION) {
+            boolean CurrentOrHallEffectTriggered = (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED);
+            boolean EncoderPositionPassed = (Math.abs(m_intake.getRaiseEncoder().getPosition()) >= Constants.INTAKE_CHANGE_POSITION);
+            if (CurrentOrHallEffectTriggered) {
+                if (EncoderPositionPassed) {
                 m_intake.setRaiseIntakeSpeed(0);
                 end = true;
                 } 
             } 
+            //change speeds
+            //intakePos is absolute cause we caccount for signs when settings
+            double intakePos = Math.abs(intakeEncoder.getPosition());
+            switch(previous_state){
+                case TOP:
+                    m_intake.setRaiseIntakeSpeed(-approximateSpeed(intakePos));
+                    break;
+                case BOTTOM:
+                    m_intake.setRaiseIntakeSpeed(approximateSpeed(intakePos));
+                    break;
+                case CALIBRATE:
+                    //move down to calibrate if we dont know our position
+                    m_intake.setRaiseIntakeSpeed(-approximateSpeed(intakePos));
+                    break;
+                case MOVE:
+                    //move 
+                    break;
+            }
+
         }
 
         @Override
         public boolean isFinished() {
             return end;
         }
-
+        
+        @Override
+        public void end(boolean Interrupted){
+            m_intake.getRaiseEncoder().setPosition(0);
+        }
     }
 }

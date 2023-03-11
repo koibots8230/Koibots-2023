@@ -10,7 +10,7 @@ public class IntakeCommand extends CommandBase {
     public IntakeCommand(IntakeSubsystem subsystem, Boolean fwd) {
         m_intake = subsystem;
         m_fwd = fwd;
-        addRequirements(m_intake);
+       addRequirements(m_intake);
     }
     
     @Override
