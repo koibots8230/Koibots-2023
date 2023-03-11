@@ -75,9 +75,13 @@ public class Constants {
   public static final double SHOOTER_ANGLE = 45; // To be changed
   public static final double GRAVITY = 9.8; // If you can figure out a way to change this one, that's impressive
   public static final double SHOOTER_FROM_GROUND = 1; // To be changed
-  public static final double VELOCITY_TO_SPEED = 0; // To be changed
+  public static final double SHOOTER_VELOCITY_TO_SPEED = 0; // To be changed
   public static final double MIDDLE_HEIGHT = 23.5 * 0.0254;
   public static final double MIDDLE_X = 24.25 * 0.0254;
+
+  public static final double AVAILABLE_CUBE_NODE_SPACE = 9.25;
+
+  public static final double ALIGN_DRIVE_SPEED = .5;
 
   public static final double Y1 = 43.125 * 0.0254;
   public static final double Y2 = 108.5 * 0.0254;

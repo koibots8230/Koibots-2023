@@ -19,20 +19,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class VisionSubsystem extends SubsystemBase{
 
-    public static PhotonPoseEstimator photonPoseEstimator;
+    public PhotonPoseEstimator photonPoseEstimator;
     final PhotonCamera camera;
     final Transform3d robotToCam;
     AprilTagFieldLayout aprilTagFieldLayout;
-    private Boolean side = false;
 
-    boolean m_sideChooser = true;
-    public VisionSubsystem(Boolean _side) {
+    public VisionSubsystem(Boolean red) {
         camera = new PhotonCamera("KoiBotsCamera");
         robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));
         aprilTagFieldLayout = null;
         try {
             aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-            if (side == false) {
+            if (red == true) {
                 aprilTagFieldLayout.setOrigin(new Pose3d(651.25*0.0254, 0.0, 0.0, new Rotation3d(0, 0, Math.PI)));
             }
         } catch (IOException ioexcept) {
