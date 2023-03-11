@@ -161,6 +161,11 @@ public class TankDriveSubsystem extends SubsystemBase {
         primaryLeftMotor.setVoltage(leftVoltage);
         drivetrain.feed();
     }
+
+    public double getRoll(){
+        return gyro.getRoll();
+    }
+    
     
     // ================================Commands================================
 
@@ -261,11 +266,86 @@ public class TankDriveSubsystem extends SubsystemBase {
 
             // End Check
             double[] current_positions = m_DriveSubsystem.getEncoderPositions();
-            double l_dif = (current_positions[0] - m_initialPositions[0]);
-            double r_dif = (current_positions[1] - m_initialPositions[1]); 
+            double l_dif = Math.abs(current_positions[0] - m_initialPositions[0]);
+            double r_dif = Math.abs(current_positions[1] - m_initialPositions[1]); 
 
-            if (Math.abs(l_dif + r_dif)>= m_encoderLimit) {
+            if ((l_dif + r_dif)>= m_encoderLimit) {
                 System.out.println("Reached end condition for DriveDistance");
+                hasReachedEnd = true;
+            }
+        }
+        
+        @Override 
+        public boolean isFinished() {
+            return hasReachedEnd;
+        }
+
+        @Override 
+        public void end(boolean isInterrupted){
+            m_leftPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
+            m_rightPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
+        }
+
+    }
+
+    public class rotateCommand extends CommandBase {
+        private double m_speed;
+        private SparkMaxPIDController m_rightPID;
+        private SparkMaxPIDController m_leftPID;
+        private TankDriveSubsystem m_DriveSubsystem;
+        private boolean hasReachedEnd;
+        private double m_angleLimit;
+        private double curr_angle;
+        private boolean direction;
+        private double m_initialAngle;
+
+        //Direction should be from -1 to 1 to indicate direction; 0 is Balanced, -1 is full left, 1 is full right
+        public rotateCommand(double relative_angle, double speed, TankDriveSubsystem subsystem) {
+            m_DriveSubsystem = subsystem;
+            m_angleLimit = Math.abs(relative_angle);
+            m_speed = speed;
+            // positive rotation is true, negative rotation is false
+            direction = (relative_angle > 0);
+            addRequirements(subsystem);
+        }
+        
+        @Override
+        public void initialize() {
+
+            m_initialAngle = m_DriveSubsystem.getRoll();
+            hasReachedEnd = false;
+
+            m_rightPID = m_DriveSubsystem.getRightPID();
+            m_leftPID = m_DriveSubsystem.getLeftPID();
+
+            m_rightPID.setOutputRange(-1, 1);
+            m_leftPID.setOutputRange(-1, 1);
+
+            m_rightPID.setP(6e-5);
+            m_leftPID.setP(6e-5);
+
+            m_rightPID.setI(0);
+            m_leftPID.setI(0);
+
+            m_rightPID.setD(0);
+            m_leftPID.setD(0);
+        }
+
+        @Override
+        public void execute() {
+            //choose rotation direction
+            if (direction) {
+                //Counter clockwise - positive angle, so left goes back and right goes forward
+                m_leftPID.setReference((m_speed), CANSparkMax.ControlType.kDutyCycle);
+                m_rightPID.setReference((-m_speed), CANSparkMax.ControlType.kDutyCycle);
+            } else {
+                //Clockwise - negative angle, so right goes back and left goes forward
+                m_leftPID.setReference((-m_speed), CANSparkMax.ControlType.kDutyCycle);
+                m_rightPID.setReference((m_speed), CANSparkMax.ControlType.kDutyCycle);
+            }
+            double curr_angle_dif = Math.abs(m_DriveSubsystem.getRoll() - m_initialAngle);
+            if ((curr_angle_dif)>= m_angleLimit) {
+                System.out.println("Reached end condition for rotateCommand");
                 hasReachedEnd = true;
             }
         }
