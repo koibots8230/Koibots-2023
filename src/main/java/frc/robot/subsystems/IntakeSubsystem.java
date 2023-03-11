@@ -115,6 +115,10 @@ public class IntakeSubsystem extends SubsystemBase {
         rightStarWheelsMotor.set(0);
     }
 
+    public void setRaiseIntakeSpeed(double speed) {
+        
+    }
+
     public double getRaiseMotorCurrent() {
         return raiseIntakeMotor.getOutputCurrent();
     }

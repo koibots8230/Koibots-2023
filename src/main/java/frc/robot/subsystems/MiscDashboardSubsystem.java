@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,15 +16,21 @@ public class MiscDashboardSubsystem extends SubsystemBase {
     private boolean voltage_alert = true;
     private double voltage = 11; // Voltage of the battery
     private double batteryCurrent = 0; // Current of the batter
-    private double inSpeed = 10; // Speed of the intake motor
+    private GenericEntry inSpeed; // Speed of the intake motor
     private double inCurrent = 0; // Current of the intake motor
     public boolean is_cube = false; // Boolean to determine whether retreived object is a cube or cone
-    private double midCurrent = 0; // Current of the midtake motor
-    private double midSpeed = 10; // Speed of the midtake motor
+    private GenericEntry midCurrent; // Current of the midtake motor
+    private GenericEntry midSpeed; // Speed of the midtake motor
+    private GenericEntry shootSpeed; // Speed of the shooter motors
+    private ShuffleboardTab driver_tab;
+
+    private double midVal;
+    private double inVal;
+    private double shootVal;
     
     public MiscDashboardSubsystem(IntakeSubsystem intake, ShooterSubsystem shooter) {
         ShuffleboardTab main_tab = Shuffleboard.getTab("Main");
-        
+
         // Battery info:
         main_tab.addBoolean("Voltage Alert", () -> voltage_alert).withSize(1, 1).withPosition(2, 0);
 
@@ -43,12 +50,22 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         main_tab.addNumber("Raise Intake Motor Current (A)", () -> intake.getIntakeRaiseMotor().getOutputCurrent()).withPosition(0, 3).
         withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
 
-        main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 4).
-        withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
+        // main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 4).
+        // withSize(3, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600));
         
         // Cube or cone? Place your bets!!
         //main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
         //withSize(3,1).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#880088", "Color when false", "#FFEE00"));
+
+        driver_tab = Shuffleboard.getTab("Driver");
+        midSpeed = driver_tab.add("Midtake Motor Speed (%)", 0.5)
+        .withWidget(BuiltInWidgets.kTextView).withPosition(3, 2).withSize(3,1).getEntry();
+
+        inSpeed = driver_tab.add("Intake Motor Speed (%)", 0.5)
+        .withPosition(0, 2).withSize(3,1).getEntry();
+
+        shootSpeed = driver_tab.add("Shooter Motor Speed (%)", 0.5)
+        .withPosition(0,4).withSize(3,1).getEntry();
     }
 
     @Override
@@ -61,6 +78,26 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
         voltage_alert = getBatteryVoltageAlert();
         voltage = getBatteryVoltage();
+
+        midVal = midSpeed.getDouble(0.5);
+        inVal = inSpeed.getDouble(0.5);
+        shootVal = shootSpeed.getDouble(1);
+
+        for(int i = 0; i < 10; i++) {
+            System.out.println("Midtake Speed:");
+            System.out.println(midVal);
+            System.out.println("\n");
+
+            System.out.println("Intake Speed:");
+            System.out.println(inVal);
+            System.out.println("\n");
+
+            System.out.println("Shooter Speed:");
+            System.out.println(inVal);  
+            System.out.println("\n");
+        }
+
+        
     }
 
     @Override
