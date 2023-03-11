@@ -24,6 +24,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import java.util.function.DoubleSupplier;
 
+import javax.swing.GrayFilter;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
@@ -302,13 +304,17 @@ public class TankDriveSubsystem extends SubsystemBase {
         //Direction should be from -1 to 1 to indicate direction; 0 is Balanced, -1 is full left, 1 is full right
         public rotateCommand(double relative_angle, double speed, TankDriveSubsystem subsystem) {
             m_DriveSubsystem = subsystem;
-            m_angleLimit = Math.abs(relative_angle);
+            m_angleLimit = Math.abs((relative_angle));
             m_speed = speed;
             // positive rotation is true, negative rotation is false
             direction = (relative_angle > 0);
             addRequirements(subsystem);
         }
         
+        private double convert(double gyro_angle){
+            return gyro_angle += 180;
+        }
+    
         @Override
         public void initialize() {
 
@@ -343,7 +349,7 @@ public class TankDriveSubsystem extends SubsystemBase {
                 m_leftPID.setReference((-m_speed), CANSparkMax.ControlType.kDutyCycle);
                 m_rightPID.setReference((m_speed), CANSparkMax.ControlType.kDutyCycle);
             }
-            double curr_angle_dif = Math.abs(m_DriveSubsystem.getRoll() - m_initialAngle);
+            double curr_angle_dif = Math.abs(convert(m_DriveSubsystem.getRoll()) - m_initialAngle);
             if ((curr_angle_dif)>= m_angleLimit) {
                 System.out.println("Reached end condition for rotateCommand");
                 hasReachedEnd = true;
