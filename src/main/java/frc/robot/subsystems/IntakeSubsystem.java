@@ -366,11 +366,9 @@ public class IntakeSubsystem extends SubsystemBase {
         public void execute() {
             boolean CurrentOrHallEffectTriggered = (Math.abs(m_intake.getRaiseMotorCurrent()) > Constants.CURRENT_ZONE_AMPS || hallEffectSensor.getVoltage() > Constants.HALL_EFFECT_SENSOR_TRIGGERED);
             boolean EncoderPositionPassed = (Math.abs(m_intake.getRaiseEncoder().getPosition()) >= Constants.INTAKE_CHANGE_POSITION);
-            if (CurrentOrHallEffectTriggered) {
-                if (EncoderPositionPassed) {
+            if (CurrentOrHallEffectTriggered || EncoderPositionPassed) {
                 m_intake.setRaiseIntakeSpeed(0);
                 end = true;
-                } 
             } 
             //change speeds
             //intakePos is absolute cause we caccount for signs when settings
