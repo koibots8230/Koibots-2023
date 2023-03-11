@@ -114,7 +114,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         //enable coast
-        m_robotContainer.getDrive().setCoast();
+        //m_robotContainer.getDrive().setCoast();
         //start camera
         CameraServer.startAutomaticCapture();
         //m_robotContainer.ResetPositions();
@@ -144,8 +144,8 @@ public class Robot extends TimedRobot {
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
-
-        
+        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.moving.DOT1);
+        hold.schedule();
     }
 
     /**
