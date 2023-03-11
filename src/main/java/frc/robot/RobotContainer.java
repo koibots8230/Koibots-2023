@@ -21,7 +21,9 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,14 +31,21 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.networktables.GenericEntry;
 
+import java.text.FieldPosition;
+import java.util.HashMap;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
@@ -56,12 +65,11 @@ public class RobotContainer {
 
   // Subsystems
   public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
-  public final IntakeSubsystem m_intake = new IntakeSubsystem();
 
   public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
   // public final VisionSubsystem m_VisionSubsystem = new
   // VisionSubsystem(m_sideChooser.getSelected());
-  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
+  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(IntakeSubsystem.getIntakeSubsystem(), m_ShooterSubsystem, m_tankDriveSubsystem);
 
   // Controlers
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
@@ -77,9 +85,7 @@ public class RobotContainer {
       m_tankDriveSubsystem);
 
   // Shuffleboard
-  SendableChooser<Integer> m_autoChooser;
-  SendableChooser<Boolean> m_customAuto;
-  SendableChooser<Integer> m_customChooser;
+  SendableChooser<Command> m_autoChooser;
   SendableChooser<Double> m_intakeSpeedChooser;
   // SendableChooser<Boolean> m_sideChooser;
 
@@ -121,7 +127,7 @@ public class RobotContainer {
 
     Trigger clearButton = m_operatorHID.circle();
 
-    clearButton.whileTrue(new InstantCommand(() -> m_intake.ClearStickies(), m_intake));
+    clearButton.whileTrue(new InstantCommand(() -> IntakeSubsystem.getIntakeSubsystem().ClearStickies(), IntakeSubsystem.getIntakeSubsystem()));
 
     // ======================================DRIVER CONTROLS======================================
     // create commands
@@ -158,41 +164,29 @@ public class RobotContainer {
    */
   private RobotContainer() {
     // choosing what auto
-    m_autoChooser = new SendableChooser<Integer>();
+    m_autoChooser = new SendableChooser<Command>();
 
-    m_autoChooser.addOption("Shoot -> Move", 0);
-    m_autoChooser.addOption("Shoot -> Autobalance", 1);
-    m_autoChooser.addOption("DO NOTHING", 2);
-    m_autoChooser.addOption("Exit Community + Balance", 3);
-    m_autoChooser.addOption("Only Shoot Move", 4);
-    m_customAuto = new SendableChooser<Boolean>();
-    // integer representes which auto we get
-    m_customChooser = new SendableChooser<Integer>();
-    // chosing parameters of auto
+    PathPlannerTrajectory centerPath = PathPlanner.loadPath("Center", new PathConstraints(0, 0));
+
+    HashMap<String, Command> eventMap = new HashMap<>();
+    eventMap.put("pause", new WaitCommand(Constants.PAUSE_LENGTH));
+    eventMap.put("GetCube", new LoadCube());
+
+    FollowPathWithEvents command = new FollowPathWithEvents(m_driveCommand, null, eventMap);
+
+    m_autoChooser.addOption("Center", new WaitCommand(0));
+  
+    PPRamseteCommand x = new PPRamseteCommand(centerPath, null, null, null, null, null);
+
     ShuffleboardTab m_autotab = Shuffleboard.getTab("Auto");
-    m_customAuto.setDefaultOption("Default autos", false);
-    m_customAuto.addOption("Custom auto", true);
-
-    m_customChooser.addOption("Shoot->Move", 0);
-    m_customChooser.addOption("Shoot->Autobalance", 1);
-
-    autobal_leftSpeed = m_autotab.add("autobal leftSpeed", Constants.AUTO_LEFT_SPEED).getEntry();
-    autobal_rightSpeed = m_autotab.add("autobal rightSpeed", Constants.AUTO_RIGHT_SPEED).getEntry();
-    shoot_leftSpeed = m_autotab.add("shoot leftSpeed", Constants.SHOOT_LEFT_SPEED).getEntry();
-    shoot_rightSpeed = m_autotab.add("shoot rightSpeed", Constants.SHOOT_RIGHT_SPEED).getEntry();
-    shoot_time = m_autotab.add("Shoot time", Constants.SHOOT_SECONDS).getEntry();
-    autobal_limit = m_autotab.add("ShootAutobalance Encoder Limit", Constants.AUTOBALANCE_MOVE_LIMIT).getEntry();
-    shoot_limit = m_autotab.add("ShootMove EncoderLimit", Constants.SHOOT_MOVE_LIMIT).getEntry();
-
     m_autoChooser.addOption(("NO AUTO"), null);
+
     configureButtonBindings();
     ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");
     m_shuffleboard.add(m_autoChooser);
-    m_autotab.add(m_customAuto);
     m_autotab.add(m_autoChooser);
     m_shuffleboard.addNumber("Encoder Left", () -> m_tankDriveSubsystem.getEncoderPositions()[0]);
     m_shuffleboard.addNumber("Encoder Right", () -> m_tankDriveSubsystem.getEncoderPositions()[1]);
-
   }
 
   public CommandGenericHID getController() {
@@ -209,68 +203,7 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // check if custom auto
-    // by defualt is set to false
-    if (m_customAuto.getSelected()) {
-
-      switch (m_customChooser.getSelected()) {
-        // break statements unecessary due to return function
-        case (0):
-          return new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
-              Constants.SHOOT_SECONDS,
-              Constants.SHOOT_MOVE_LIMIT,
-              Constants.SHOOT_LEFT_SPEED,
-              Constants.SHOOT_RIGHT_SPEED);
-        case (1):
-          AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-          return new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem,
-              Constants.SHOOT_SECONDS,
-              Constants.AUTOBALANCE_MOVE_LIMIT,
-              Constants.AUTO_LEFT_SPEED,
-              Constants.AUTO_RIGHT_SPEED,
-              m_gyro,
-              m_intake);
-      }
-      // if nothing seletcted
-      return null;
-    } else {
-      switch (m_autoChooser.getSelected()) {
-        case (0):
-          return new shootMove(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
-              Constants.SHOOT_SECONDS,
-              Constants.SHOOT_MOVE_LIMIT,
-              Constants.SHOOT_LEFT_SPEED,
-              Constants.SHOOT_RIGHT_SPEED);
-        case (1):
-          AHRS m_gyro = new AHRS(SPI.Port.kMXP);
-          return new shootAutobalance(m_tankDriveSubsystem, m_ShooterSubsystem,
-              Constants.SHOOT_SECONDS,
-              Constants.AUTOBALANCE_MOVE_LIMIT,
-              Constants.AUTO_LEFT_SPEED,
-              Constants.AUTO_RIGHT_SPEED,
-              m_gyro,
-              m_intake);
-        case (2):
-          return null;
-        case (3):
-          AHRS n_gyro = new AHRS(SPI.Port.kMXP);
-          return new CommunityBalance(
-              m_tankDriveSubsystem,
-              m_ShooterSubsystem,
-              Constants.SHOOT_SECONDS,
-              Constants.AUTOBALANCE_MOVE_LIMIT,
-              Constants.AUTO_LEFT_SPEED,
-              Constants.AUTO_RIGHT_SPEED,
-              n_gyro,
-              m_intake);
-        case (4):
-            return new ShootMoveOnly(m_tankDriveSubsystem, m_ShooterSubsystem, m_intake,
-            Constants.SHOOT_SECONDS,
-            Constants.SHOOT_MOVE_LIMIT,
-            Constants.SHOOT_LEFT_SPEED,
-            Constants.SHOOT_RIGHT_SPEED); 
-            }
-      return null;
-    }
+    return m_autoChooser.getSelected();
   }
+  
 }

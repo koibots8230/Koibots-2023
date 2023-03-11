@@ -16,6 +16,7 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 
 import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.server.PathPlannerServer;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;

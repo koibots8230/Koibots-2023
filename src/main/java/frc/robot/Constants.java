@@ -11,6 +11,7 @@ public class Constants {
   // Constants for auto
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
   // WHAT YOU ARE DOING.
+  public static final double PAUSE_LENGTH = 0.3;
   public static final double CURRENT_CAP = 60;
   public static final double FLIP_INTAKE_DISTANCE = 2;
 
