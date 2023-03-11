@@ -73,7 +73,8 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void disabledInit() {
-
+        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.BLACK);
+        hold.schedule();
     }
 
     @Override
@@ -86,7 +87,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         //set LED colors
-        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.PURPLE);
+        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.ALLYB);
+        //ALLYB = blue alliance, ALLYR = red alliance.
         hold.schedule();
         //m_robotContainer.ResetPositions();
         //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
@@ -106,18 +108,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        m_robotContainer.getLEDs().turnOff();
+        //m_robotContainer.getLEDs().turnOff();
     }
 
     @Override
     public void teleopInit() {
+        //enable coast
+        m_robotContainer.getDrive().setCoast();
         //start camera
         CameraServer.startAutomaticCapture();
         //m_robotContainer.ResetPositions();
-        //set LED colors
-        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.PURPLE);
-        //This should just be in auto init but that is crashing, so I'm putting it here.
-        hold.schedule();
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
         // continue until interrupted by another command, remove
