@@ -11,6 +11,8 @@ public class Constants {
   // Constants for auto
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
   // WHAT YOU ARE DOING.
+  public static final double CURRENT_CAP = 60;
+  public static final double FLIP_INTAKE_DISTANCE = 2;
 
   public static final double AUTOBALANCE_MOVE_LIMIT = 85;
   public static final double SHOOT_MOVE_LIMIT = 140;
@@ -63,7 +65,8 @@ public class Constants {
   public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
   public static final double INTAKE_DOWN_POSITION = -1; // To be changed when we have an actual intake
   public static final double INTAKE_CHANGE_POSITION = 20;
-  public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
+  public static final double SENSOR_TRIGGERED = 2.5;
+  public static final int BEAM_BREAK = 1;
 
   // for LED system
   public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.

@@ -21,10 +21,16 @@ import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
+    private static IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
+
     private final CANSparkMax intakeMotor;
 
     public IntakeSubsystem() {
         intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
+    }
+
+    public static IntakeSubsystem getIntakeSubsystem() {
+        return m_IntakeSubsystem;
     }
 
     public void setIntakeSpeed(double speed) {
@@ -37,13 +43,34 @@ public class IntakeSubsystem extends SubsystemBase {
     // ================================Commands================================
 
     public class RunIntake extends CommandBase {
-        RunIntake() {
+        public RunIntake() {
             addRequirements(IntakeSubsystem.this);
         }
 
         @Override
         public void initialize() {
             IntakeSubsystem.this.setIntakeSpeed(Constants.INTAKE_RUNNING_SPEED);
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public void end(boolean interrupted) {
+            IntakeSubsystem.this.setIntakeSpeed(0);
+        }
+    }
+
+    public class RunIntakeReverse extends CommandBase {
+        public RunIntakeReverse() {
+            addRequirements(IntakeSubsystem.this);
+        }
+
+        @Override
+        public void initialize() {
+            IntakeSubsystem.this.setIntakeSpeed(-Constants.INTAKE_RUNNING_SPEED);
         }
 
         @Override

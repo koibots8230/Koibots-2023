@@ -2,13 +2,12 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.autos;
 
 import frc.robot.Constants;
+import frc.robot.commands.LoadCube;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.subsystems.IntakeSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -45,15 +44,12 @@ public class shootMove extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new InstantCommand(() -> m_IntakeSubsystem.turnOn(true), m_IntakeSubsystem),
+        new LoadCube(),
         m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime),
-        new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
         m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, m_EncoderDistance, tankDriveSubsystem),
-        m_IntakeSubsystem.new MoveIntakeByEncoder(intakeSubsystem),
+        //Lower Intake
         m_tankDriveSubsystem.new driveDistanceCommand(m_leftSpeed, m_rightSpeed, 45, tankDriveSubsystem),
-        new InstantCommand(() -> m_IntakeSubsystem.turnOn(true), m_IntakeSubsystem),
-        new WaitCommand(0.4),
-        new InstantCommand(() -> m_IntakeSubsystem.turnOff(), m_IntakeSubsystem),
+        new LoadCube(),
         m_tankDriveSubsystem.new driveDistanceCommand(-m_leftSpeed, -m_rightSpeed, 130, tankDriveSubsystem),
         m_ShooterSubsystem.new ShootTimeCommand(shooterSubsystem, ShootTime, Constants.L1_SHOOTER_SPEED),
         m_tankDriveSubsystem.new driveDistanceCommand(leftSpeed, rightSpeed, 100, tankDriveSubsystem)

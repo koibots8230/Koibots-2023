@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class IntakePositionSubsystem extends SubsystemBase {
+  private static IntakePositionSubsystem m_IntakePositionSubsystem = new IntakePositionSubsystem();
+
   private CANSparkMax intakePositionMotor;
   private RelativeEncoder intakePositionEncoder;
 
@@ -21,6 +23,10 @@ public class IntakePositionSubsystem extends SubsystemBase {
   public IntakePositionSubsystem() {
     intakePositionMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
     intakePositionEncoder = intakePositionMotor.getEncoder();
+  }
+
+  public static IntakePositionSubsystem getIntakePositionSubsystem() {
+    return m_IntakePositionSubsystem;
   }
 
   public void setIntakePositionSpeed(double speed) {

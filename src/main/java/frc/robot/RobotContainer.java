@@ -12,6 +12,10 @@ ROBOTBUILDER TYPE: RobotContainer. */
 
 package frc.robot;
 
+import frc.robot.autos.CommunityBalance;
+import frc.robot.autos.ShootMoveOnly;
+import frc.robot.autos.shootAutobalance;
+import frc.robot.autos.shootMove;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -23,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -131,26 +135,17 @@ public class RobotContainer {
 
     // Flip Intake
     // Trigger flipTrigger = m_driverHID.leftBumper();
-    // flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+    // flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));\
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
+    runIntakeForwardsTrigger.whileTrue(new LoadCube());
 
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
-    runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false)
-        .alongWith(Commands.runEnd(
-            () -> m_ShooterSubsystem.SetShooter(-.1),
-            () -> m_ShooterSubsystem.SetShooter(0),
-            m_ShooterSubsystem)));
+    runIntakeBackwardsTrigger.whileTrue(new EjectCube());
 
     // Slow Shooter
     Trigger runInShooterSlowly = m_operatorHID.square();
-    runInShooterSlowly.whileTrue(new IntakeCommand(m_intake, true)
-        .alongWith(Commands.runEnd(
-            () -> m_ShooterSubsystem.SetShooter(.2),
-            () -> m_ShooterSubsystem.SetShooter(0),
-            m_ShooterSubsystem)));
 
   }
 
@@ -202,10 +197,6 @@ public class RobotContainer {
 
   public CommandGenericHID getController() {
     return m_driverHID;
-  }
-
-  public void ResetPositions() {
-    m_intake.resetPosition();
   }
 
   public TankDriveSubsystem getDrive() {
