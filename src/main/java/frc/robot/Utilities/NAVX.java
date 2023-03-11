@@ -48,8 +48,8 @@ public class NAVX extends AHRS{
             leftAbsoluteEncoder = drive.getLeftAbsoluteEncoder();
             rightAbsoluteEncoder = drive.getRightAbsoluteEncoder();
 
-            leftDistance = ellipseCircumference(forwardsDistance_m + halfRobotWidth,  horizontalDistance_m + halfRobotWidth);
-            rightDistance = ellipseCircumference(forwardsDistance_m - halfRobotWidth, horizontalDistance_m - halfRobotWidth);
+            leftDistance = ellipseCircumference(forwardsDistance_m + halfRobotWidth,  horizontalDistance_m + halfRobotWidth) / 4;
+            rightDistance = ellipseCircumference(forwardsDistance_m - halfRobotWidth, horizontalDistance_m - halfRobotWidth) / 4;
 
             leftSpeed = leftDistance / rightDistance;
             rightSpeed = rightDistance / leftDistance;
