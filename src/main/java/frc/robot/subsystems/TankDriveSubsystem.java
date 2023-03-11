@@ -24,6 +24,7 @@ import frc.robot.Constants;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
+import java.util.function.BiConsumer;
 import java.util.function.DoubleSupplier;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -257,8 +258,12 @@ public class TankDriveSubsystem extends SubsystemBase {
                 hasReachedEnd = true;
             }
         }
+        
+        public void PPDrive(BiConsumer<Double, Double> speeds) {
+            
+        }
 
-        @Override
+        @Override 
         public boolean isFinished() {
             return hasReachedEnd;
         }

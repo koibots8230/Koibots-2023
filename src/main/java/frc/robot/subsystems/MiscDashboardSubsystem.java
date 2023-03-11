@@ -38,15 +38,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
         main_tab.addNumber("Main Battery Current (A)", () -> batteryCurrent).withPosition(3, 0).
         withSize(2,2).withWidget(BuiltInWidgets.kDial).withProperties(Map.of("min", 0, "max", 600));
 
-        //The motor speeds:
-        //main_tab.addNumber("Intake Motor Speed (RPM)", () -> inSpeed).withPosition(0, 2).
-        //withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
-
-        //main_tab.addNumber("Midtake Motor Speed (RPM)", () -> midSpeed).withPosition(3, 2).
-        //withSize(3,1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", 0, "max", 600)); //Disclaimer: I DON'T KNOW THE ACTUAL TOP SPEED.
-
-        
-
         main_tab.addNumber("Shooter Motor Speed (RPM)", () -> shooter.getShooterSpeed()).withPosition(0, 3).
         withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -5000, "max", 5000));
 
@@ -55,23 +46,10 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
         main_tab.addNumber("Right Drive Motor Speed (RPM)", () -> drive.getRightDriveSpeed()*(68/30)).withPosition(0, 2).
         withSize(2, 1).withWidget(BuiltInWidgets.kNumberBar).withProperties(Map.of("min", -7500, "max", 7500));
-        
-
-
-
-        // Cube or cone? Place your bets!!
-        //main_tab.addBoolean("Cube or Cone", () -> is_cube).withPosition(0, 1).
-        //withSize(3,1).withWidget(BuiltInWidgets.kBooleanBox).withProperties(Map.of("Color when true", "#880088", "Color when false", "#FFEE00"));
     }
 
     @Override
     public void periodic() {
-        /* if (periodic_loop_counter >= checkDelay(2)) {
-            // code
-            periodic_loop_counter = 0;
-        }
-        periodic_loop_counter += 1; */
-
         SmartDashboard.putNumber("Gyro Roll", gyro.getRoll());
         SmartDashboard.putNumber("Gyro Pitch", gyro.getPitch());
         voltage_alert = getBatteryVoltageAlert();
@@ -80,12 +58,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
     @Override
     public void simulationPeriodic() {
-        /* if (periodic_loop_counter >= checkDelay(2)) {
-            // code
-            periodic_loop_counter = 0;
-        }
-        periodic_loop_counter += 1; */
-
         voltage_alert = getBatteryVoltageAlert();
         voltage = getBatteryVoltage();
         batteryCurrent = getBatteryCurrent();
@@ -93,7 +65,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
 
     public static double getBatteryVoltage() {
         return RobotController.getInputVoltage();
-        // return RobotController.getBatteryVoltage();
     }
 
     public static boolean getBatteryVoltageAlert() {
@@ -101,12 +72,6 @@ public class MiscDashboardSubsystem extends SubsystemBase {
             return true;
         }
         return false;
-
-        /* if (RobotController.getBatteryVoltage() >= 12) {
-            return true;
-        }
-
-        return false; */
 
     }
 

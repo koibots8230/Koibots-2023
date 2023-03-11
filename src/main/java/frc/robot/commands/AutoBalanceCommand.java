@@ -7,6 +7,7 @@ package frc.robot.commands;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.TankDriveSubsystem;
 import frc.robot.Constants;
 import frc.robot.commands.AutoBalanceCommand;
@@ -49,7 +50,7 @@ public class AutoBalanceCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_driveSubsystem.setMotor(0, 0);
     if (!interrupted) {
-      new waitCommand(25, gyro, m_driveSubsystem).schedule();
+      new WaitCommand(0.5);
     }
   }
 

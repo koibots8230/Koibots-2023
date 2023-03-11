@@ -1,19 +1,33 @@
 package frc.robot;
 
+import frc.robot.autos.CommunityBalance;
+import frc.robot.autos.ShootMoveOnly;
+import frc.robot.autos.shootAutobalance;
+import frc.robot.autos.shootMove;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 import edu.wpi.first.networktables.GenericEntry;
+
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.networktables.GenericEntry;
+
+import java.util.function.DoubleSupplier;
+
+import com.kauailabs.navx.frc.AHRS;
 
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
@@ -32,10 +46,12 @@ public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
 
   // Subsystems
-  private final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
-  private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
-  private final MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
+  public final TankDriveSubsystem m_tankDriveSubsystem = new TankDriveSubsystem();
+
+  public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+  // public final VisionSubsystem m_VisionSubsystem = new
+  // VisionSubsystem(m_sideChooser.getSelected());
+  private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(IntakeSubsystem.getIntakeSubsystem(), m_ShooterSubsystem, m_tankDriveSubsystem);
 
   // Controlers
   private final CommandXboxController m_driverHID = new CommandXboxController(0);
@@ -72,21 +88,6 @@ public class RobotContainer {
     slowMode.onTrue(new InstantCommand(() -> m_tankDriveSubsystem.SlowDrive()));
     slowMode.onFalse(new InstantCommand(() -> m_tankDriveSubsystem.UnslowDrive()));
 
-    // Speed Up/Down
-    // Trigger operatorSpeedUp = m_operatorHID.cross();
-    // Trigger operatorSpeedDown = m_operatorHID.circle();
-
-    // operatorSpeedUp.onTrue(new setSpeedCommand(true, m_tankDriveSubsystem));
-    // operatorSpeedDown.onTrue(new setSpeedCommand(false, m_tankDriveSubsystem));
-
-    // LED
-    // Trigger leftTrigger_op =
-    // m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value,
-    // Constants.DEADZONE);
-    // Trigger rightTrigger_op =
-    // m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value,
-    // Constants.DEADZONE);
-
     // Shooting
     Trigger shootL2 = m_operatorHID.L1();
     Trigger shootL3 = m_operatorHID.R1();
@@ -102,7 +103,7 @@ public class RobotContainer {
 
     Trigger clearButton = m_operatorHID.circle();
 
-    clearButton.whileTrue(new InstantCommand(() -> m_intake.ClearStickies(), m_intake));
+    clearButton.whileTrue(new InstantCommand(() -> IntakeSubsystem.getIntakeSubsystem().ClearStickies(), IntakeSubsystem.getIntakeSubsystem()));
 
     // ======================================DRIVER
     // CONTROLS======================================
@@ -117,26 +118,17 @@ public class RobotContainer {
 
     // Flip Intake
     // Trigger flipTrigger = m_driverHID.leftBumper();
-    // flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));
+    // flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));\
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new IntakeCommand(m_intake, true));
+    runIntakeForwardsTrigger.whileTrue(new LoadCube());
 
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
-    runIntakeBackwardsTrigger.whileTrue(new IntakeCommand(m_intake, false)
-        .alongWith(Commands.runEnd(
-            () -> m_ShooterSubsystem.SetShooter(-.1),
-            () -> m_ShooterSubsystem.SetShooter(0),
-            m_ShooterSubsystem)));
+    runIntakeBackwardsTrigger.whileTrue(new EjectCube());
 
     // Slow Shooter
     Trigger runInShooterSlowly = m_operatorHID.square();
-    runInShooterSlowly.whileTrue(new IntakeCommand(m_intake, true)
-        .alongWith(Commands.runEnd(
-            () -> m_ShooterSubsystem.SetShooter(.2),
-            () -> m_ShooterSubsystem.SetShooter(0),
-            m_ShooterSubsystem)));
 
   }
 
@@ -152,14 +144,31 @@ public class RobotContainer {
     m_autoChooser = new SendableChooser<Command>();
 
     configureButtonBindings();
+
+    PathPlannerTrajectory centerPath = PathPlanner.loadPath("Center", new PathConstraints(0, 0));
+
+    HashMap<String, Command> eventMap = new HashMap<>();
+    eventMap.put("pause", new WaitCommand(Constants.PAUSE_LENGTH));
+    eventMap.put("GetCube", new LoadCube());
+
+    FollowPathWithEvents command = new FollowPathWithEvents(m_driveCommand, null, eventMap);
+
+    m_autoChooser.addOption("Center", new WaitCommand(0));
+  
+    PPRamseteCommand x = new PPRamseteCommand(centerPath, null, null, null, null, null);
+
+    ShuffleboardTab m_autotab = Shuffleboard.getTab("Auto");
+    m_autoChooser.addOption(("NO AUTO"), null);
+
+    ShuffleboardTab m_shuffleboard = Shuffleboard.getTab("Main");
+    m_shuffleboard.add(m_autoChooser);
+    m_autotab.add(m_autoChooser);
+    m_shuffleboard.addNumber("Encoder Left", () -> m_tankDriveSubsystem.getEncoderPositions()[0]);
+    m_shuffleboard.addNumber("Encoder Right", () -> m_tankDriveSubsystem.getEncoderPositions()[1]);
   }
 
   public CommandGenericHID getController() {
     return m_driverHID;
-  }
-
-  public void ResetPositions() {
-    m_intake.resetPosition();
   }
 
   public TankDriveSubsystem getDrive() {
@@ -174,4 +183,5 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return m_autoChooser.getSelected();
   }
+  
 }

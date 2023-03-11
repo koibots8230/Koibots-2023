@@ -11,6 +11,9 @@ public class Constants {
   // Constants for auto
   // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
   // WHAT YOU ARE DOING.
+  public static final double PAUSE_LENGTH = 0.3;
+  public static final double CURRENT_CAP = 60;
+  public static final double FLIP_INTAKE_DISTANCE = 2;
 
   public static final double RELATIVE_DRIVE_SPEED = 0.5;
   public static final double TURN_SPEED = 0.5;
@@ -69,7 +72,8 @@ public class Constants {
   public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
   public static final double INTAKE_DOWN_POSITION = -1; // To be changed when we have an actual intake
   public static final double INTAKE_CHANGE_POSITION = 20;
-  public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
+  public static final double SENSOR_TRIGGERED = 2.5;
+  public static final int BEAM_BREAK = 1;
 
   // for LED system
   public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
@@ -81,7 +85,7 @@ public class Constants {
   public static final double SHOOTER_ANGLE = 45; // To be changed
   public static final double GRAVITY = 9.8; // If you can figure out a way to change this one, that's impressive
   public static final double SHOOTER_FROM_GROUND = 1; // To be changed
-  public static final double MOTOR_SPEED_TO_VELOCITY = 0; // To be changed
+  public static final double VELOCITY_TO_SPEED = 0; // To be changed
   public static final double MIDDLE_HEIGHT = 23.5 * 0.0254;
   public static final double MIDDLE_X = 24.25 * 0.0254;
 
@@ -90,7 +94,7 @@ public class Constants {
   public static final double Y3 = 174.625 * 0.0254;
 
   public static final Translation3d MC1 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
-  public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
+  public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y2, MIDDLE_HEIGHT);
   public static final Translation3d MC3 = new Translation3d(MIDDLE_X, Y3, MIDDLE_HEIGHT);
 
   public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1, MC2, MC3);
@@ -99,10 +103,12 @@ public class Constants {
   public static final double HIGH_X = 12.25 * 0.0254;
 
   public static final Translation3d HC1 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
-  public static final Translation3d HC2 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
+  public static final Translation3d HC2 = new Translation3d(HIGH_X, Y2, HIGH_HEIGHT);
   public static final Translation3d HC3 = new Translation3d(HIGH_X, Y3, HIGH_HEIGHT);
 
   public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1, HC2, HC3);
+
+  public static final double MAX_SHOOTER_RANGE = 2;
 
   // Encoder Values
   public static final double RIGHT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
