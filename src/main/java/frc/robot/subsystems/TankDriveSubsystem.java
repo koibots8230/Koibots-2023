@@ -318,7 +318,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         @Override
         public void initialize() {
 
-            m_initialAngle = m_DriveSubsystem.getRoll();
+            m_initialAngle = convert(m_DriveSubsystem.getRoll());
             hasReachedEnd = false;
 
             m_rightPID = m_DriveSubsystem.getRightPID();
