@@ -28,13 +28,10 @@ public class IndexerSubsystem extends SubsystemBase {
   }
 
   public boolean isIndexerFilled() {
-      if (BeamBreakSensor.getVoltage() > Constants.SENSOR_TRIGGERED) {
-        return true;
-      }
-      return false;
+    return BeamBreakSensor.getVoltage() > Constants.SENSOR_TRIGGERED;
   }
 
-  public static IndexerSubsystem getIndexerSubsystem() {
+  public static IndexerSubsystem get() {
     return m_IndexerSubsystem;
   }
 

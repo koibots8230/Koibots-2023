@@ -18,7 +18,7 @@ public class LoadCube extends ParallelCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       IntakeSubsystem.getIntakeSubsystem().new RunIntake(),
-      IndexerSubsystem.getIndexerSubsystem().new RunIndexer()
+      IndexerSubsystem.get().new RunIndexer()
     );
   }
 }

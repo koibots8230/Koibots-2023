@@ -2,7 +2,6 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
@@ -23,7 +22,6 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem.CommunityShotCommand;
 
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
@@ -77,33 +75,33 @@ public class RobotContainer {
 
     // Create Triggers here | Triggers should be named t_CommandName
 
-    // ======================================Operator Controls====================================== \\
+    // ====================================== Operator Controls ====================================== \\
 
     Trigger slowMode = m_operatorHID.triangle();
     slowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
     slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
     // Shooting
-    Trigger shootL2 = m_operatorHID.L1();
-    Trigger shootL3 = m_operatorHID.R1();
+    Trigger shootL1 = m_operatorHID.L1();
+    shootL1.whileTrue(ShooterSubsystem.get().L1Shot());
 
-    shootL2.whileTrue(ShooterSubsystem.get().new LevelShootCommand(2));
-    shootL3.whileTrue(ShooterSubsystem.get().new LevelShootCommand(3));
+    Trigger shootL2 = m_operatorHID.R1();
+    shootL2.whileTrue(ShooterSubsystem.get().L2Shot());
 
 
+
+    
     Trigger clearButton = m_operatorHID.circle();
     clearButton.whileTrue(new InstantCommand(() -> IntakeSubsystem.getIntakeSubsystem().ClearStickies(), IntakeSubsystem.getIntakeSubsystem()));
 
-    // ======================================DRIVER
-    // CONTROLS======================================
+    // ====================================== DRIVER CONTROLS ====================================== \\
     // create commands
     // 5 = left bumper
     // 6 = right bumper
 
     // Community Shot
-    Trigger shootTrigger = m_driverHID.axisGreaterThan(XboxController.Axis.kLeftTrigger.value, Constants.DEADZONE);
-    CommunityShotCommand com_shot_cmd = ShooterSubsystem.get().new CommunityShotCommand();
-    shootTrigger.whileTrue(com_shot_cmd);
+    Trigger shootHybrid = m_driverHID.leftTrigger(Constants.DEADZONE); // TODO: Make new deadzone
+    shootHybrid.whileTrue(ShooterSubsystem.get().HybridShot());
 
     // Flip Intake
     // Trigger flipTrigger = m_driverHID.leftBumper();
