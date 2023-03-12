@@ -39,7 +39,7 @@
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [
           "Shoot High",
@@ -52,22 +52,22 @@
     },
     {
       "anchorPoint": {
-        "x": 3.3018474248725918,
-        "y": 4.454927397158954
+        "x": 3.239295511546183,
+        "y": 4.459395390967984
       },
       "prevControl": {
-        "x": 5.044365010393986,
-        "y": 4.504075329058274
+        "x": 4.981813097067571,
+        "y": 4.508543322867304
       },
       "nextControl": {
-        "x": 5.044365010393986,
-        "y": 4.504075329058274
+        "x": 4.981813097067571,
+        "y": 4.508543322867304
       },
       "holonomicAngle": 0,
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -92,7 +92,7 @@
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -102,12 +102,12 @@
     },
     {
       "anchorPoint": {
-        "x": 3.3107834124906503,
-        "y": 4.459395390967984
+        "x": 3.2303595239281244,
+        "y": 4.468331378586042
       },
       "prevControl": {
-        "x": 5.602864236522639,
-        "y": 4.535351285721481
+        "x": 5.522440347960091,
+        "y": 4.544287273339538
       },
       "nextControl": null,
       "holonomicAngle": 0,

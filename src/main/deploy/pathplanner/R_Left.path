@@ -39,7 +39,7 @@
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -64,7 +64,7 @@
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -89,7 +89,7 @@
       "isReversal": true,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": false,
+      "isStopPoint": true,
       "stopEvent": {
         "names": [],
         "executionBehavior": "parallel",
@@ -99,12 +99,12 @@
     },
     {
       "anchorPoint": {
-        "x": 12.639954485743656,
-        "y": 1.0011681827793695
+        "x": 12.657826460979773,
+        "y": 1.0190401580154853
       },
       "prevControl": {
-        "x": 10.316597705048462,
-        "y": 1.0413801270606324
+        "x": 10.33446968028458,
+        "y": 1.0592521022967483
       },
       "nextControl": null,
       "holonomicAngle": 0,
