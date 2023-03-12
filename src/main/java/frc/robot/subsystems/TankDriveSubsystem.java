@@ -10,17 +10,12 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Utilities.NAVX;
@@ -29,10 +24,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -52,9 +44,6 @@ public class TankDriveSubsystem extends SubsystemBase {
     private final SparkMaxAbsoluteEncoder rightAbsoluteEncoder;
 
     private DifferentialDriveOdometry m_Odometry;
-    private Supplier<Pose2d> RobotPosition;
-    private DifferentialDriveKinematics m_Kinematics;
-    private RamseteController DriveController;
 
     private double speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
 
@@ -76,9 +65,6 @@ public class TankDriveSubsystem extends SubsystemBase {
         leftAbsoluteEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
         rightAbsoluteEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
 
-        DriveController = new RamseteController();
-        m_Kinematics = new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m);
-
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
                 leftAbsoluteEncoder.getPosition(), rightAbsoluteEncoder.getPosition());
     }
@@ -89,6 +75,10 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public Pose2d getRobotPose() {
         return m_Odometry.getPoseMeters();
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        return new DifferentialDriveWheelSpeeds(leftAbsoluteEncoder.getVelocity(), rightAbsoluteEncoder.getVelocity());
     }
 
     @Override
@@ -109,23 +99,14 @@ public class TankDriveSubsystem extends SubsystemBase {
         NAVX.get().setAngleAdjustment(pose.getRotation().getDegrees());
     }
 
-    public Command followTrajectoryCommand(PathPlannerTrajectory traj) {
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> {
-                    this.resetOdometry(traj.getInitialPose());
-                }),
-                new PPRamseteCommand(
-                        traj,
-                        RobotPosition,
-                        DriveController,
-                        m_Kinematics,
-                        (leftSpeed, rightSpeed) -> this.setMotor(leftSpeed, rightSpeed),
-                        this));
-    }
-
     public double[] getEncoderPositions() {
         // get the in between of both encoders
         return (new double[] { leftAbsoluteEncoder.getPosition(), rightAbsoluteEncoder.getPosition() });
+    }
+
+    public void setVoltage(double leftVoltage, double rightVoltage) {
+        primaryLeftMotor.setVoltage(leftVoltage);
+        primaryRightMotor.setVoltage(rightVoltage);
     }
 
     public void setMotor(double leftSpeed, double rightSpeed) {

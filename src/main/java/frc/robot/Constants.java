@@ -7,6 +7,7 @@ import java.util.List;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,6 +24,8 @@ public class Constants {
 
 
   private static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(0, 0);
+
+  public static final PIDConstants AUTO_PID = new PIDConstants(5, 0, 0); // TODO: Maybe tune these
 
   public static final Hashtable<String, PathPlannerTrajectory> Paths = new Hashtable<String, PathPlannerTrajectory>() 
   {{
