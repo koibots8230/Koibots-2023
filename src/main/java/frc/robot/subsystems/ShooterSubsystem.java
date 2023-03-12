@@ -21,7 +21,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
-    starWheelMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR_L, MotorType.kBrushless);
+    starWheelMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR, MotorType.kBrushless);
     shooterEncoder = shooterMotorL.getEncoder();
 
     shooterMotorR.follow(shooterMotorL);

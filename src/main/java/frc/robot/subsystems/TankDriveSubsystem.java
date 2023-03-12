@@ -119,7 +119,7 @@ public class TankDriveSubsystem extends SubsystemBase {
     }
 
     public void UnslowDrive() {
-        speedCoefficient = 1;
+        speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
     }
 
     public void setMotorVoltage(double leftVoltage, double rightVoltage) {
@@ -175,7 +175,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         }
 
         private double adjustForDeadzone(double in) {
-            if (Math.abs(in) < Constants.DEADZONE) {
+            if (Math.abs(in) < Constants.THUMBSTICK_DEADZONE) {
                 return 0;
             }
             double sign = (in < 0) ? -Constants.MAX_DRIVETRAIN_SPEED : Constants.MAX_DRIVETRAIN_SPEED;

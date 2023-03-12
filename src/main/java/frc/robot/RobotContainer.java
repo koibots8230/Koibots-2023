@@ -8,14 +8,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.networktables.GenericEntry;
-
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-
 import java.util.Enumeration;
-
+import java.util.List;
 
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
@@ -30,26 +26,17 @@ public class RobotContainer {
   private final CommandPS4Controller m_operatorHID = new CommandPS4Controller(1);
 
   // Shuffleboard
-  SendableChooser<PathPlannerTrajectory> m_autoChooser;
-
-  GenericEntry autobal_leftSpeed; // = m_autotab.add("autobal leftSpeed", Constants.AUTO_LEFT_SPEED).getEntry();
-  GenericEntry autobal_rightSpeed; // = m_autotab.add("autobal rightSpeed", Constants.AUTO_RIGHT_SPEED).getEntry();
-  GenericEntry shoot_leftSpeed; // = m_autotab.add("shoot leftSpeed", Constants.SHOOT_LEFT_SPEED).getEntry();
-  GenericEntry shoot_rightSpeed;// = m_autotab.add("shoot rightSpeed", Constants.SHOOT_RIGHT_SPEED).getEntry();
-  GenericEntry shoot_time; // = m_autotab.add("Shoot time", Constants.SHOOT_SECONDS).getEntry();
-  GenericEntry autobal_limit;
-  GenericEntry shoot_limit;
-
+  SendableChooser<List<PathPlannerTrajectory>> m_autoChooser;
 
   private RobotContainer() {
     // choosing what auto
-    m_autoChooser = new SendableChooser<PathPlannerTrajectory>();
+    m_autoChooser = new SendableChooser<List<PathPlannerTrajectory>>();
 
-    Enumeration<String> PathNames = Constants.Paths.keys();
+    Enumeration<String> PathNames = Constants.PATHS.keys();
     while (PathNames.hasMoreElements()) {
       String key = PathNames.nextElement();
 
-      m_autoChooser.addOption(key, Constants.Paths.get(key));
+      m_autoChooser.addOption(key, Constants.PATHS.get(key));
     }
 
     configureButtonBindings();
@@ -86,14 +73,14 @@ public class RobotContainer {
       () -> m_driverHID.getLeftY()));
 
     // Community Shot
-    Trigger shootHybrid = m_driverHID.leftTrigger(Constants.DEADZONE); // TODO: Make new deadzone
+    Trigger shootHybrid = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
     shootHybrid.whileTrue(ShooterSubsystem.get().HybridShot());
 
     // Flip Intake
     // Trigger flipTrigger = m_driverHID.leftBumper();
     // flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));\
 
-    Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.DEADZONE);
+    Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new LoadCube());
 
     // Reverse Intake/Midtake/Shooter
@@ -116,11 +103,11 @@ public class RobotContainer {
       TankDriveSubsystem.get()::resetOdometry,
       new RamseteController(),
       new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
-      new SimpleMotorFeedforward(0.2, 0.4), // TODO: Placeholder values, should be in constants
+      Constants.PP_FEED_FORWARD,
       TankDriveSubsystem.get()::getWheelSpeeds,
       Constants.AUTO_PID,
       TankDriveSubsystem.get()::setVoltage,
-      Constants.Events,
+      Constants.EVENTS,
       false,
       TankDriveSubsystem.get()
     ).fullAuto(m_autoChooser.getSelected());
