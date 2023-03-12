@@ -25,7 +25,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     intakePositionEncoder = intakePositionMotor.getEncoder();
   }
 
-  public static IntakePositionSubsystem getIntakePositionSubsystem() {
+  public static IntakePositionSubsystem get() {
     return m_IntakePositionSubsystem;
   }
 
@@ -50,7 +50,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
   }
 
   public class FlipIntake extends CommandBase {
-    FlipIntake() {
+    public FlipIntake() {
       addRequirements(IntakePositionSubsystem.this);
     }
 

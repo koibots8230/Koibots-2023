@@ -10,150 +10,122 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Utilities.NAVX;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 
-import java.util.function.BiConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
-import com.kauailabs.navx.frc.AHRS;
+import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.commands.PPRamseteCommand;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class TankDriveSubsystem extends SubsystemBase {
+    private static TankDriveSubsystem m_TankDriveSubsystem = new TankDriveSubsystem();
 
     private CANSparkMax primaryRightMotor;
     private CANSparkMax secondaryRightMotor;
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
 
-    private double speedCoefficient = 1;
-
-    private AHRS gyro = new AHRS(SPI.Port.kMXP);
-
     DifferentialDrive drivetrain;
     DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
-
-    private final RelativeEncoder primaryRightEncoder;
-    private final RelativeEncoder primaryLeftEncoder;
 
     private final SparkMaxAbsoluteEncoder leftAbsoluteEncoder;
     private final SparkMaxAbsoluteEncoder rightAbsoluteEncoder;
 
     private DifferentialDriveOdometry m_Odometry;
-    private Pose2d OdometryPose;
+    private Supplier<Pose2d> RobotPosition;
+    private DifferentialDriveKinematics m_Kinematics;
+    private RamseteController DriveController;
+
+    private double speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
 
     public TankDriveSubsystem() {
 
-        // Motors
         primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
+        secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);
+        primaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_1, MotorType.kBrushless);
+        secondaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_2, MotorType.kBrushless);
+
         primaryRightMotor.setInverted(true);
 
-        primaryLeftMotor.getAbsoluteEncoder(Type.kDutyCycle).getPosition();
-        secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryRightMotor.follow(primaryRightMotor);
-
-        primaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_1, MotorType.kBrushless);
-
-        secondaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_2, MotorType.kBrushless);
         secondaryLeftMotor.follow(primaryLeftMotor);
-
-        // drivetrain = new DifferentialDrive(primaryLeftMotor, primaryRightMotor);
-
-        // Encoders
-        primaryRightEncoder = primaryRightMotor.getEncoder();
-        primaryLeftEncoder = primaryLeftMotor.getEncoder();
 
         leftAbsoluteEncoder = primaryLeftMotor.getAbsoluteEncoder(Type.kDutyCycle);
         rightAbsoluteEncoder = primaryRightMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
-        primaryLeftEncoder.setPositionConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
-        primaryRightEncoder.setPositionConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
+        leftAbsoluteEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        rightAbsoluteEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
 
-        primaryLeftEncoder.setVelocityConversionFactor(Constants.LEFT_ENCODER_ROTATIONS_TO_DISTANCE);
-        primaryRightEncoder.setVelocityConversionFactor(Constants.RIGHT_ENCODER_ROTATIONS_TO_DISTANCE);
+        DriveController = new RamseteController();
+        m_Kinematics = new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m);
 
-        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(gyro.getYaw() + 180),
-                primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition());
+        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
+                leftAbsoluteEncoder.getPosition(), rightAbsoluteEncoder.getPosition());
+    }
+
+    public static TankDriveSubsystem get() {
+        return m_TankDriveSubsystem;
+    }
+
+    public Pose2d getRobotPose() {
+        return m_Odometry.getPoseMeters();
     }
 
     @Override
     public void periodic() {
-        wheelSpeeds = new DifferentialDriveWheelSpeeds(primaryLeftEncoder.getVelocity(),
-                primaryRightEncoder.getVelocity());
-        OdometryPose = m_Odometry.update(
-                new Rotation2d(gyro.getYaw() + 180),
-                primaryLeftEncoder.getPosition(),
-                primaryRightEncoder.getPosition());
-        // This method will be called once per scheduler run
+        if (NAVX.get().getRoll() > 1) {
+            m_Odometry.update(NAVX.get().getRotation2d(), // TODO: May not adjust for alliance offset
+            leftAbsoluteEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())),
+            rightAbsoluteEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())));
+        }
+        m_Odometry.update(NAVX.get().getRotation2d(),
+        leftAbsoluteEncoder.getPosition(),
+        rightAbsoluteEncoder.getPosition());
     }
 
-    // ================================Getters================================
-
-    public void setBrake() {
-        primaryLeftMotor.setIdleMode(IdleMode.kBrake);
-        primaryRightMotor.setIdleMode(IdleMode.kBrake);
-        secondaryLeftMotor.setIdleMode(IdleMode.kBrake);
-        secondaryRightMotor.setIdleMode(IdleMode.kBrake);
+    public void resetOdometry(Pose2d pose) {
+        m_Odometry = new DifferentialDriveOdometry(pose.getRotation(), leftAbsoluteEncoder.getPosition(),
+                rightAbsoluteEncoder.getPosition(), pose);
+        NAVX.get().setAngleAdjustment(pose.getRotation().getDegrees());
     }
 
-    public void setCoast() {
-        primaryLeftMotor.setIdleMode(IdleMode.kCoast);
-        primaryRightMotor.setIdleMode(IdleMode.kCoast);
-        secondaryLeftMotor.setIdleMode(IdleMode.kCoast);
-        secondaryRightMotor.setIdleMode(IdleMode.kCoast);
-    }
-
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return wheelSpeeds;
-    }
-
-    public double getLeftDriveSpeed() {
-        return primaryLeftEncoder.getVelocity();
-    }
-
-    public double getRightDriveSpeed() {
-        return primaryRightEncoder.getVelocity();
-    }
-
-    public Pose2d getOdometryPose() {
-        return OdometryPose;
-    }
-
-    public SparkMaxPIDController getLeftPID() {
-        return primaryLeftMotor.getPIDController();
-    }
-
-    public SparkMaxPIDController getRightPID() {
-        return primaryRightMotor.getPIDController();
+    public Command followTrajectoryCommand(PathPlannerTrajectory traj) {
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> {
+                    this.resetOdometry(traj.getInitialPose());
+                }),
+                new PPRamseteCommand(
+                        traj,
+                        RobotPosition,
+                        DriveController,
+                        m_Kinematics,
+                        (leftSpeed, rightSpeed) -> this.setMotor(leftSpeed, rightSpeed),
+                        this));
     }
 
     public double[] getEncoderPositions() {
         // get the in between of both encoders
-        return (new double[] { primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition() });
-    }
-
-    // ================================Setters================================
-
-    public void setOdometry(Pose2d pose) {
-        primaryLeftEncoder.setPosition(0);
-        primaryRightEncoder.setPosition(0);
-        m_Odometry.resetPosition(
-                gyro.getRotation2d(), primaryLeftEncoder.getPosition(), primaryRightEncoder.getPosition(), pose);
+        return (new double[] { leftAbsoluteEncoder.getPosition(), rightAbsoluteEncoder.getPosition() });
     }
 
     public void setMotor(double leftSpeed, double rightSpeed) {
@@ -183,18 +155,30 @@ public class TankDriveSubsystem extends SubsystemBase {
         return rightAbsoluteEncoder;
     }
 
+    public void setBrake() {
+        primaryLeftMotor.setIdleMode(IdleMode.kBrake);
+        primaryRightMotor.setIdleMode(IdleMode.kBrake);
+        secondaryLeftMotor.setIdleMode(IdleMode.kBrake);
+        secondaryRightMotor.setIdleMode(IdleMode.kBrake);
+    }
+
+    public void setCoast() {
+        primaryLeftMotor.setIdleMode(IdleMode.kCoast);
+        primaryRightMotor.setIdleMode(IdleMode.kCoast);
+        secondaryLeftMotor.setIdleMode(IdleMode.kCoast);
+        secondaryRightMotor.setIdleMode(IdleMode.kCoast);
+    }
+
     // ================================Commands================================
 
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;
         private DoubleSupplier m_leftSpeed;
-        private TankDriveSubsystem m_DriveSubsystem;
 
-        public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed, TankDriveSubsystem subsystem) {
+        public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed) {
             m_rightSpeed = rightSpeed;
             m_leftSpeed = leftSpeed;
-            m_DriveSubsystem = subsystem;
-            addRequirements(subsystem);
+            addRequirements(TankDriveSubsystem.this);
         }
 
         @Override
@@ -204,7 +188,7 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         @Override
         public void execute() {
-            m_DriveSubsystem.setMotor(
+            TankDriveSubsystem.this.setMotor(
                     adjustForDeadzone(m_leftSpeed.getAsDouble()) * speedCoefficient,
                     adjustForDeadzone(m_rightSpeed.getAsDouble()) * speedCoefficient);
         }
@@ -215,63 +199,6 @@ public class TankDriveSubsystem extends SubsystemBase {
             }
             double sign = (in < 0) ? -Constants.MAX_DRIVETRAIN_SPEED : Constants.MAX_DRIVETRAIN_SPEED;
             return sign * (in * in);
-        }
-    }
-
-    public class driveDistanceCommand extends CommandBase {
-        private double m_rightSpeed;
-        private double m_leftSpeed;
-        private SparkMaxPIDController m_rightPID;
-        private SparkMaxPIDController m_leftPID;
-        private TankDriveSubsystem m_DriveSubsystem;
-        private double[] m_initialPositions;
-        private boolean hasReachedEnd;
-        private double m_encoderLimit;
-
-        // Direction should be from -1 to 1 to indicate direction; 0 is Balanced, -1 is
-        // full left, 1 is full right
-        public driveDistanceCommand(double leftSpeed, double rightSpeed, double encoder_limit,
-                TankDriveSubsystem subsystem) {
-            m_DriveSubsystem = subsystem;
-            m_encoderLimit = encoder_limit;
-            m_leftSpeed = leftSpeed;
-            m_rightSpeed = rightSpeed;
-            addRequirements(subsystem);
-        }
-
-        @Override
-        public void initialize() {
-        }
-
-        @Override
-        public void execute() {
-            m_leftPID.setReference((-m_leftSpeed), CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference((-m_rightSpeed), CANSparkMax.ControlType.kDutyCycle);
-
-            // End Check
-            double[] current_positions = m_DriveSubsystem.getEncoderPositions();
-            double l_dif = (current_positions[0] - m_initialPositions[0]);
-            double r_dif = (current_positions[1] - m_initialPositions[1]);
-
-            if (Math.abs(l_dif + r_dif) >= m_encoderLimit) {
-                System.out.println("Reached end condition for DriveDistance");
-                hasReachedEnd = true;
-            }
-        }
-        
-        public void PPDrive(BiConsumer<Double, Double> speeds) {
-            
-        }
-
-        @Override 
-        public boolean isFinished() {
-            return hasReachedEnd;
-        }
-
-        @Override
-        public void end(boolean isInterrupted) {
-            m_leftPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
-            m_rightPID.setReference(0, CANSparkMax.ControlType.kDutyCycle);
         }
     }
 }

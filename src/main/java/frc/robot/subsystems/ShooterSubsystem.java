@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
+  private static ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+
   // Auto Shoot Variables
   public static Pose3d Bot3d = null;
   public static boolean VariablesDefined = false;
@@ -41,6 +43,10 @@ public class ShooterSubsystem extends SubsystemBase {
 
     shooterMotorL.setIdleMode(IdleMode.kBrake);
     shooterMotorR.setIdleMode(IdleMode.kBrake);
+  }
+
+  public static ShooterSubsystem get() {
+    return m_ShooterSubsystem;
   }
 
   private List<Translation3d> getCubeList(int Level) {
@@ -87,46 +93,44 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public class CommunityShotCommand extends CommandBase {
-    private ShooterSubsystem shooter;
 
-    public CommunityShotCommand(ShooterSubsystem m_ShooterSubsystem) {
-      addRequirements(m_ShooterSubsystem);
-      shooter = m_ShooterSubsystem;
+    public CommunityShotCommand() {
+      addRequirements(ShooterSubsystem.this);
     }
 
     @Override
     public void initialize() {
-      shooter.SetShooter(Constants.COMMUNITY_SHOOTER_SPEED);
+      ShooterSubsystem.this.SetShooter(Constants.COMMUNITY_SHOOTER_SPEED);
     }
 
     @Override
     public void end(boolean interrupted) {
-      shooter.SetShooter(0);
+      ShooterSubsystem.this.SetShooter(0);
     }
   }
   
   public class LevelShootCommand extends CommandBase {
-    private ShooterSubsystem shooter;
     private int shootLevel;
 
-    public LevelShootCommand(ShooterSubsystem m_ShooterSubsystem, Integer m_shootLevel) {
-        addRequirements(m_ShooterSubsystem);
-        shooter = m_ShooterSubsystem;
+    public LevelShootCommand(Integer m_shootLevel) {
+        addRequirements(ShooterSubsystem.this);
         shootLevel = m_shootLevel;
     }
 
     public void initialize() {
       if (shootLevel == 2) {
-        shooter.SetShooter(Constants.L1_SHOOTER_SPEED);
+        ShooterSubsystem.this.SetShooter(Constants.L1_SHOOTER_SPEED);
       } else if (shootLevel == 3) {
-        shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
+        ShooterSubsystem.this.SetShooter(Constants.L2_SHOOTER_SPEED);
       }
     }
 
     public void end(boolean interrupted) {
-      shooter.SetShooter(0);
+      ShooterSubsystem.this.SetShooter(0);
     }
   }
+
+
    
   public class ShootTimeCommand extends CommandBase {
     private ShooterSubsystem shooter;

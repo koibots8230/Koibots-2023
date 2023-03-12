@@ -15,13 +15,11 @@ package frc.robot;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 
-import com.kauailabs.navx.frc.AHRS;
-import com.pathplanner.lib.server.PathPlannerServer;
-
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.TankDriveSubsystem;
 import edu.wpi.first.cameraserver.CameraServer;
 
 /**
@@ -103,7 +101,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         //enable coast
-        m_robotContainer.getDrive().setCoast();
+        TankDriveSubsystem.get().setCoast();
         //start camera
         CameraServer.startAutomaticCapture();
         // This makes sure that the autonomous stops running when
@@ -124,7 +122,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopExit() {
-        m_robotContainer.getDrive().setBrake();
+        TankDriveSubsystem.get().setBrake();
     }
 
     @Override
