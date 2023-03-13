@@ -84,13 +84,13 @@ public class TankDriveSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         if (NAVX.get().getRoll() > 1) {
-            m_Odometry.update(NAVX.get().getRotation2d(), // TODO: May not adjust for alliance offset
-            leftAbsoluteEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())),
-            rightAbsoluteEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())));
+            m_Odometry.update(NAVX.get().getRotation2d(),
+                    leftAbsoluteEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())),
+                    rightAbsoluteEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())));
         }
         m_Odometry.update(NAVX.get().getRotation2d(),
-        leftAbsoluteEncoder.getPosition(),
-        rightAbsoluteEncoder.getPosition());
+                leftAbsoluteEncoder.getPosition(),
+                rightAbsoluteEncoder.getPosition());
     }
 
     public void resetOdometry(Pose2d pose) {
@@ -150,7 +150,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         secondaryRightMotor.setIdleMode(IdleMode.kCoast);
     }
 
-    // ================================Commands================================
+    // ================================Commands================================ \\
 
     public class driveMotorCommand extends CommandBase {
         private DoubleSupplier m_rightSpeed;

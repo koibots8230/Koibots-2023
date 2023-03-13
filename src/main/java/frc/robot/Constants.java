@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Utilities.TimedCommand;
 import frc.robot.commands.AutoBalanceCommand;
 import frc.robot.commands.LoadCube;
 import frc.robot.subsystems.IntakePositionSubsystem;
@@ -16,7 +17,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class Constants {
   // DO. NOT. CHANGE. THESE. UNLESS YOU KNOW WHAT YOU ARE DOING
-
 
 // ====================================== Auto ====================================== \\
   private static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(0, 0); // TODO: Find these
@@ -46,14 +46,16 @@ public class Constants {
 
   public static final Hashtable<String, Command> EVENTS = new Hashtable<String, Command>()
   {{
+
     put("Lower Intake", IntakePositionSubsystem.get().new FlipIntake());
-    put("Pick Up Cube", new LoadCube());
-    put("Auto-Balance", new AutoBalanceCommand());
-    put("Far Shot", ShooterSubsystem.get().new Shoot(FAR_SPEED));
-    put("CS to L1", ShooterSubsystem.get().new Shoot(CS_TO_L1_SPEED));
-    put("CS to Hybrid", ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED));
-    put("Ground to L1", ShooterSubsystem.get().new Shoot(GROUND_TO_L1_SPEED));
-    put("Ground to Hybrid", ShooterSubsystem.get().new Shoot(GROUND_TO_HYBRID_SPEED));
+    put("Pick Up Cube", new TimedCommand(new LoadCube(), (double) 1));
+    put("Auto-Balance", new AutoBalanceCommand()); 
+    put("Far Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(FAR_SPEED), SHOOT_TIME));
+    put("CS to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_L1_SPEED), SHOOT_TIME));
+    put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));
+    put("Ground to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_L1_SPEED), SHOOT_TIME));
+    put("Ground to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_HYBRID_SPEED), SHOOT_TIME));
+
   }};
 
   public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.2, 0.4); // TODO: Tune these
@@ -69,7 +71,7 @@ public class Constants {
   private static final double GROUND_TO_L1_SPEED = 0.5; // TODO: unknown
   private static final double GROUND_TO_HYBRID_SPEED = 0.5; // TODO: unknown
 
-
+  private static final double SHOOT_TIME = 0.5;
 
 // ====================================== Teleop / Driver ====================================== \\
 
@@ -91,17 +93,17 @@ public class Constants {
   public static final double THUMBSTICK_DEADZONE = 0.15; // Probably don't change this
   public static final double TRIGGER_DEADZONE = -0.5;
 
-  public static final double SENSOR_TRIGGERED = 2.5;
+  public static final double SENSOR_TRIGGERED = 2.5; // Voltage at which a digital signal is considered activated
 
   public static final double CURRENT_CAP = 60;
   public static final double FLIP_INTAKE_DISTANCE = 2;
   
   // for LED system
-  public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
+  public static final int LED_STRIP_LENGTH = 60; // the number of LEDs on each of the LED strips.
 
 // ====================================== Hardware Ports ====================================== \\
 
-  // ShooterSubsystem
+  // new TimedCommand(ShooterSubsystem
   public static final int SHOOTER_MOTOR_L = 4;
   public static final int SHOOTER_MOTOR_R = 5;
 

@@ -42,7 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
   public void SetStarWheels(double speed) {
     starWheelMotor.set(speed);
   }
-  
+
+  // ================================Commands================================ \\
+
   public class Shoot extends CommandBase {
     double m_speed;
     public Shoot(double speed) {

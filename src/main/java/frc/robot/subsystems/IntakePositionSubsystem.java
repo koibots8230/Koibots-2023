@@ -49,6 +49,8 @@ public class IntakePositionSubsystem extends SubsystemBase {
     }
   }
 
+  // ================================Commands================================ \\
+
   public class FlipIntake extends CommandBase {
     public FlipIntake() {
       addRequirements(IntakePositionSubsystem.this);

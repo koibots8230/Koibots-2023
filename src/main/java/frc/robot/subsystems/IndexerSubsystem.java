@@ -40,6 +40,9 @@ public class IndexerSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
+
+    // ================================Commands================================ \\
+
   public class RunIndexer extends CommandBase {
     public RunIndexer() {
       addRequirements(IndexerSubsystem.this);
