@@ -9,7 +9,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -41,12 +40,13 @@ public class IntakePositionSubsystem extends SubsystemBase {
     return intakePositionEncoder.getPosition();
   }
 
+  public double getMotorCurrent() {
+    return intakePositionMotor.getOutputCurrent();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (intakePositionMotor.getOutputCurrent() > Constants.CURRENT_CAP) {
-      new InstantCommand(() -> this.setIntakePositionSpeed(0), this);
-    }
   }
 
   // ================================Commands================================ \\
@@ -65,6 +65,8 @@ public class IntakePositionSubsystem extends SubsystemBase {
     @Override
     public boolean isFinished() {
         if (Math.abs(IntakePositionSubsystem.this.getEncoderPosition()) > Constants.FLIP_INTAKE_DISTANCE) {
+          return true;
+        } else if (IntakePositionSubsystem.this.getMotorCurrent() > Constants.CURRENT_CAP) {
           return true;
         }
       return false;
