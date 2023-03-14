@@ -55,6 +55,11 @@ public class RobotContainer {
   public final IntakeSubsystem m_intake = new IntakeSubsystem();
 
   public final ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+
+  //LED system 
+  private final LEDsystem LEDstrips = new LEDsystem(Constants.LEDPort1);//addressable LED only works from one port.
+  //public final VisionSubsystem m_VisionSubsystem = new VisionSubsystem(m_sideChooser.getSelected());
+
   // public final VisionSubsystem m_VisionSubsystem = new
   // VisionSubsystem(m_sideChooser.getSelected());
   private MiscDashboardSubsystem m_miscDashboardSubsystem = new MiscDashboardSubsystem(m_intake, m_ShooterSubsystem, m_tankDriveSubsystem);
@@ -97,6 +102,10 @@ public class RobotContainer {
 
     // ======================================Operator Controls======================================
 
+    // Create Triggers here | Triggers should be named t_CommandName
+
+    Trigger operatorSpeedUp = m_operatorHID.cross();
+    Trigger operatorSpeedDown = m_operatorHID.circle();
 
     Trigger slowMode = m_operatorHID.triangle();
     slowMode.onTrue(new InstantCommand(() -> m_tankDriveSubsystem.SlowDrive()));
@@ -210,6 +219,9 @@ public class RobotContainer {
 
   public TankDriveSubsystem getDrive() {
     return m_tankDriveSubsystem;
+  }
+  public LEDsystem getLEDs(){
+    return LEDstrips;
   }
 
   /**

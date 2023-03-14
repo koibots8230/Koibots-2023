@@ -25,5 +25,12 @@
       }
     },
   ],
-  "java.test.defaultConfig": "WPIlibUnitTests"
+  "java.test.defaultConfig": "WPIlibUnitTests",
+  "grammarly.selectors": [
+    {
+      "language": "java",
+      "scheme": "file",
+      "pattern": "src/main/java/frc/robot/subsystems/IntakeSubsystem.java"
+    }
+  ]
 }
