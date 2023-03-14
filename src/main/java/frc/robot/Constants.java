@@ -18,7 +18,8 @@ public class Constants {
 }
 public enum moving{
   DOT1,
-  NONE
+  NONE,
+  BAR
 }
 
   // Constants for auto

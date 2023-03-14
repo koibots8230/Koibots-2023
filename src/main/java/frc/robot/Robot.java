@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         //set LED colors
-        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.ALLYB);
+        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.moving.BAR);
         //ALLYB = blue alliance, ALLYR = red alliance.
         hold.schedule();
         //m_robotContainer.ResetPositions();
@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
     public void testInit() {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
-        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.moving.DOT1);
+        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.moving.BAR);
         hold.schedule();
     }
 

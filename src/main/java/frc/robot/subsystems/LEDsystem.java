@@ -78,7 +78,6 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         currentcolor=color;
         runningPattern=false;
         strip1.setData(buffer);
-        //strip2.setData(buffer);
     }
     public void setLEDs(int R, int G, int B){//sets all the LEDs to the given RGB color
         for (var i = 0; i < buffer.getLength(); i++) {
@@ -89,16 +88,20 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         if(pattern==currentPattern&&runningPattern){//no need to set the LEDs if we're just trying to set them to what they are.
             return;
         }
-        setLEDs(0, 0, 0);//clear LEDs
-        switch(currentPattern){
+        switch(pattern){
             case DOT1:
             D1start();
+            break;
+            case BAR:
+            D1start();//uses the same array, so no need to make a new function.
             break;
             case NONE:
             //If a case doesn't have a specific function to handle it, don't put a break
             default:
-            System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern set");
+            System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern function.");
+            return;
         }
+        setLEDs(0, 0, 0);//clear LEDs
         currentPattern=pattern;
         runningPattern=true;
         //don't set data cause we can't change it yet.
@@ -121,7 +124,21 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
-
+        if(runningPattern){
+            switch(currentPattern){
+                case DOT1:
+                D1period();
+                break;
+                case BAR:
+                BarPeriod();
+                break;
+                case NONE:
+                //If a case doesn't have a specific function to handle it, don't put a break
+                default:
+                System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern set");
+                runningPattern=!runningPattern;//to stop the print message spaming.
+            }
+        }
     }
     
     @Override
@@ -132,10 +149,14 @@ private Constants.moving currentPattern=Constants.moving.NONE;
                 case DOT1:
                 D1period();
                 break;
+                case BAR:
+                BarPeriod();
+                break;
                 case NONE:
                 //If a case doesn't have a specific function to handle it, don't put a break
                 default:
                 System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern set");
+                runningPattern=!runningPattern;//to stop the print message spaming.
             }
         }
         //do nothing if not running pattern.
@@ -144,11 +165,11 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     private int[]patternValues={};//use this to hold values needed to properly display moving patterns.
     public void D1start(){//"start" functions set the array so that it can hold the values needed for the pattern.
         patternValues=new int[2];//appearently {0,0} is an array constant, and you can only use that to init an array.
-        patternValues[0]=0;
+        patternValues[0]=0;//timer, so that the dot doesn't move every
         patternValues[1]=0;
     }
     public void D1period(){
-        if(patternValues[0]<5){//periodic runs every 20 miliseconds
+        if(patternValues[0]<10){//periodic runs every 20 miliseconds
             patternValues[0]++;
             return;
         } else {
@@ -159,7 +180,24 @@ private Constants.moving currentPattern=Constants.moving.NONE;
                 patternValues[1]=0;
             }
             buffer.setRGB(patternValues[1], 255, 0, 0);
+            strip1.setData(buffer);//Don't forget to actually write the changes.
+        }
+    }
+    public void BarPeriod(){
+        if(patternValues[0]<10){//periodic runs every 20 miliseconds
+            patternValues[0]++;
+            return;
+        } else {
+            patternValues[0]=0;
+            patternValues[1]++;
+            if(!(patternValues[1]<buffer.getLength())){//is the value outside of the LED strip?
+                patternValues[1]=0;
+                setLEDs(0,0,0);
+            }
+            buffer.setRGB(patternValues[1], 255, 0, 0);
+            strip1.setData(buffer);//Don't forget to actually write the changes.
         }
     }
 }
+
 
