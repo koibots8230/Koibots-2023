@@ -47,6 +47,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public class Shoot extends CommandBase {
     double m_speed;
+    
     public Shoot(double speed) {
       this.m_speed = speed;
     }

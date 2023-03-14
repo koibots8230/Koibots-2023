@@ -11,9 +11,8 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import java.util.Enumeration;
-import java.util.List;
 
-import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
 
 import frc.robot.subsystems.IntakeSubsystem;
@@ -26,11 +25,11 @@ public class RobotContainer {
   private final CommandPS4Controller m_operatorHID = new CommandPS4Controller(1);
 
   // Shuffleboard
-  SendableChooser<List<PathPlannerTrajectory>> m_autoChooser;
+  SendableChooser<String> m_autoChooser;
 
   private RobotContainer() {
     // choosing what auto
-    m_autoChooser = new SendableChooser<List<PathPlannerTrajectory>>();
+    m_autoChooser = new SendableChooser<String>();
 
     Enumeration<String> PathNames = Constants.PATHS.keys();
     while (PathNames.hasMoreElements()) {
@@ -110,6 +109,6 @@ public class RobotContainer {
       Constants.EVENTS,
       false,
       TankDriveSubsystem.get()
-    ).fullAuto(m_autoChooser.getSelected());
+    ).fullAuto(PathPlanner.loadPathGroup(m_autoChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
   }
 }

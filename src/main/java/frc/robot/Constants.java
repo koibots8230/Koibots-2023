@@ -1,10 +1,7 @@
 package frc.robot;
 
 import java.util.Hashtable;
-import java.util.List;
 import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -19,28 +16,28 @@ public class Constants {
   // DO. NOT. CHANGE. THESE. UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // ====================================== Auto ====================================== \\
-  private static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(0, 0); // TODO: Find these
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(0, 0); // TODO: Find these
 
   public static final PIDConstants AUTO_PID = new PIDConstants(5, 0, 0); // TODO: Maybe tune these
 
-  public static final Hashtable<String, List<PathPlannerTrajectory>> PATHS = new Hashtable<String, List<PathPlannerTrajectory>>() 
+  public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
 
-    put("Blue: Left Side - 3 Pieces", PathPlanner.loadPathGroup("B_Left", AUTO_CONSTRAINTS));
-    put("Blue: Left Side - 2 Pieces", PathPlanner.loadPathGroup("B_Left_Score2", AUTO_CONSTRAINTS));
-    put("Blue: Right Side - 3 Pieces", PathPlanner.loadPathGroup("B_Right", AUTO_CONSTRAINTS));
-    put("Blue: Right Side - 2 Pieces", PathPlanner.loadPathGroup("B_Right_Score2", AUTO_CONSTRAINTS));
-    put("Blue: Center - Coopertition", PathPlanner.loadPathGroup("B_Center", AUTO_CONSTRAINTS));
-    put("Blue: Center - Left piece first", PathPlanner.loadPathGroup("B_Center_Top_First", AUTO_CONSTRAINTS));
-    put("Blue: Center - Right piece first", PathPlanner.loadPathGroup("B_Center_Bottom_First", AUTO_CONSTRAINTS));
+    put("Blue: Left Side - 3 Pieces", "B_Left");
+    put("Blue: Left Side - 2 Pieces", "B_Left_Score2");
+    put("Blue: Right Side - 3 Pieces", "B_Right");
+    put("Blue: Right Side - 2 Pieces", "B_Right_Score2");
+    put("Blue: Center - Coopertition", "B_Center");
+    put("Blue: Center - Left piece first", "B_Center_Top_First");
+    put("Blue: Center - Right piece first", "B_Center_Bottom_First");
 
-    put("Red: Left Side - 3 Pieces", PathPlanner.loadPathGroup("R_Left", AUTO_CONSTRAINTS));
-    put("Red: Left Side - 2 Pieces", PathPlanner.loadPathGroup("R_Left_Score2", AUTO_CONSTRAINTS));
-    put("Red: Right Side - 3 Pieces", PathPlanner.loadPathGroup("R_Right", AUTO_CONSTRAINTS));
-    put("Red: Right Side - 2 Pieces", PathPlanner.loadPathGroup("R_Right_Score2", AUTO_CONSTRAINTS));
-    put("Red: Center - Coopertition", PathPlanner.loadPathGroup("R_Center", AUTO_CONSTRAINTS));
-    put("Red: Center - Left piece first", PathPlanner.loadPathGroup("R_Center_Bottom_First", AUTO_CONSTRAINTS));
-    put("Red: Center - Right piece first", PathPlanner.loadPathGroup("R_Center_Top_First", AUTO_CONSTRAINTS));
+    put("Red: Left Side - 3 Pieces", "R_Left");
+    put("Red: Left Side - 2 Pieces", "R_Left_Score2");
+    put("Red: Right Side - 3 Pieces","R_Right");
+    put("Red: Right Side - 2 Pieces", "R_Right_Score2");
+    put("Red: Center - Coopertition", "R_Center");
+    put("Red: Center - Left piece first", "R_Center_Bottom_First");
+    put("Red: Center - Right piece first", "R_Center_Top_First");
 
   }};
 
