@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -18,10 +19,22 @@ public class IntakePositionSubsystem extends SubsystemBase {
   private CANSparkMax intakePositionMotor;
   private RelativeEncoder intakePositionEncoder;
 
+  private boolean isUp;
+
   /** Creates a new IntakePositionSubsystem. */
   public IntakePositionSubsystem() {
     intakePositionMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
     intakePositionEncoder = intakePositionMotor.getEncoder();
+    isUp = true;
+  }
+
+  public void switchIntakeState() {
+    if (isUp) {
+      isUp = false;
+      intakePositionMotor.setIdleMode(IdleMode.kCoast);
+    }
+    isUp = true;
+    intakePositionMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public static IntakePositionSubsystem get() {
@@ -75,6 +88,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     @Override
     public void end(boolean interrupted) {
         IntakePositionSubsystem.this.setIntakePositionSpeed(0);
+        IntakePositionSubsystem.this.switchIntakeState();
     }
   }
 }
