@@ -108,7 +108,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        m_robotContainer.getLEDs().turnOff();
+        //m_robotContainer.getLEDs().turnOff();
     }
 
     @Override
