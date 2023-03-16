@@ -80,7 +80,7 @@ public class Constants {
 
   public static final double DRIVE_SPEED_COEFFICIENT = 0.85; 
 
-  public static final double RAISE_SPEED = 0.8;
+  public static final double RAISE_SPEED = 0.25;
 
   // Teleop Shooti
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
@@ -88,12 +88,12 @@ public class Constants {
   public static final double L1_SHOOTER_SPEED = .55;
   
   public static final double THUMBSTICK_DEADZONE = 0.15; // Probably don't change this
-  public static final double TRIGGER_DEADZONE = -0.5;
+  public static final double TRIGGER_DEADZONE = 0.5;
 
   public static final double SENSOR_TRIGGERED = 2.5; // Voltage at which a digital signal is considered activated
 
   public static final double CURRENT_CAP = 60;
-  public static final double FLIP_INTAKE_DISTANCE = 2;
+  public static final double FLIP_INTAKE_DISTANCE = 3;
   
   // for LED system
   public static final int LED_STRIP_LENGTH = 60; // the number of LEDs on each of the LED strips.
@@ -101,19 +101,18 @@ public class Constants {
 // ====================================== Hardware Ports ====================================== \\
 
   // new TimedCommand(ShooterSubsystem
-  public static final int SHOOTER_MOTOR_L = 4;
-  public static final int SHOOTER_MOTOR_R = 5;
+  public static final int SHOOTER_MOTOR_L = 5;
+  public static final int SHOOTER_MOTOR_R = 8;
 
   // IndexerSubsytem
-  public static final int MIDTAKE_MOTOR = 7;
-  public static final int STAR_WHEELS_MOTOR = 8;
-  public static final int BEAM_BREAK = 1; // Analog Input
+  public static final int MIDTAKE_MOTOR = 4;
+  public static final int BEAM_BREAK = 0; // Analog Input
   
   // IntakeSubsystem
   public static final int INTAKE_MOTOR = 10;
 
   // IntakePositionSubsystem
-  public static final int RAISE_INTAKE_MOTOR = 11;
+  public static final int RAISE_INTAKE_MOTOR = 7;
 
   // TankDriveSubsystem
   public static final int RIGHT_DRIVE_MOTOR_1 = 12;

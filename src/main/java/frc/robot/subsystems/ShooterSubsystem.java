@@ -14,17 +14,17 @@ public class ShooterSubsystem extends SubsystemBase {
   // Motors/Encoders
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
-  private CANSparkMax starWheelMotor;
 
   private RelativeEncoder shooterEncoder;
 
   public ShooterSubsystem() {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
-    starWheelMotor = new CANSparkMax(Constants.STAR_WHEELS_MOTOR, MotorType.kBrushless);
+    shooterMotorL.setInverted(true);
+
     shooterEncoder = shooterMotorL.getEncoder();
 
-    shooterMotorR.follow(shooterMotorL);
+    shooterMotorR.follow(shooterMotorL, true);
   }
 
   public static ShooterSubsystem get() {
@@ -39,10 +39,6 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorL.set(speed);
   }
 
-  public void SetStarWheels(double speed) {
-    starWheelMotor.set(speed);
-  }
-
   // ================================Commands================================ \\
 
   public class Shoot extends CommandBase {
@@ -55,20 +51,17 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void initialize() {
       ShooterSubsystem.this.SetShooter(m_speed);
-      ShooterSubsystem.this.SetStarWheels(Constants.STARS_RUNNING_SPEED);
     }
 
     @Override
     public void execute() {
       if (!IndexerSubsystem.get().isIndexerFilled()) {
-        ShooterSubsystem.this.SetStarWheels(0);
       }
     }
 
     @Override
     public void end(boolean interrupted) {
       ShooterSubsystem.this.SetShooter(0);
-      ShooterSubsystem.this.SetStarWheels(0);
     }
   }
 

@@ -15,7 +15,7 @@ import frc.robot.Constants;
 
 public class IntakePositionSubsystem extends SubsystemBase {
   private static IntakePositionSubsystem m_IntakePositionSubsystem = new IntakePositionSubsystem();
-
+  private int m_direction = 11;
   private CANSparkMax intakePositionMotor;
   private RelativeEncoder intakePositionEncoder;
 
@@ -57,12 +57,55 @@ public class IntakePositionSubsystem extends SubsystemBase {
     return intakePositionMotor.getOutputCurrent();
   }
 
+  public int getDirection() {
+    m_direction *= -1;
+    return m_direction;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
 
   // ================================Commands================================ \\
+
+  public class IntakeUpDown extends CommandBase {
+    boolean up;
+    boolean end = false;
+
+    public IntakeUpDown(boolean _up) {
+      up = _up;
+      addRequirements(IntakePositionSubsystem.get());
+    }
+
+    @Override
+    public void initialize() {
+      if (up) {
+        IntakePositionSubsystem.get().setIntakePositionSpeed(.35);
+      } else {
+        IntakePositionSubsystem.get().setIntakePositionSpeed(-.35);
+      }
+    }
+
+    @Override
+    public void execute() {
+      if (Math.abs(IntakePositionSubsystem.get().getMotorCurrent()) > Constants.CURRENT_CAP) {
+        System.out.print("Intake Position Current Overrun");
+        end = true;
+      }
+    }
+
+    @Override
+    public boolean isFinished() {
+      return end;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+      IntakePositionSubsystem.get().setIntakePositionSpeed(0);
+    }
+
+  }
 
   public class FlipIntake extends CommandBase {
     public FlipIntake() {
@@ -71,7 +114,10 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void initialize() {
-      IntakePositionSubsystem.this.setIntakePositionSpeed(Constants.RAISE_SPEED);
+      IntakePositionSubsystem.this.setIntakePositionSpeed(Constants.RAISE_SPEED * IntakePositionSubsystem.this.getDirection());
+      if (IntakePositionSubsystem.this.getDirection() < 0) {
+
+      }
       IntakePositionSubsystem.this.resetPositionEncoder();
     }
 
