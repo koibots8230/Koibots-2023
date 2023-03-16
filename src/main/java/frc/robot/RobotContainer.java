@@ -2,6 +2,7 @@ package frc.robot;
 
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -57,6 +58,11 @@ public class RobotContainer {
     shootL2.whileTrue(ShooterSubsystem.get().L2Shot());
 
 
+    Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
+    Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);
+
+    intakeUp.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(true));
+    intakeDown.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(false));
 
     
     Trigger clearButton = m_operatorHID.circle();
@@ -76,8 +82,8 @@ public class RobotContainer {
     shootHybrid.whileTrue(ShooterSubsystem.get().HybridShot());
 
     // Flip Intake
-    // Trigger flipTrigger = m_driverHID.leftBumper();
-    // flipTrigger.onTrue(m_intake.new FlipIntake(m_intake));\
+    Trigger flipTrigger = m_driverHID.leftBumper();
+    flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new LoadCube());
