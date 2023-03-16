@@ -19,7 +19,9 @@ public class Constants {
 public enum moving{
   DOT1,
   NONE,
-  BAR
+  BAR,
+  ALLYB,
+  ALLYR,
 }
 
   // Constants for auto

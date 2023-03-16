@@ -90,15 +90,21 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         }
         switch(pattern){
             case DOT1:
-            D1start();
+            D1Start();
             break;
             case BAR:
-            D1start();//uses the same array, so no need to make a new function.
+            D1Start();//uses the same array, so no need to make a new function.
+            break;
+            case ALLYR:
+            slidingPatternStart(redAlliance);
+            break;
+            case ALLYB:
+            slidingPatternStart(blueAlliance);
             break;
             case NONE:
             //If a case doesn't have a specific function to handle it, don't put a break
             default:
-            System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern function.");
+            System.err.println("WARNING: Attempted to set a moving pattern without a proper pattern function.");
             return;
         }
         setLEDs(0, 0, 0);//clear LEDs
@@ -124,18 +130,24 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
-        if(runningPattern){
+        if(runningPattern){//move this to a different function so sim and IRL are same.
             switch(currentPattern){
                 case DOT1:
-                D1period();
+                D1Period();
                 break;
                 case BAR:
                 BarPeriod();
                 break;
+                case ALLYR:
+                slidePeriod();
+                break;
+                case ALLYB:
+                slidePeriod();
+                break;
                 case NONE:
                 //If a case doesn't have a specific function to handle it, don't put a break
                 default:
-                System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern set");
+                System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern function");
                 runningPattern=!runningPattern;//to stop the print message spaming.
             }
         }
@@ -144,31 +156,45 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     @Override
     public void periodic() {
         // This method will be called once per scheduler run when IRL
-        if(runningPattern){
+        if(runningPattern){//move this to a different function so sim and IRL are same.
             switch(currentPattern){
                 case DOT1:
-                D1period();
+                D1Period();
                 break;
                 case BAR:
                 BarPeriod();
                 break;
+                case ALLYR:
+                slidePeriod();
+                break;
+                case ALLYB:
+                slidePeriod();
+                break;
                 case NONE:
                 //If a case doesn't have a specific function to handle it, don't put a break
                 default:
-                System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern set");
+                System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern function");
                 runningPattern=!runningPattern;//to stop the print message spaming.
             }
         }
         //do nothing if not running pattern.
     }
     //moving pattern code
+    //start pattern functions
     private int[]patternValues={};//use this to hold values needed to properly display moving patterns.
-    public void D1start(){//"start" functions set the array so that it can hold the values needed for the pattern.
+    public void D1Start(){//"start" functions set the array so that it can hold the values needed for the pattern.
         patternValues=new int[2];//appearently {0,0} is an array constant, and you can only use that to init an array.
         patternValues[0]=0;//timer, so that the dot doesn't move every
         patternValues[1]=0;
     }
-    public void D1period(){
+    private int[][]slidingPatternState={};//needed for sliding patterns
+    public void slidingPatternStart(int[][] pattern){//this start will be used by multiple functions.
+        patternValues=new int[1];
+        patternValues[0]=0;//timer
+        slidingPatternState=pattern;
+    }
+    //periodic functions
+    public void D1Period(){//Period functions are the functions that handle the movement of the pattern.
         if(patternValues[0]<10){//periodic runs every 20 miliseconds
             patternValues[0]++;
             return;
@@ -195,6 +221,21 @@ private Constants.moving currentPattern=Constants.moving.NONE;
                 setLEDs(0,0,0);
             }
             buffer.setRGB(patternValues[1], 255, 0, 0);
+            strip1.setData(buffer);//Don't forget to actually write the changes.
+        }
+    }
+    public void slidePeriod(){
+        if(patternValues[0]<20){//periodic runs every 20 miliseconds
+            patternValues[0]++;
+            return;
+        } else {
+            patternValues[0]=0;
+            int[] holdOverflow = slidingPatternState[slidingPatternState.length-1];//should be the last one.
+            for(int i=slidingPatternState.length-1;i>0;i--){
+                slidingPatternState[i]=slidingPatternState[i-1];
+            }
+            slidingPatternState[0]=holdOverflow;
+            setPattern(slidingPatternState);
             strip1.setData(buffer);//Don't forget to actually write the changes.
         }
     }
