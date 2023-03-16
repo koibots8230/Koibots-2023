@@ -26,6 +26,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     intakePositionMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
     intakePositionEncoder = intakePositionMotor.getEncoder();
     isUp = true;
+    intakePositionMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public void switchIntakeState() {
@@ -80,6 +81,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void initialize() {
+      IntakePositionSubsystem.this.switchIntakeState();
       if (up) {
         IntakePositionSubsystem.get().setIntakePositionSpeed(.35);
       } else {
