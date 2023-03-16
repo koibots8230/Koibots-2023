@@ -75,7 +75,7 @@ public class Constants {
   public static final double MAX_DRIVETRAIN_SPEED = .88;
   // Intake/Midtake Constants
   public static final double STARS_RUNNING_SPEED = 0.30;
-  public static final double BELT_RUNNING_SPEED = 0.30;
+  public static final double BELT_RUNNING_SPEED = 0.25;
   public static final double INTAKE_RUNNING_SPEED = 0.43;
 
   public static final double DRIVE_SPEED_COEFFICIENT = 0.85; 
