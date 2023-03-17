@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,7 +27,6 @@ public class IntakePositionSubsystem extends SubsystemBase {
     intakePositionMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
     intakePositionEncoder = intakePositionMotor.getEncoder();
     isUp = true;
-    intakePositionMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public void switchIntakeState() {
@@ -48,6 +48,14 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
   public void resetPositionEncoder() {
     intakePositionEncoder.setPosition(0);
+  }
+
+  public void setCoast() {
+    intakePositionMotor.setIdleMode(IdleMode.kCoast);
+  }
+
+  public void setBrake() {
+    intakePositionMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public double getEncoderPosition() {
@@ -73,9 +81,11 @@ public class IntakePositionSubsystem extends SubsystemBase {
   public class IntakeUpDown extends CommandBase {
     boolean up;
     boolean end = false;
+    LinearFilter voltageFilter;
 
     public IntakeUpDown(boolean _up) {
       up = _up;
+      voltageFilter = LinearFilter.movingAverage(5);
       addRequirements(IntakePositionSubsystem.get());
     }
 
@@ -91,10 +101,9 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void execute() {
-      if (Math.abs(IntakePositionSubsystem.get().getMotorCurrent()) > Constants.CURRENT_CAP) {
-        System.out.print("Intake Position Current Overrun");
-        end = true;
-      }
+        if (voltageFilter.calculate(Math.abs(IntakePositionSubsystem.get().getMotorCurrent())) > Constants.CURRENT_CAP) {
+          end = true;
+        }
     }
 
     @Override

@@ -27,12 +27,13 @@ public class IndexerSubsystem extends SubsystemBase {
     IndexerMotor.set(speed);
   }
 
+    /*
   public boolean isIndexerFilled() {
     if (BeamBreakSensor.getVoltage() > Constants.SENSOR_TRIGGERED) {
       System.out.print("Beam Break Triggered");
     }
     return BeamBreakSensor.getVoltage() > Constants.SENSOR_TRIGGERED;
-  }
+  } */
 
   public static IndexerSubsystem get() {
     return m_IndexerSubsystem;
@@ -43,7 +44,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
   public class RunIndexer extends CommandBase {
     public RunIndexer() {
-      addRequirements(IndexerSubsystem.this);
+      addRequirements(IndexerSubsystem.get());
     }
 
     @Override
@@ -53,7 +54,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     @Override
     public boolean isFinished() {
-        return IndexerSubsystem.this.isIndexerFilled();
+        return false;
     }
 
     @Override

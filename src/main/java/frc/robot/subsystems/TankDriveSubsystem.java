@@ -26,6 +26,7 @@ import com.revrobotics.SparkMaxAbsoluteEncoder.Type;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxAbsoluteEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
@@ -42,6 +43,9 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     private final SparkMaxAbsoluteEncoder leftAbsoluteEncoder;
     private final SparkMaxAbsoluteEncoder rightAbsoluteEncoder;
+
+    private RelativeEncoder leftRelativeEncoder;
+    private RelativeEncoder rightRelativeEncoder;
 
     private DifferentialDriveOdometry m_Odometry;
 
@@ -64,6 +68,10 @@ public class TankDriveSubsystem extends SubsystemBase {
 
         leftAbsoluteEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
         rightAbsoluteEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+
+        leftRelativeEncoder = primaryLeftMotor.getEncoder();
+
+        rightRelativeEncoder = primaryRightMotor.getEncoder();
 
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
                 leftAbsoluteEncoder.getPosition(), rightAbsoluteEncoder.getPosition());
@@ -101,7 +109,7 @@ public class TankDriveSubsystem extends SubsystemBase {
 
     public double[] getEncoderPositions() {
         // get the in between of both encoders
-        return (new double[] { leftAbsoluteEncoder.getPosition(), rightAbsoluteEncoder.getPosition() });
+        return (new double[] { leftRelativeEncoder.getPosition(), rightRelativeEncoder.getPosition() });
     }
 
     public void setVoltage(double leftVoltage, double rightVoltage) {
@@ -179,7 +187,7 @@ public class TankDriveSubsystem extends SubsystemBase {
                 return 0;
             }
             double sign = (in < 0) ? -Constants.MAX_DRIVETRAIN_SPEED : Constants.MAX_DRIVETRAIN_SPEED;
-            return sign * Math.pow(in, 4);
+            return sign * Math.pow(in, 2);
         }
     }
 
@@ -187,7 +195,7 @@ public class TankDriveSubsystem extends SubsystemBase {
         private double m_rightSpeed;
         private double m_leftSpeed;
         private double[] m_initialPositions;
-        private boolean hasReachedEnd;
+        private boolean hasReachedEnd = false;
         private double m_encoderLimit;
 
 

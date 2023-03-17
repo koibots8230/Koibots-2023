@@ -8,17 +8,15 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import java.util.Enumeration;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import java.util.Enumeration;
 
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -41,6 +39,7 @@ public class RobotContainer {
     m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
     m_autoChooser.addOption("L2 and leave community", new ShootMove());
 
+    SmartDashboard.putData(m_autoChooser);
 
     // choosing what auto
     m_pathChooser = new SendableChooser<String>();
@@ -65,10 +64,12 @@ public class RobotContainer {
 
     // Shooting
     Trigger shootL1 = m_operatorHID.L1();
-    shootL1.whileTrue(ShooterSubsystem.get().L1Shot());
+    shootL1.whileTrue(ShooterSubsystem.get().L1Shot())
+    .whileTrue(IndexerSubsystem.get().new RunIndexer());
 
     Trigger shootL2 = m_operatorHID.R1();
-    shootL2.whileTrue(ShooterSubsystem.get().L2Shot());
+    shootL2.whileTrue(ShooterSubsystem.get().L2Shot())
+    .whileTrue(IndexerSubsystem.get().new RunIndexer());
 
 
     Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
@@ -91,12 +92,15 @@ public class RobotContainer {
       () -> m_driverHID.getLeftY()));
 
     // Community Shot
-    Trigger shootHybrid = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
-    shootHybrid.whileTrue(ShooterSubsystem.get().HybridShot());
-
+    Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
+    communityShot.whileTrue(new ParallelCommandGroup(
+      IndexerSubsystem.get().new RunIndexer(),
+      ShooterSubsystem.get().CommunityShot()
+      )
+    );
     // Flip Intake
-    Trigger flipTrigger = m_driverHID.leftBumper();
-    flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
+    //Trigger flipTrigger = m_driverHID.leftBumper();
+    //flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new LoadCube());

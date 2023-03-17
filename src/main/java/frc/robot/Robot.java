@@ -19,6 +19,7 @@ import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.TankDriveSubsystem;
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -123,10 +124,13 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopExit() {
         TankDriveSubsystem.get().setBrake();
+        IntakePositionSubsystem.get().setBrake();
     }
 
     @Override
     public void testInit() {
+        IntakePositionSubsystem.get().setCoast();
+        TankDriveSubsystem.get().setCoast();
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
     }
