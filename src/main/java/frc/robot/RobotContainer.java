@@ -1,5 +1,9 @@
 package frc.robot;
 
+import frc.robot.autos.CommunityBalance;
+import frc.robot.autos.Score2;
+import frc.robot.autos.ShootBalance;
+import frc.robot.autos.ShootMove;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -26,17 +30,26 @@ public class RobotContainer {
   private final CommandPS4Controller m_operatorHID = new CommandPS4Controller(1);
 
   // Shuffleboard
-  SendableChooser<String> m_autoChooser;
+  SendableChooser<String> m_pathChooser;
+  SendableChooser<Command> m_autoChooser;
 
   private RobotContainer() {
+    m_autoChooser = new SendableChooser<Command>();
+
+    m_autoChooser.setDefaultOption("Leave community and balance", new CommunityBalance());
+    m_autoChooser.addOption("Score L1 & L2", new Score2());
+    m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
+    m_autoChooser.addOption("L2 and leave community", new ShootMove());
+
+
     // choosing what auto
-    m_autoChooser = new SendableChooser<String>();
+    m_pathChooser = new SendableChooser<String>();
 
     Enumeration<String> PathNames = Constants.PATHS.keys();
     while (PathNames.hasMoreElements()) {
       String key = PathNames.nextElement();
 
-      m_autoChooser.addOption(key, Constants.PATHS.get(key));
+      m_pathChooser.addOption(key, Constants.PATHS.get(key));
     }
 
     configureButtonBindings();
@@ -103,6 +116,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    return m_autoChooser.getSelected();
+  /* 
     return new RamseteAutoBuilder(
       TankDriveSubsystem.get()::getRobotPose,
       TankDriveSubsystem.get()::resetOdometry,
@@ -115,6 +130,7 @@ public class RobotContainer {
       Constants.EVENTS,
       false,
       TankDriveSubsystem.get()
-    ).fullAuto(PathPlanner.loadPathGroup(m_autoChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
+    ).fullAuto(PathPlanner.loadPathGroup(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
+  */
   }
 }
