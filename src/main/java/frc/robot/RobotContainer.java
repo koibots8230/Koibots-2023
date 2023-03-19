@@ -1,6 +1,7 @@
 package frc.robot;
 
 import frc.robot.autos.CommunityBalance;
+import frc.robot.autos.CommunityPickupBalance;
 import frc.robot.autos.Score2;
 import frc.robot.autos.ShootBalance;
 import frc.robot.autos.ShootMove;
@@ -35,6 +36,7 @@ public class RobotContainer {
     m_autoChooser = new SendableChooser<Command>();
 
     m_autoChooser.setDefaultOption("Leave community and balance", new CommunityBalance());
+    m_autoChooser.addOption("Leave Community and Balance + Piece Pickup", new CommunityPickupBalance());
     m_autoChooser.addOption("Score L1 & L2", new Score2());
     m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
     m_autoChooser.addOption("L2 and leave community", new ShootMove());
