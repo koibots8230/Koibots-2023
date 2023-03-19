@@ -42,7 +42,7 @@ public class AutoBalanceCommand extends CommandBase {
   public void end(boolean interrupted) {
     TankDriveSubsystem.get().setMotor(0, 0);
     if (!interrupted) {
-      new waitCommand(25);
+      new waitCommand(25).schedule();
     }
   }
 

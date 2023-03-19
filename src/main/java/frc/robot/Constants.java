@@ -72,13 +72,13 @@ public class Constants {
 
 // ====================================== Teleop / Driver ====================================== \\
 
-  public static final double MAX_DRIVETRAIN_SPEED = .88;
+  public static final double MAX_DRIVETRAIN_SPEED = .93;
   // Intake/Midtake Constants
   public static final double STARS_RUNNING_SPEED = 0.30;
-  public static final double BELT_RUNNING_SPEED = 0.25;
+  public static final double BELT_RUNNING_SPEED = 0.4;
   public static final double INTAKE_RUNNING_SPEED = 0.43;
 
-  public static final double DRIVE_SPEED_COEFFICIENT = 0.85; 
+  public static final double DRIVE_SPEED_COEFFICIENT = 0.90; 
 
   public static final double RAISE_SPEED = 0.25;
 
@@ -93,7 +93,7 @@ public class Constants {
   public static final double SENSOR_TRIGGERED = 2.5; // Voltage at which a digital signal is considered activated
 
   public static final double CURRENT_CAP = 60;
-  public static final double FLIP_INTAKE_DISTANCE = 3;
+  public static final double FLIP_INTAKE_DISTANCE = 5;
   
   // for LED system
   public static final int LED_STRIP_LENGTH = 60; // the number of LEDs on each of the LED strips.

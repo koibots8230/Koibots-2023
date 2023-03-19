@@ -99,8 +99,8 @@ public class RobotContainer {
       )
     );
     // Flip Intake
-    //Trigger flipTrigger = m_driverHID.leftBumper();
-    //flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
+    Trigger flipTrigger = m_driverHID.leftBumper();
+    flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new LoadCube());

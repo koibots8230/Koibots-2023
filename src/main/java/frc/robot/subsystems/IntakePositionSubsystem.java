@@ -16,7 +16,7 @@ import frc.robot.Constants;
 
 public class IntakePositionSubsystem extends SubsystemBase {
   private static IntakePositionSubsystem m_IntakePositionSubsystem = new IntakePositionSubsystem();
-  private int m_direction = 11;
+  private int m_direction = -1;
   private CANSparkMax intakePositionMotor;
   private RelativeEncoder intakePositionEncoder;
 
@@ -125,9 +125,12 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
     @Override
     public void initialize() {
-      IntakePositionSubsystem.this.setIntakePositionSpeed(Constants.RAISE_SPEED * IntakePositionSubsystem.this.getDirection());
-      if (IntakePositionSubsystem.this.getDirection() < 0) {
-
+      int direction = IntakePositionSubsystem.this.getDirection();
+      IntakePositionSubsystem.this.setIntakePositionSpeed(Constants.RAISE_SPEED * direction);
+      if (direction < 0) {
+        IntakePositionSubsystem.this.setCoast();
+      } else {
+        IntakePositionSubsystem.this.setBrake();
       }
       IntakePositionSubsystem.this.resetPositionEncoder();
     }
