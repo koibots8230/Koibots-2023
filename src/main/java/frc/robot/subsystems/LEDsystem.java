@@ -10,11 +10,14 @@
 
 
 package frc.robot.subsystems;
+package frc.robot.commands;
 
 import frc.robot.Constants;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class LEDsystem extends SubsystemBase {
 private AddressableLED strip1;
@@ -123,10 +126,6 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             buffer.setRGB(i, colors[0], colors[1], colors[2]);
         }
     }
-    public void turnOff(){//locks LEDs to current colors, don't use.
-        strip1.stop();
-    }
-
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
@@ -239,6 +238,61 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             strip1.setData(buffer);//Don't forget to actually write the changes.
         }
     }
+    //commands
+    public class setLedColor extends CommandBase {
+        private final LEDsystem sys;
+        private final Constants.color setColor;
+        private final Constants.moving movingPattern;
+    
+        public setLedColor(LEDsystem strips, Constants.color hold) {
+            sys = strips;
+            movingPattern = Constants.moving.NONE;
+            setColor = hold;
+            addRequirements(sys);
+        }
+        public setLedColor(LEDsystem strips, Constants.moving hold) {
+            sys = strips;
+            setColor = Constants.color.NONE;
+            movingPattern = hold;
+            addRequirements(sys);
+        }
+    
+        // Called when the command is initially scheduled.
+        @Override
+        public void initialize() {
+            if(setColor!=Constants.color.NONE){
+                sys.setColor(setColor);
+            } else {
+                sys.setColor(movingPattern);
+            }
+        }
+    
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            // check for if one of the triggers is active
+            // sys.setColor(setColor);
+        }
+    
+        // Called once the command ends or is interrupted.
+        @Override
+        public void end(boolean interrupted) {
+            System.out.println("B");
+        }
+    
+        // Returns true when the command should end.
+        @Override
+        public boolean isFinished() {
+            System.out.println("C");
+            return true;
+        }
+    
+        @Override
+        public boolean runsWhenDisabled() {
+            return false;
+        }
+    }
+    
 }
 
 
