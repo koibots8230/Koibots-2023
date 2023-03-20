@@ -36,6 +36,8 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotorR.follow(shooterMotorL, true);
   }
 
+  // ================================Getters================================ \\
+
   public static ShooterSubsystem get() {
     return m_ShooterSubsystem;
   }
@@ -44,14 +46,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterEncoder.getVelocity();
   }
 
-  public void SetShooter(double speed) {
-    shooterMotorL.set(speed);
-  }
-
   private List<Translation3d> getCubeList(int Level) {
-    if (Level == 2) {
+    if (Level == 1) {
       return Constants.MIDDLE_SPOTS;
-    } else if (Level == 3) {
+    } else if (Level == 2) {
       return Constants.HIGH_SPOTS;
     }
 
@@ -67,12 +65,6 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
-  /**
-   * 
-   * @param Robot_Pose
-   * @param Level
-   * @return
-   */
   public Optional<Pose3d> getNearestTarget(Translation3d Robot_Pose, int Level) {
 
     double closestDistance = 100.0;
@@ -94,11 +86,16 @@ public class ShooterSubsystem extends SubsystemBase {
     return Closest;
   }
 
+  // ================================Setters================================ \\
+
+  public void SetShooter(double speed) {
+    shooterMotorL.set(speed);
+  }
+
   public void SetShooterVelocity(double velocityMetersPerSecond) {
     shooterMotorL.set(velocityMetersPerSecond * Constants.SHOOTER_VELOCITY_TO_SPEED);
-    shooterMotorR.set(-velocityMetersPerSecond * Constants.SHOOTER_VELOCITY_TO_SPEED);
   }
-  
+
   // ================================Commands================================ \\
 
   public class Shoot extends CommandBase {

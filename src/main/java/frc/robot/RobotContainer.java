@@ -78,6 +78,12 @@ public class RobotContainer {
     shootL2.whileTrue(new AutoShootCommand(2))
     .whileTrue(IndexerSubsystem.get().new RunIndexer());
 
+    // Aligning
+    Trigger alignL1 = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kL2.value, Constants.TRIGGER_DEADZONE);
+    alignL1.onTrue(new AutoAlignCommand(1));
+
+    Trigger alignL2 = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kR2.value, Constants.TRIGGER_DEADZONE);
+    alignL2.onTrue(new AutoAlignCommand(2));
 
     Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
     Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);
