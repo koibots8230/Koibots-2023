@@ -4,35 +4,28 @@
 
 package frc.robot.commands;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.TankDriveSubsystem;
 import frc.robot.Constants;
+import frc.robot.Utilities.NAVX;
 import frc.robot.commands.AutoBalanceCommand;
 
 public class AutoBalanceCommand extends CommandBase {
-    private final AHRS gyro;
+    private final NAVX gyro;
     private double Factor = 1;
-    private final TankDriveSubsystem m_driveSubsystem;
+
     /** Creates a new AutoBalanceCommand. */
-    public AutoBalanceCommand(AHRS _Gyro, TankDriveSubsystem _rightDrive) {
+    public AutoBalanceCommand() {
       // Use addRequirements() here to declare subsystem dependencies.
-      gyro = _Gyro;
-      m_driveSubsystem = _rightDrive;
+      gyro = NAVX.get();
+      addRequirements(TankDriveSubsystem.get());
     }
-
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  }
-
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double rightDirection = 0;
-    double leftDirection = 0;
+    double rightDirection;
+    double leftDirection;
     if (Math.abs(gyro.getWorldLinearAccelX()) > 0.8) {
       rightDirection = gyro.getRoll() * gyro.getWorldLinearAccelY();
       leftDirection = gyro.getRoll() * gyro.getWorldLinearAccelY() * -1;
@@ -41,15 +34,15 @@ public class AutoBalanceCommand extends CommandBase {
       leftDirection = gyro.getRoll();
     }
     
-    m_driveSubsystem.setMotor(-Constants.AUTO_SPEED * Factor * Math.signum(rightDirection), -Constants.AUTO_SPEED * Factor * Math.signum(leftDirection));
+    TankDriveSubsystem.get().setMotor(-Constants.AUTO_SPEED * Factor * Math.signum(rightDirection), -Constants.AUTO_SPEED * Factor * Math.signum(leftDirection));
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_driveSubsystem.setMotor(0, 0);
+    TankDriveSubsystem.get().setMotor(0, 0);
     if (!interrupted) {
-      new waitCommand(25, gyro, m_driveSubsystem).schedule();
+      new waitCommand(25).schedule();
     }
   }
 

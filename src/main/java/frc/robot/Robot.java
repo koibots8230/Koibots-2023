@@ -15,14 +15,12 @@ package frc.robot;
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 
-import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.subsystems.IntakePositionSubsystem;
+import frc.robot.subsystems.TankDriveSubsystem;
 import edu.wpi.first.cameraserver.CameraServer;
 
 /**
@@ -34,7 +32,6 @@ import edu.wpi.first.cameraserver.CameraServer;
  */
 public class Robot extends TimedRobot {
 
-    AHRS gyro = new AHRS(Port.kMXP);
     private Command m_autonomousCommand;
     private RobotContainer m_robotContainer;
 
@@ -44,6 +41,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         m_robotContainer = RobotContainer.getInstance();
@@ -65,7 +63,6 @@ public class Robot extends TimedRobot {
         // block in order for anything in the Command-based framework to work.
         CommandScheduler.getInstance().run();
     }
-
 
     /**
     * This function is called once each time the robot enters Disabled mode.
@@ -90,6 +87,8 @@ public class Robot extends TimedRobot {
 
         //m_robotContainer.ResetPositions();
         //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        TankDriveSubsystem.get().setBrake();
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
@@ -111,7 +110,7 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         //enable coast
-        m_robotContainer.getDrive().setCoast();
+        TankDriveSubsystem.get().setCoast();
         //start camera
         CameraServer.startAutomaticCapture();
         //m_robotContainer.ResetPositions();
@@ -134,11 +133,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopExit() {
-
+        TankDriveSubsystem.get().setBrake();
+        IntakePositionSubsystem.get().setBrake();
     }
 
     @Override
     public void testInit() {
+        IntakePositionSubsystem.get().setCoast();
+        TankDriveSubsystem.get().setCoast();
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
 
@@ -151,5 +153,4 @@ public class Robot extends TimedRobot {
     @Override
     public void testPeriodic() {
     }
-
 }
