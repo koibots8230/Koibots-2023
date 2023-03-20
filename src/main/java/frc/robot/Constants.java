@@ -1,10 +1,14 @@
 package frc.robot;
 
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.List;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Utilities.TimedCommand;
 import frc.robot.commands.AutoBalanceCommand;
@@ -98,6 +102,40 @@ public class Constants {
   // for LED system
   public static final int LED_STRIP_LENGTH = 60; // the number of LEDs on each of the LED strips.
 
+  // Auto Shooting
+
+  public static final double SHOOTER_ANGLE = 45; // TODO: Get This
+  public static final double GRAVITY = 9.8; // If you can figure out a way to change this one, that's impressive
+  public static final double SHOOTER_FROM_GROUND = 1; // TODO: Get This
+  public static final double SHOOTER_VELOCITY_TO_SPEED = 0; // TODO: Get This
+  public static final double MIDDLE_HEIGHT = 23.5 * 0.0254;
+  public static final double MIDDLE_X = 24.25 * 0.0254;
+
+  public static final double AVAILABLE_CUBE_NODE_SPACE = 9.25;
+
+  public static final double ALIGN_DRIVE_SPEED = .5;
+
+  public static final double Y1 = 43.125 * 0.0254;
+  public static final double Y2 = 108.5 * 0.0254;
+  public static final double Y3 = 174.625 * 0.0254;
+
+  public static final Translation3d MC1 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
+  public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y2, MIDDLE_HEIGHT);
+  public static final Translation3d MC3 = new Translation3d(MIDDLE_X, Y3, MIDDLE_HEIGHT);
+
+  public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1, MC2, MC3);
+
+  public static final double HIGH_HEIGHT = 35.5 * 0.0254;
+  public static final double HIGH_X = 12.25 * 0.0254;
+
+  public static final Translation3d HC1 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
+  public static final Translation3d HC2 = new Translation3d(HIGH_X, Y2, HIGH_HEIGHT);
+  public static final Translation3d HC3 = new Translation3d(HIGH_X, Y3, HIGH_HEIGHT);
+
+  public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1, HC2, HC3);
+
+  public static final double MAX_SHOOTER_RANGE = 2;
+  
 // ====================================== Hardware Ports ====================================== \\
 
   // new TimedCommand(ShooterSubsystem

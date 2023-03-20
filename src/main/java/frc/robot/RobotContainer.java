@@ -31,6 +31,7 @@ public class RobotContainer {
   // Shuffleboard
   SendableChooser<String> m_pathChooser;
   SendableChooser<Command> m_autoChooser;
+  SendableChooser<Boolean> m_sideChooser;
 
   private RobotContainer() {
     m_autoChooser = new SendableChooser<Command>();
@@ -44,6 +45,10 @@ public class RobotContainer {
     SmartDashboard.putData(m_autoChooser);
 
     // choosing what auto
+
+    m_sideChooser.addOption("Blue", false);
+    m_sideChooser.addOption("Red", true);
+
     m_pathChooser = new SendableChooser<String>();
 
     Enumeration<String> PathNames = Constants.PATHS.keys();
@@ -66,11 +71,11 @@ public class RobotContainer {
 
     // Shooting
     Trigger shootL1 = m_operatorHID.L1();
-    shootL1.whileTrue(ShooterSubsystem.get().L1Shot())
+    shootL1.whileTrue(new AutoShootCommand(1))
     .whileTrue(IndexerSubsystem.get().new RunIndexer());
 
     Trigger shootL2 = m_operatorHID.R1();
-    shootL2.whileTrue(ShooterSubsystem.get().L2Shot())
+    shootL2.whileTrue(new AutoShootCommand(2))
     .whileTrue(IndexerSubsystem.get().new RunIndexer());
 
 
@@ -116,6 +121,9 @@ public class RobotContainer {
     return m_robotContainer;
   }
 
+  public Boolean getSide() {
+    return m_sideChooser.getSelected();
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *

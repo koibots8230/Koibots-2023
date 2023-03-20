@@ -16,10 +16,12 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 public class VisionSubsystem extends SubsystemBase{
+    private static VisionSubsystem m_VisionSubsystem = new VisionSubsystem(RobotContainer.getInstance().getSide());
 
-    public static PhotonPoseEstimator photonPoseEstimator;
+    public PhotonPoseEstimator photonPoseEstimator;
     final PhotonCamera camera;
     final Transform3d robotToCam;
     AprilTagFieldLayout aprilTagFieldLayout;
@@ -39,6 +41,10 @@ public class VisionSubsystem extends SubsystemBase{
             System.err.println("File did not exist! Try fixing your settings");  
         }
         photonPoseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.AVERAGE_BEST_TARGETS, camera, robotToCam);
+    }
+
+    public static VisionSubsystem get() {
+        return m_VisionSubsystem;
     }
 
     @Override
