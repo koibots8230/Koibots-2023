@@ -22,8 +22,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.cameraserver.CameraServer;
-import frc.robot.commands.LEDsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -72,8 +72,8 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void disabledInit() {
-        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.BLACK);
-        hold.schedule();
+            //set LED colors
+            m_robotContainer.getLEDs().setColor(Constants.color.BLACK);
     }
 
     @Override
@@ -86,12 +86,10 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         //set LED colors
-        setLedColor hold = new setLedColor(m_robotContainer.getLEDs(),Constants.color.ALLYB);
-        //ALLYB = blue alliance, ALLYR = red alliance.
-        hold.schedule();
+        m_robotContainer.getLEDs().setColor(Constants.color.ALLYB);
+
         //m_robotContainer.ResetPositions();
         //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();

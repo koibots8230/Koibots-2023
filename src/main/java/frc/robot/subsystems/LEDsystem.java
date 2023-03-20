@@ -236,6 +236,10 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             strip1.setData(buffer);//Don't forget to actually write the changes.
         }
     }
+    //misc functions:
+    public LEDsystem get(){
+        return this;
+    }
     //commands
     public class setLedColor extends CommandBase {
         private final LEDsystem sys;
@@ -275,13 +279,11 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         // Called once the command ends or is interrupted.
         @Override
         public void end(boolean interrupted) {
-            System.out.println("B");
         }
     
         // Returns true when the command should end.
         @Override
         public boolean isFinished() {
-            System.out.println("C");
             return true;
         }
     
