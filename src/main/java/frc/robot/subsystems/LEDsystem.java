@@ -73,7 +73,7 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             setLEDs(255,155,0);
             break;
             default:
-            System.err.println("WARNING: ATTEMPTED TO SET LEDS TO MAGENTA.");
+            System.err.println("WARNING: attempted to set LEDs to magenta.");
             return;
         }
         currentcolor=color;
@@ -177,7 +177,9 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         //do nothing if not running pattern.
     }
     //moving pattern code
+
     //start pattern functions
+
     private int[]patternValues={};//use this to hold values needed to properly display moving patterns.
     public void D1Start(){//"start" functions set the array so that it can hold the values needed for the pattern.
         patternValues=new int[2];//appearently {0,0} is an array constant, and you can only use that to init an array.
@@ -190,7 +192,9 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         patternValues[0]=0;//timer
         slidingPatternState=pattern;
     }
-    //periodic functions
+
+    //start periodic functions
+
     public void D1Period(){//Period functions are the functions that handle the movement of the pattern.
         if(patternValues[0]<10){//periodic runs every 20 miliseconds
             patternValues[0]++;
@@ -210,7 +214,7 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         if(patternValues[0]<10){//periodic runs every 20 miliseconds
             patternValues[0]++;
             return;
-        } else {
+        } else {//first LED is off first time around, but after it goes through all the LEDs, it works. 
             patternValues[0]=0;
             patternValues[1]++;
             if(!(patternValues[1]<buffer.getLength())){//is the value outside of the LED strip?
@@ -221,7 +225,7 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             strip1.setData(buffer);//Don't forget to actually write the changes.
         }
     }
-    public void slidePeriod(){
+    public void slidePeriod(){//for static patterns that slide.
         if(patternValues[0]<20){//periodic runs every 20 miliseconds
             patternValues[0]++;
             return;
@@ -236,11 +240,15 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             strip1.setData(buffer);//Don't forget to actually write the changes.
         }
     }
+
     //misc functions:
+
     public LEDsystem get(){
         return this;
     }
-    //commands
+
+    //command(s)
+
     public class setLedColor extends CommandBase {
         private final LEDsystem sys;
         private final Constants.color setColor;
