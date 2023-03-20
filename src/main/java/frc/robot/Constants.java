@@ -114,6 +114,7 @@ public enum moving{
   
   // for LED system
   public static final int LED_STRIP_LENGTH = 60; // the number of LEDs on each of the LED strips.
+  public static final int LEDPort=0;
 
 // ====================================== Hardware Ports ====================================== \\
 
