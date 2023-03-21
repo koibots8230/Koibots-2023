@@ -42,6 +42,7 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     //static patterns:
     private final int[][]redAlliance={{255,165,0},{255,0,255},{255,0,0}};
     private final int[][]blueAlliance={{255,165,0},{255,0,255},{0,0,255}};
+    private final int[][] rgb={{255,0,0},{0,255,0},{0,0,255}};
     //set LEDs static edition:
     public void setColor(Constants.color color){
         if(color==currentcolor&&!runningPattern){//no need to set the LEDs if we're just trying to set them to what they are.
@@ -68,6 +69,9 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             break;
             case ORANGE:
             setLEDs(255,155,0);
+            break;
+            case RGB:
+            setPattern(rgb);
             break;
             default:
             System.err.println("WARNING: attempted to set LEDs to magenta.");
@@ -167,8 +171,8 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     private int[]patternValues={};//use this to hold values needed to properly display moving patterns.
     public void D1Start(){//"start" functions set the array so that it can hold the values needed for the pattern.
         patternValues=new int[2];//appearently {0,0} is an array constant, and you can only use that to init an array.
-        patternValues[0]=0;//timer, so that the dot doesn't move every
-        patternValues[1]=0;
+        patternValues[0]=0;//timer, so that the dot doesn't move every periodic
+        patternValues[1]=0;//location of dot
     }
     private int[][]slidingPatternState={};//needed for sliding patterns
     public void slidingPatternStart(int[][] pattern){//this start will be used by multiple functions.

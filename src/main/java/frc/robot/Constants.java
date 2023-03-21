@@ -21,6 +21,7 @@ public class Constants {
     ALLYR,//red alliance
     ALLYB,//blue alliance
     ORANGE,
+    RGB,
     NONE, //placeholder moment.
 }
 public enum moving{
