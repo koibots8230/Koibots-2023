@@ -125,54 +125,40 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     @Override
     public void simulationPeriodic() {
         // This method will be called once per scheduler run when in simulation
-        if(runningPattern){//move this to a different function so sim and IRL are same.
-            switch(currentPattern){
-                case DOT1:
-                D1Period();
-                break;
-                case BAR:
-                BarPeriod();
-                break;
-                case ALLYR:
-                slidePeriod();
-                break;
-                case ALLYB:
-                slidePeriod();
-                break;
-                case NONE:
-                //If a case doesn't have a specific function to handle it, don't put a break
-                default:
-                System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern function");
-                runningPattern=!runningPattern;//to stop the print message spaming.
-            }
+        if(runningPattern){
+            allPeriodics();
         }
     }
     
     @Override
     public void periodic() {
         // This method will be called once per scheduler run when IRL
-        if(runningPattern){//move this to a different function so sim and IRL are same.
-            switch(currentPattern){
-                case DOT1:
-                D1Period();
-                break;
-                case BAR:
-                BarPeriod();
-                break;
-                case ALLYR:
-                slidePeriod();
-                break;
-                case ALLYB:
-                slidePeriod();
-                break;
-                case NONE:
-                //If a case doesn't have a specific function to handle it, don't put a break
-                default:
-                System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern function");
-                runningPattern=!runningPattern;//to stop the print message spaming.
-            }
+        if(runningPattern){
+            allPeriodics();
         }
         //do nothing if not running pattern.
+    }
+    public void allPeriodics(){
+        //So that I only have to edit one function to make changes to the periodic functions
+        switch(currentPattern){
+            case DOT1:
+            D1Period();
+            break;
+            case BAR:
+            BarPeriod();
+            break;
+            case ALLYR:
+            slidePeriod();
+            break;
+            case ALLYB:
+            slidePeriod();
+            break;
+            case NONE:
+            //If a case doesn't have a specific function to handle it, don't put a break
+            default:
+            System.err.println("WARNING: Attempted to execute a moving pattern without a proper pattern function");
+            runningPattern=!runningPattern;//to stop the print message spaming.
+        }
     }
     //moving pattern code
 
