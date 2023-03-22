@@ -158,6 +158,10 @@ public class TankDriveSubsystem extends SubsystemBase {
         secondaryRightMotor.setIdleMode(IdleMode.kCoast);
     }
 
+    public IdleMode getMode(){
+        return primaryLeftMotor.getIdleMode();//All motors are set to the same mode, so any one of them will do.
+    }
+
     // ================================Commands================================ \\
 
     public class driveMotorCommand extends CommandBase {

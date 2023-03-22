@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import com.revrobotics.CANSparkMax.IdleMode;
+import frc.robot.Utilities.NAVX;
 
 public class LEDsystem extends SubsystemBase {
 private AddressableLED strip;
@@ -288,7 +290,69 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             return false;
         }
     }
+    public class botInfoDisplay extends CommandBase{
+        private final IndexerSubsystem beamBreak;//TODO: set this to the function "isIndexerFilled"
+        private final LEDsystem LEDs;
+        private final TankDriveSubsystem Drivetrain;//TODO: set this to the function "getIdleMode"
+        private final NAVX gyro;
+        private int[][] display={{},{},{}};
+        private int[][] lastDisplay={{},{},{}};
+        public botInfoDisplay(IndexerSubsystem indexer,LEDsystem subsys,TankDriveSubsystem wheels){
+            beamBreak=indexer;
+            LEDs=subsys;
+            Drivetrain=wheels;
+            gyro=NAVX.get();
+            addRequirements(subsys);//only reading from indexer and tankdrive, so we don't need them.
+        }
+        @Override
+        public void initialize() {
+            //command runs continucously 
+        }
+        private int[] green={0,255,0};
+        private int[] blue={0,0,255};
+        private int[] red={255,0,0};
+        private int[] purple={255,0,255};
+        private int[] yellow={255,255,0};
+        private int[] white={255,255,255};
+        // Called every time the scheduler runs while the command is scheduled.
+        @Override
+        public void execute() {
+            if(beamBreak.isIndexerFilled()){//is cube loaded?
+                display[0]=purple;
+            } else {
+                display[0]=white;//empty, probably will make this a different color
+            }
+            if(Drivetrain.getMode()==IdleMode.kBrake){
+                display[1]=red;
+            } else {
+                display[1]=yellow;//should be coast
+            }
+            if (Math.abs(gyro.getRoll()) <= 2.5) {//we on flat ground?
+                display[2]=green;
+            } else if (Math.abs(gyro.getRoll()) >= 30) {//TODO: whats he max angle of the charge station?
+                //are we at or greater than the max angle of the charge station?
+                display[2]=red;
+            } else {
+                display[2]=yellow;//somewhere inbetween
+            }
+            if(display.equals(lastDisplay)){//Hopefully this will work?
+                return;//no need to continue if we're just trying to set the LEDs to what they already are.
+            }
+            lastDisplay=display;
+            LEDs.setPattern(display);
+        }
     
+        // Called once the command ends or is interrupted.
+        @Override
+        public void end(boolean interrupted) {
+        }
+    
+        // Returns true when the command should end.
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+    }
 }
 
 
