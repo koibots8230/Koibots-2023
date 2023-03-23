@@ -311,8 +311,8 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         private final LEDsystem LEDs;
         private final TankDriveSubsystem Drivetrain;//TODO: set this to the function "getIdleMode"
         // private final NAVX gyro;
-        private int[][] display={{},{},{}};
-        private int[][] lastDisplay={{},{},{}};
+        private int[][] display={{},{}};
+        private int[][] lastDisplay={{},{}};
         public botInfoDisplay(IndexerSubsystem indexer,LEDsystem subsys,TankDriveSubsystem wheels){
             beamBreak=indexer;
             LEDs=subsys;
