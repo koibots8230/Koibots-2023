@@ -310,14 +310,14 @@ private Constants.moving currentPattern=Constants.moving.NONE;
         private final IndexerSubsystem beamBreak;//TODO: set this to the function "isIndexerFilled"
         private final LEDsystem LEDs;
         private final TankDriveSubsystem Drivetrain;//TODO: set this to the function "getIdleMode"
-        private final NAVX gyro;
+        // private final NAVX gyro;
         private int[][] display={{},{},{}};
         private int[][] lastDisplay={{},{},{}};
         public botInfoDisplay(IndexerSubsystem indexer,LEDsystem subsys,TankDriveSubsystem wheels){
             beamBreak=indexer;
             LEDs=subsys;
             Drivetrain=wheels;
-            gyro=NAVX.get();
+            // gyro=NAVX.get();
             addRequirements(subsys);//only reading from indexer and tankdrive, so we don't need them.
         }
 
@@ -329,8 +329,8 @@ private Constants.moving currentPattern=Constants.moving.NONE;
             LEDs.reset();//Need to reset so that nothing funky happens.
         }
 
-        private int[] green={0,255,0};
-        private int[] blue={0,0,255};
+        // private int[] green={0,255,0};
+        // private int[] blue={0,0,255};
         private int[] red={255,0,0};
         private int[] purple={255,0,255};
         private int[] yellow={255,255,0};
@@ -347,14 +347,6 @@ private Constants.moving currentPattern=Constants.moving.NONE;
                 display[1]=red;
             } else {
                 display[1]=yellow;//should be coast
-            }
-            if (Math.abs(gyro.getRoll()) <= 2.5) {//we on flat ground?
-                display[2]=green;
-            } else if (Math.abs(gyro.getRoll()) >= 30) {//TODO: whats the max angle of the charge station?
-                //are we at or greater than the max angle of the charge station?
-                display[2]=red;
-            } else {
-                display[2]=yellow;//somewhere inbetween
             }
             if(display.equals(lastDisplay)){//Hopefully this will work?
                 return;//no need to continue if we're just trying to set the LEDs to what they already are.
