@@ -75,7 +75,7 @@ public class Constants {
   public static final double MAX_DRIVETRAIN_SPEED = .93;
   // Intake/Midtake Constants
   public static final double STARS_RUNNING_SPEED = 0.30;
-  public static final double BELT_RUNNING_SPEED = 0.4;
+  public static final double BELT_RUNNING_SPEED = 0.6;
   public static final double INTAKE_RUNNING_SPEED = 0.43;
 
   public static final double DRIVE_SPEED_COEFFICIENT = 0.90; 
@@ -83,7 +83,7 @@ public class Constants {
   public static final double RAISE_SPEED = 0.25;
 
   // Teleop Shooti
-  public static final double COMMUNITY_SHOOTER_SPEED = .95;
+  public static final double COMMUNITY_SHOOTER_SPEED = .9;
   public static final double L2_SHOOTER_SPEED = .7;
   public static final double L1_SHOOTER_SPEED = .55;
   
