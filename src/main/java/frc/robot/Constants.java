@@ -18,7 +18,7 @@ public class Constants {
 // ====================================== Auto ====================================== \\
   public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(0, 0); // TODO: Find these
 
-  public static final PIDConstants AUTO_PID = new PIDConstants(3.1629, 0, 0); // TODO: Maybe tune these
+  public static final PIDConstants AUTO_PID = new PIDConstants(3.1629, 0, 0);
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
@@ -59,7 +59,7 @@ public class Constants {
 
   public static final double DRIVE_ROTATIONS_TO_DISTANCE = 1; // TODO: Find this
 
-  public static final double ROBOT_WIDTH_m = 0.6; // TODO: Double check this
+  public static final double ROBOT_WIDTH_m = 0.57785; // TODO: Double check this
 
   public static final double AUTO_SPEED = 0.07;
   private static final double FAR_SPEED = 1; // TODO: unknown

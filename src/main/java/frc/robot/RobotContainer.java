@@ -7,6 +7,8 @@ import frc.robot.autos.ShootBalance;
 import frc.robot.autos.ShootMove;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import edu.wpi.first.math.controller.RamseteController;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -18,6 +20,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import java.util.Enumeration;
+
+import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
 
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -122,8 +127,6 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_autoChooser.getSelected();
-  /* 
     return new RamseteAutoBuilder(
       TankDriveSubsystem.get()::getRobotPose,
       TankDriveSubsystem.get()::resetOdometry,
@@ -137,6 +140,5 @@ public class RobotContainer {
       false,
       TankDriveSubsystem.get()
     ).fullAuto(PathPlanner.loadPathGroup(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
-  */
   }
 }
