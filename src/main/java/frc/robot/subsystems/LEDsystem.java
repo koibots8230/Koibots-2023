@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+
+import java.util.function.BooleanSupplier;
+
 import com.revrobotics.CANSparkMax.IdleMode;
 import frc.robot.Utilities.NAVX;
 
@@ -307,16 +310,16 @@ private Constants.moving currentPattern=Constants.moving.NONE;
     }
     public class botInfoDisplay extends CommandBase{
         //TODO: make it so that the LED subsystem will only take input from this command while it is running.
-        private final IndexerSubsystem beamBreak;//TODO: set this to the function "isIndexerFilled"
         private final LEDsystem LEDs;
-        private final TankDriveSubsystem Drivetrain;//TODO: set this to the function "getIdleMode"
         // private final NAVX gyro;
         private int[][] display={{},{}};
         private int[][] lastDisplay={{},{}};
-        public botInfoDisplay(IndexerSubsystem indexer,LEDsystem subsys,TankDriveSubsystem wheels){
-            beamBreak=indexer;
+        private final BooleanSupplier beamSup;
+        private final BooleanSupplier wheelMode;
+        public botInfoDisplay(BooleanSupplier indexer,LEDsystem subsys,BooleanSupplier wheels){
+            beamSup=indexer;//()->indexer.isIndexerFilled();
             LEDs=subsys;
-            Drivetrain=wheels;
+            wheelMode=wheels;//()->wheels.getModeAsBoolean();
             // gyro=NAVX.get();
             addRequirements(subsys);//only reading from indexer and tankdrive, so we don't need them.
         }
@@ -338,12 +341,12 @@ private Constants.moving currentPattern=Constants.moving.NONE;
 
         @Override
         public void execute() {
-            if(beamBreak.isIndexerFilled()){//is cube loaded?
+            if(beamSup.getAsBoolean()){//is cube loaded?
                 display[0]=purple;
             } else {
                 display[0]=white;//empty, probably will make this a different color
             }
-            if(Drivetrain.getMode()==IdleMode.kBrake){
+            if(wheelMode.getAsBoolean()){
                 display[1]=red;
             } else {
                 display[1]=yellow;//should be coast

@@ -161,6 +161,9 @@ public class TankDriveSubsystem extends SubsystemBase {
     public IdleMode getMode(){
         return primaryLeftMotor.getIdleMode();//All motors are set to the same mode, so any one of them will do.
     }
+    public boolean getModeAsBoolean(){
+        return getMode()==IdleMode.kBrake;
+    }
 
     // ================================Commands================================ \\
 
