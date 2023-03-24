@@ -4,7 +4,6 @@
 
 package frc.robot.autos;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -17,7 +16,6 @@ import com.kauailabs.navx.frc.AHRS;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class CommunityPickupBalance extends SequentialCommandGroup {
   /** Creates a new CommunityBalance. */
-
 
   AHRS m_Gyro;
   public CommunityPickupBalance() {
