@@ -31,6 +31,8 @@ public class Constants {
     put("Blue: Center - Left piece first", "B_Center_Top_First");
     put("Blue: Center - Right piece first", "B_Center_Bottom_First");
 
+    put("Calibrate", "Circle");
+
     put("Red: Left Side - 3 Pieces", "R_Left");
     put("Red: Left Side - 2 Pieces", "R_Left_Score2");
     put("Red: Right Side - 3 Pieces","R_Right");
@@ -52,14 +54,15 @@ public class Constants {
     put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));
     put("Ground to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_L1_SPEED), SHOOT_TIME));
     put("Ground to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_HYBRID_SPEED), SHOOT_TIME));
+    put("Max Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(MAX_SPEED), AUTO_SPEED));
 
   }};
 
   public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.10614, 2.6082, 0.27666); // TODO: Tune these
 
-  public static final double DRIVE_ROTATIONS_TO_DISTANCE = 1; // TODO: Find this
+  public static final double DRIVE_ROTATIONS_TO_DISTANCE = 0.04873967373; // TODO: Find this
 
-  public static final double ROBOT_WIDTH_m = 0.57785; // TODO: Double check this
+  public static final double ROBOT_WIDTH_m = 0.57785;
 
   public static final double AUTO_SPEED = 0.07;
   private static final double FAR_SPEED = 1; // TODO: unknown
@@ -67,6 +70,7 @@ public class Constants {
   private static final double CS_TO_HYBRID_SPEED = 0.5; // TODO: unknown
   private static final double GROUND_TO_L1_SPEED = 0.5; // TODO: unknown
   private static final double GROUND_TO_HYBRID_SPEED = 0.5; // TODO: unknown
+  private static final double MAX_SPEED = 1; 
 
   private static final double SHOOT_TIME = 0.5;
 

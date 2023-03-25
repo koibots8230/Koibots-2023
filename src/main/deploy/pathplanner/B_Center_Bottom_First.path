@@ -2,49 +2,22 @@
   "waypoints": [
     {
       "anchorPoint": {
-        "x": 1.7037280598315736,
+        "x": 1.82,
         "y": 2.745
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.703728059831568,
+        "x": 2.8199999999999945,
         "y": 2.745
-      },
-      "holonomicAngle": 0,
-      "isReversal": false,
-      "velOverride": null,
-      "isLocked": true,
-      "isStopPoint": false,
-      "stopEvent": {
-        "names": [],
-        "executionBehavior": "sequential",
-        "waitBehavior": "none",
-        "waitTime": 0
-      }
-    },
-    {
-      "anchorPoint": {
-        "x": 3.9,
-        "y": 2.7
-      },
-      "prevControl": {
-        "x": 2.98820498398684,
-        "y": 2.7477851519505947
-      },
-      "nextControl": {
-        "x": 4.851425244229493,
-        "y": 2.6501379157961074
       },
       "holonomicAngle": 0,
       "isReversal": false,
       "velOverride": null,
       "isLocked": false,
-      "isStopPoint": true,
+      "isStopPoint": false,
       "stopEvent": {
-        "names": [
-          "Lower Intake"
-        ],
-        "executionBehavior": "parallel",
+        "names": [],
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -98,7 +71,7 @@
         "names": [
           "Far Shot"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
@@ -150,7 +123,7 @@
           "Far Shot",
           "Auto-Balance"
         ],
-        "executionBehavior": "parallel",
+        "executionBehavior": "sequential",
         "waitBehavior": "none",
         "waitTime": 0
       }
