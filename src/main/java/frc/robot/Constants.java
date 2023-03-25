@@ -16,9 +16,9 @@ public class Constants {
   // DO. NOT. CHANGE. THESE. UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // ====================================== Auto ====================================== \\
-  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(0, 0); // TODO: Find these
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(.5, 0.1); // TODO: Find these
 
-  public static final PIDConstants AUTO_PID = new PIDConstants(3.1629, 0, 0);
+  public static final PIDConstants AUTO_PID = new PIDConstants(.00015, 0, 0);
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
@@ -30,6 +30,8 @@ public class Constants {
     put("Blue: Center - Coopertition", "B_Center");
     put("Blue: Center - Left piece first", "B_Center_Top_First");
     put("Blue: Center - Right piece first", "B_Center_Bottom_First");
+
+    put("Test", "Test");
 
     put("Calibrate", "Circle");
 

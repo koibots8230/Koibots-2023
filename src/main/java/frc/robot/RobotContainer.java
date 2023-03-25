@@ -58,6 +58,8 @@ public class RobotContainer {
       m_pathChooser.addOption(key, Constants.PATHS.get(key));
     }
 
+    SmartDashboard.putData(m_pathChooser);
+
     configureButtonBindings();
   }
 
