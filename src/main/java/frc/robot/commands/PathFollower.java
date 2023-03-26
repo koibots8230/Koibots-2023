@@ -290,6 +290,12 @@ public class PathFollower extends CommandBase {
       desiredState.poseMeters.getX(), 
       desiredState.poseMeters.getY(), 
       desiredState.poseMeters.getRotation().getDegrees()});
+    
+    System.out.println("\nCurrent Pose: ");
+    System.out.print(currentPose);
+    System.out.println("\nDesired State: ");
+    System.out.print(desiredState);
+    
 
     PathPlannerServer.sendPathFollowingData(desiredState.poseMeters, currentPose);
 
@@ -299,6 +305,9 @@ public class PathFollower extends CommandBase {
 
     double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
+
+    System.out.println("Left Output: " + leftSpeedSetpoint);
+    System.out.println("Right Output: " + rightSpeedSetpoint);
 
     SmartDashboard.putNumberArray("Wheel Speed Setpoints", new double[] {
       leftSpeedSetpoint,
@@ -328,6 +337,9 @@ public class PathFollower extends CommandBase {
       leftOutput = leftSpeedSetpoint;
       rightOutput = rightSpeedSetpoint;
     }
+
+    System.out.println("Left Output: " + leftOutput);
+    System.out.println("Right Output: " + rightOutput);
 
     SmartDashboard.putNumberArray("Outputs", new double[] {
       leftOutput,

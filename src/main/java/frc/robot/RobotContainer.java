@@ -154,6 +154,7 @@ public class RobotContainer {
       , null
       , null); */
       PathPlannerTrajectory path = PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
+      TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
       return new FollowPathWithEvents(
         new PathFollower(
           path, 

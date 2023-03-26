@@ -70,27 +70,18 @@ public class TankDriveSubsystem extends SubsystemBase{
     @Override
     public void periodic() {
         if (Math.abs(NAVX.get().getRoll()) > 1) {
-            m_Odometry.update(new Rotation2d(),
+            m_Odometry.update(NAVX.get().getRotation2d(),
                     leftRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())),
                     rightRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())));
         } else {
-            m_Odometry.update(new Rotation2d(),
+            m_Odometry.update(NAVX.get().getRotation2d(),
                 leftRelativeEncoder.getPosition(),
                 rightRelativeEncoder.getPosition());
         }
-
-        SmartDashboard.putNumber("Left Encoder", leftRelativeEncoder.getPosition());
-        SmartDashboard.putNumber("Right Encoder", rightRelativeEncoder.getPosition());
-
-        SmartDashboard.putNumber("Left Voltage", primaryLeftMotor.getBusVoltage());
-        SmartDashboard.putNumber("Right Voltage", primaryRightMotor.getBusVoltage());
-
-        SmartDashboard.putNumber("X", m_Odometry.getPoseMeters().getX());
-        SmartDashboard.putNumber("Y", m_Odometry.getPoseMeters().getY());
     }
 
     public double[] getVoltages() {
-        return new double[] { primaryLeftMotor.getBusVoltage(), primaryRightMotor.getBusVoltage()};
+        return new double[] { primaryLeftMotor.getAppliedOutput(), primaryRightMotor.getAppliedOutput()};
     }
 
     public static TankDriveSubsystem get() {
@@ -109,14 +100,19 @@ public class TankDriveSubsystem extends SubsystemBase{
         m_Odometry.resetPosition(NAVX.get().getRotation2d(), leftRelativeEncoder.getPosition(), rightRelativeEncoder.getPosition(), pose);
     }
 
+    public void resetEncoders() {
+        leftRelativeEncoder.setPosition(0);
+        rightRelativeEncoder.setPosition(0);
+    }
+
     public double[] getEncoderPositions() {
         // get the in between of both encoders
         return (new double[] { leftRelativeEncoder.getPosition(), rightRelativeEncoder.getPosition() });
     }
 
     public void setVoltage(double leftVoltage, double rightVoltage) {
-        primaryLeftMotor.setVoltage(leftVoltage);
-        primaryRightMotor.setVoltage(rightVoltage);
+        primaryLeftMotor.setVoltage(-leftVoltage);
+        primaryRightMotor.setVoltage(-rightVoltage);
     }
 
     public void setMotor(double leftSpeed, double rightSpeed) {
