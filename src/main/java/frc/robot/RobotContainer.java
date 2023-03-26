@@ -23,6 +23,7 @@ import java.util.Enumeration;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import frc.robot.subsystems.IntakeSubsystem;
 
@@ -134,7 +135,8 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
-      return new RamseteAutoBuilder(
+      return new FollowPathWithEvents(
+      new RamseteAutoBuilder(
         TankDriveSubsystem.get()::getRobotPose,
         TankDriveSubsystem.get()::resetOdometry,
         new RamseteController(),
@@ -146,7 +148,10 @@ public class RobotContainer {
         Constants.EVENTS,
         false,
         TankDriveSubsystem.get()
-      ).followPath(PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
+      ).followPath(PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS))
+      , null
+      , null);
+      
     }
     return m_autoChooser.getSelected();
   }
