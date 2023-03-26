@@ -10,8 +10,8 @@ import frc.robot.subsystems.*;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.PS4Controller;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.CommandPS4Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -46,19 +46,24 @@ public class RobotContainer {
     m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
     m_autoChooser.addOption("L2 and leave community", new ShootMove());
 
-    SmartDashboard.putData(m_autoChooser);
-
-    // choosing what auto
     m_pathChooser = new SendableChooser<String>();
 
+    // Paths are in Constants
     Enumeration<String> PathNames = Constants.PATHS.keys();
     while (PathNames.hasMoreElements()) {
       String key = PathNames.nextElement();
-
       m_pathChooser.addOption(key, Constants.PATHS.get(key));
     }
+    
+    Shuffleboard.getTab("Driver")
+      .add("Auto Chooser", m_autoChooser)
+      .withPosition(0, 0)
+      .withSize(2, 2);
 
-    SmartDashboard.putData(m_pathChooser);
+    Shuffleboard.getTab("Driver")
+      .add("Path Chooser", m_pathChooser)
+      .withPosition(2, 0)
+      .withSize(2, 2);
 
     configureButtonBindings();
   }
@@ -80,14 +85,12 @@ public class RobotContainer {
     shootL2.whileTrue(ShooterSubsystem.get().L2Shot())
     .whileTrue(IndexerSubsystem.get().new RunIndexer());
 
-
     Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
     Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);
 
     intakeUp.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(true));
     intakeDown.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(false));
 
-    
     Trigger clearButton = m_operatorHID.circle();
     clearButton.whileTrue(new InstantCommand(() -> IntakeSubsystem.getIntakeSubsystem().ClearStickies(), IntakeSubsystem.getIntakeSubsystem()));
 
@@ -107,6 +110,7 @@ public class RobotContainer {
       ShooterSubsystem.get().CommunityShot()
       )
     );
+    
     // Flip Intake
     Trigger flipTrigger = m_driverHID.leftBumper();
     flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
@@ -129,18 +133,21 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new RamseteAutoBuilder(
-      TankDriveSubsystem.get()::getRobotPose,
-      TankDriveSubsystem.get()::resetOdometry,
-      new RamseteController(),
-      new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
-      Constants.PP_FEED_FORWARD,
-      TankDriveSubsystem.get()::getWheelSpeeds,
-      Constants.AUTO_PID,
-      TankDriveSubsystem.get()::setVoltage,
-      Constants.EVENTS,
-      false,
-      TankDriveSubsystem.get()
-    ).fullAuto(PathPlanner.loadPathGroup(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
+    if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
+      return new RamseteAutoBuilder(
+        TankDriveSubsystem.get()::getRobotPose,
+        TankDriveSubsystem.get()::resetOdometry,
+        new RamseteController(),
+        new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
+        Constants.PP_FEED_FORWARD,
+        TankDriveSubsystem.get()::getWheelSpeeds,
+        Constants.AUTO_PID,
+        TankDriveSubsystem.get()::setVoltage,
+        Constants.EVENTS,
+        false,
+        TankDriveSubsystem.get()
+      ).fullAuto(PathPlanner.loadPathGroup(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
+    }
+    return m_autoChooser.getSelected();
   }
 }

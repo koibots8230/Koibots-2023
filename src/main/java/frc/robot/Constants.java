@@ -23,6 +23,8 @@ public class Constants {
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
 
+    put("Use Auto Chooser", "Legacy");
+
     put("Blue: Left Side - 3 Pieces", "B_Left");
     put("Blue: Left Side - 2 Pieces", "B_Left_Score2");
     put("Blue: Right Side - 3 Pieces", "B_Right");
