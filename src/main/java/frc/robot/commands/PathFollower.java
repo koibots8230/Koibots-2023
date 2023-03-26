@@ -281,6 +281,16 @@ public class PathFollower extends CommandBase {
     PathPlannerTrajectory.PathPlannerState desiredState =
         (PathPlannerTrajectory.PathPlannerState) transformedTrajectory.sample(currentTime);
 
+    SmartDashboard.putNumberArray("Current Pose", new double[] {
+      currentPose.getX(), 
+      currentPose.getY(), 
+      currentPose.getRotation().getDegrees()});
+
+    SmartDashboard.putNumberArray("Desired Pose", new double[] {
+      desiredState.poseMeters.getX(), 
+      desiredState.poseMeters.getY(), 
+      desiredState.poseMeters.getRotation().getDegrees()});
+
     PathPlannerServer.sendPathFollowingData(desiredState.poseMeters, currentPose);
 
     ChassisSpeeds targetChassisSpeeds = this.controller.calculate(currentPose, desiredState);
@@ -289,6 +299,11 @@ public class PathFollower extends CommandBase {
 
     double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
+
+    SmartDashboard.putNumberArray("Wheel Speed Setpoints", new double[] {
+      leftSpeedSetpoint,
+      rightSpeedSetpoint
+    });
 
     double leftOutput;
     double rightOutput;
@@ -313,6 +328,11 @@ public class PathFollower extends CommandBase {
       leftOutput = leftSpeedSetpoint;
       rightOutput = rightSpeedSetpoint;
     }
+
+    SmartDashboard.putNumberArray("Outputs", new double[] {
+      leftOutput,
+      rightOutput
+    });
 
     this.output.accept(leftOutput, rightOutput);
     this.prevSpeeds = targetWheelSpeeds;

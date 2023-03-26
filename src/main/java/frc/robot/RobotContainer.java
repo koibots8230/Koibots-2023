@@ -7,6 +7,7 @@ import frc.robot.autos.ShootBalance;
 import frc.robot.autos.ShootMove;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -22,7 +23,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import java.util.Enumeration;
 
 import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 import frc.robot.subsystems.IntakeSubsystem;
@@ -135,6 +136,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
+      /*
       return new FollowPathWithEvents(
       new RamseteAutoBuilder(
         TankDriveSubsystem.get()::getRobotPose,
@@ -150,8 +152,23 @@ public class RobotContainer {
         TankDriveSubsystem.get()
       ).followPath(PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS))
       , null
-      , null);
-      
+      , null); */
+      PathPlannerTrajectory path = PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
+      return new FollowPathWithEvents(
+        new PathFollower(
+          path, 
+          TankDriveSubsystem.get()::getRobotPose, 
+          new RamseteController(),
+          Constants.PP_FEED_FORWARD,
+          new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
+          TankDriveSubsystem.get()::getWheelSpeeds,
+          new PIDController(.00015, 0, 0),
+          new PIDController(.00015, 0, 0),
+          TankDriveSubsystem.get()::setVoltage,
+          TankDriveSubsystem.get()
+          ),
+        path.getMarkers(), 
+        Constants.EVENTS);
     }
     return m_autoChooser.getSelected();
   }
