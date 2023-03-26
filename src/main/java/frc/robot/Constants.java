@@ -2,10 +2,7 @@ package frc.robot;
 
 import java.util.Hashtable;
 
-import javax.print.DocPrintJob;
-
 import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,8 +17,6 @@ public class Constants {
 
 // ====================================== Auto ====================================== \\
   public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(1.5, 0.6); // TODO: Find these
-  private static final double ku = 0.002;
-  public static final PIDConstants AUTO_PID = new PIDConstants(.00015, 0, 0);
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{

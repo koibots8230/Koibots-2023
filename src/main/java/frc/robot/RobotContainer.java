@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.Utilities.TimedCommand;
 import frc.robot.autos.CommunityBalance;
 import frc.robot.autos.CommunityPickupBalance;
 import frc.robot.autos.Score2;
@@ -19,14 +20,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import java.util.Enumeration;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
-
-import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
@@ -112,13 +113,14 @@ public class RobotContainer {
       ShooterSubsystem.get().CommunityShot()
       )
     );
-    
-    // Flip Intake
-    Trigger flipTrigger = m_driverHID.leftBumper();
-    flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new LoadCube());
+    runIntakeForwardsTrigger.whileTrue(new ParallelRaceGroup(
+      new SequentialCommandGroup(
+        new TimedCommand(new IndexerSubsystem().new RunIndexer(), 0.5),
+        IndexerSubsystem.get().new RunUntilBeam()),
+      IntakeSubsystem.getIntakeSubsystem().new RunIntake()
+    ));
 
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
