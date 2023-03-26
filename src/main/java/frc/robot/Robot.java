@@ -14,7 +14,6 @@ package frc.robot;
 
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
-
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -52,7 +51,7 @@ public class Robot extends TimedRobot {
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
 
         ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
-         
+
         debugTab
             .addDoubleArray("Drive Voltages", TankDriveSubsystem.get()::getVoltages)
             .withWidget("Graph")
@@ -60,7 +59,7 @@ public class Robot extends TimedRobot {
             .withSize(3, 3);
 
         debugTab
-            .add("Yaw", NAVX.get())
+            .addDouble("Yaw", NAVX.get()::getAngle)
             .withPosition(3, 0)
             .withSize(3, 3);
         
@@ -76,6 +75,11 @@ public class Robot extends TimedRobot {
             .withPosition(9, 0)
             .withSize(3, 3);
 
+        debugTab
+            .addDoubleArray("Encoders", TankDriveSubsystem.get()::getEncoderPositions)
+            .withWidget("Graph")
+            .withPosition(0, 3)
+            .withSize(3, 3);
     }
 
     /**
@@ -163,6 +167,7 @@ public class Robot extends TimedRobot {
         TankDriveSubsystem.get().setCoast();
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
+        System.out.println("Reset to Coast");
     }
 
     /**
