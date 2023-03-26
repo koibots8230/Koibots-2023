@@ -146,7 +146,7 @@ public class RobotContainer {
         Constants.EVENTS,
         false,
         TankDriveSubsystem.get()
-      ).fullAuto(PathPlanner.loadPathGroup(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
+      ).followPath(PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS));
     }
     return m_autoChooser.getSelected();
   }
