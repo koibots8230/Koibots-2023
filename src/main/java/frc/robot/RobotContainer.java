@@ -99,11 +99,11 @@ public class RobotContainer {
     // ====================================== DRIVER CONTROLS ====================================== \\
     // create commands
     // 5 = left bumper
-    // 6 = right bumper
+    // 6 = right bumperm
 
     TankDriveSubsystem.get().setDefaultCommand(TankDriveSubsystem.get().new driveMotorCommand(
-      () -> m_driverHID.getRightY(),
-      () -> m_driverHID.getLeftY()));
+      () -> -m_driverHID.getRightY(),
+      () -> -m_driverHID.getLeftY()));
 
     // Community Shot
     Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
@@ -163,8 +163,8 @@ public class RobotContainer {
           Constants.PP_FEED_FORWARD,
           new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
           TankDriveSubsystem.get()::getWheelSpeeds,
-          new PIDController(.00015, 0, 0),
-          new PIDController(.00015, 0, 0),
+          new PIDController(.00075, 0, 0),
+          new PIDController(.00075, 0, 0),
           TankDriveSubsystem.get()::setVoltage,
           TankDriveSubsystem.get()
           ),

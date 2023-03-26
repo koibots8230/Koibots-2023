@@ -14,7 +14,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -52,7 +51,8 @@ public class TankDriveSubsystem extends SubsystemBase{
         primaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_1, MotorType.kBrushless);
         secondaryLeftMotor = new CANSparkMax(Constants.LEFT_DRIVE_MOTOR_2, MotorType.kBrushless);
 
-        primaryRightMotor.setInverted(true);
+        primaryLeftMotor.setInverted(true);
+        primaryRightMotor.setInverted(false);
 
         secondaryRightMotor.follow(primaryRightMotor);
         secondaryLeftMotor.follow(primaryLeftMotor);
@@ -111,8 +111,8 @@ public class TankDriveSubsystem extends SubsystemBase{
     }
 
     public void setVoltage(double leftVoltage, double rightVoltage) {
-        primaryLeftMotor.setVoltage(-leftVoltage);
-        primaryRightMotor.setVoltage(-rightVoltage);
+        primaryLeftMotor.setVoltage(leftVoltage);
+        primaryRightMotor.setVoltage(rightVoltage);
     }
 
     public void setMotor(double leftSpeed, double rightSpeed) {

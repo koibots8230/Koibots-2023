@@ -1,6 +1,9 @@
 package frc.robot;
 
 import java.util.Hashtable;
+
+import javax.print.DocPrintJob;
+
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.auto.PIDConstants;
 
@@ -16,8 +19,8 @@ public class Constants {
   // DO. NOT. CHANGE. THESE. UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // ====================================== Auto ====================================== \\
-  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(.5, 0.1); // TODO: Find these
-
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(1.5, 0.6); // TODO: Find these
+  private static final double ku = 0.002;
   public static final PIDConstants AUTO_PID = new PIDConstants(.00015, 0, 0);
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
