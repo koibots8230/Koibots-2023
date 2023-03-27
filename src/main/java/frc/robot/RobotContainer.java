@@ -117,7 +117,7 @@ public class RobotContainer {
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new ParallelRaceGroup(
       new SequentialCommandGroup(
-        new TimedCommand(new IndexerSubsystem().new RunIndexer(), 0.5),
+        new TimedCommand(IndexerSubsystem.get().new RunIndexer(), 0.5),
         IndexerSubsystem.get().new RunUntilBeam()),
       IntakeSubsystem.getIntakeSubsystem().new RunIntake()
     ));
