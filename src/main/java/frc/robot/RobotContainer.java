@@ -75,6 +75,11 @@ public class RobotContainer {
 
     // ====================================== Operator Controls ====================================== \\
 
+    Trigger brakeMode = m_operatorHID.povUp();
+    brakeMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().setBrake()));
+    brakeMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().setCoast()));
+
+
     Trigger slowMode = m_operatorHID.triangle();
     slowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
     slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
@@ -115,12 +120,11 @@ public class RobotContainer {
     );
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new ParallelRaceGroup(
-      new SequentialCommandGroup(
-        new TimedCommand(IndexerSubsystem.get().new RunIndexer(), 0.5),
-        IndexerSubsystem.get().new RunUntilBeam()),
-      IntakeSubsystem.getIntakeSubsystem().new RunIntake()
-    ));
+    runIntakeForwardsTrigger.whileTrue(new ParallelCommandGroup(
+      IntakeSubsystem.get().new RunIntake(),
+      IndexerSubsystem.get().new RunIndexer()
+    )
+    );
 
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
@@ -165,8 +169,8 @@ public class RobotContainer {
           Constants.PP_FEED_FORWARD,
           new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
           TankDriveSubsystem.get()::getWheelSpeeds,
-          new PIDController(.00075, 0, 0),
-          new PIDController(.00075, 0, 0),
+          new PIDController(.0019, 0, 0),
+          new PIDController(.0019, 0, 0),
           TankDriveSubsystem.get()::setVoltage,
           TankDriveSubsystem.get()
           ),
