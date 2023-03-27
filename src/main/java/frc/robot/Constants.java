@@ -1,8 +1,8 @@
 package frc.robot;
 
 import java.util.Hashtable;
+
 import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.auto.PIDConstants;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -34,12 +34,12 @@ public enum moving{
   // DO. NOT. CHANGE. THESE. UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // ====================================== Auto ====================================== \\
-  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(0, 0); // TODO: Find these
-
-  public static final PIDConstants AUTO_PID = new PIDConstants(5, 0, 0); // TODO: Maybe tune these
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(1.5, 0.6); // TODO: Find these
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
+
+    put("Use Auto Chooser", "Legacy");
 
     put("Blue: Left Side - 3 Pieces", "B_Left");
     put("Blue: Left Side - 2 Pieces", "B_Left_Score2");
@@ -48,6 +48,10 @@ public enum moving{
     put("Blue: Center - Coopertition", "B_Center");
     put("Blue: Center - Left piece first", "B_Center_Top_First");
     put("Blue: Center - Right piece first", "B_Center_Bottom_First");
+
+    put("Test", "Test");
+
+    put("Calibrate", "Circle");
 
     put("Red: Left Side - 3 Pieces", "R_Left");
     put("Red: Left Side - 2 Pieces", "R_Left_Score2");
@@ -70,14 +74,15 @@ public enum moving{
     put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));
     put("Ground to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_L1_SPEED), SHOOT_TIME));
     put("Ground to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_HYBRID_SPEED), SHOOT_TIME));
+    put("Max Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(MAX_SPEED), AUTO_SPEED));
 
   }};
 
-  public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.2, 0.4); // TODO: Tune these
+  public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.10614, 2.6082, 0.27666); // TODO: Tune these
 
-  public static final double DRIVE_ROTATIONS_TO_DISTANCE = 1; // TODO: Find this
+  public static final double DRIVE_ROTATIONS_TO_DISTANCE = 0.04873967373; // TODO: Find this
 
-  public static final double ROBOT_WIDTH_m = 0.6; // TODO: Double check this
+  public static final double ROBOT_WIDTH_m = 0.57785;
 
   public static final double AUTO_SPEED = 0.07;
   private static final double FAR_SPEED = 1; // TODO: unknown
@@ -85,6 +90,7 @@ public enum moving{
   private static final double CS_TO_HYBRID_SPEED = 0.5; // TODO: unknown
   private static final double GROUND_TO_L1_SPEED = 0.5; // TODO: unknown
   private static final double GROUND_TO_HYBRID_SPEED = 0.5; // TODO: unknown
+  private static final double MAX_SPEED = 1; 
 
   private static final double SHOOT_TIME = 0.5;
 
@@ -93,7 +99,7 @@ public enum moving{
   public static final double MAX_DRIVETRAIN_SPEED = .93;
   // Intake/Midtake Constants
   public static final double STARS_RUNNING_SPEED = 0.30;
-  public static final double BELT_RUNNING_SPEED = 0.4;
+  public static final double BELT_RUNNING_SPEED = 0.6;
   public static final double INTAKE_RUNNING_SPEED = 0.43;
 
   public static final double DRIVE_SPEED_COEFFICIENT = 0.90; 
@@ -101,7 +107,7 @@ public enum moving{
   public static final double RAISE_SPEED = 0.25;
 
   // Teleop Shooti
-  public static final double COMMUNITY_SHOOTER_SPEED = .95;
+  public static final double COMMUNITY_SHOOTER_SPEED = .9;
   public static final double L2_SHOOTER_SPEED = .7;
   public static final double L1_SHOOTER_SPEED = .55;
   

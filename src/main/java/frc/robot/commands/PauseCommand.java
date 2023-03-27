@@ -6,13 +6,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-public class waitCommand extends CommandBase {
+public class PauseCommand extends CommandBase {
   /** Creates a new waitCommand. */
-  int m_waitSeconds;
+  int m_waitPeriod;
   int count = 0;
-  public waitCommand(int wait20ms) {
+  public PauseCommand(int waitPeriod) {
     // Use addRequirements() here to declare subsystem dependencies.
-    m_waitSeconds = wait20ms;
+    m_waitPeriod = waitPeriod;
   }
 
   // Called when the command is initially scheduled.
@@ -34,7 +34,7 @@ public class waitCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (count >= m_waitSeconds) {
+    if (count >= m_waitPeriod) {
       return true;
     }
     return false;

@@ -17,11 +17,13 @@ import edu.wpi.first.hal.FRCNetComm.tResourceType;
 
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.Utilities.NAVX;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.TankDriveSubsystem;
-import edu.wpi.first.cameraserver.CameraServer;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -40,12 +42,46 @@ public class Robot extends TimedRobot {
      * used for any initialization code.
      */
     @Override
+    @SuppressWarnings("resource")
     public void robotInit() {
-        
+
+        m_robotContainer = RobotContainer.getInstance();
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
-        m_robotContainer = RobotContainer.getInstance();
+        NAVX.get().zeroYaw();
+        TankDriveSubsystem.get().resetEncoders();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
+
+        ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
+
+        debugTab
+            .addDoubleArray("Drive Voltages", TankDriveSubsystem.get()::getVoltages)
+            .withWidget("Graph")
+            .withPosition(0, 0)
+            .withSize(3, 3);
+
+        debugTab
+            .addDouble("Yaw", NAVX.get()::getAngle)
+            .withPosition(3, 0)
+            .withSize(3, 3);
+        
+        debugTab
+            .addDouble("Pitch", NAVX.get()::getRoll)
+            .withWidget("Gyro")
+            .withPosition(6, 0)
+            .withSize(3, 3);
+
+        debugTab
+            .addDouble("Roll", NAVX.get()::getPitch)
+            .withWidget("Gyro")
+            .withPosition(9, 0)
+            .withSize(3, 3);
+
+        debugTab
+            .addDoubleArray("Encoders", TankDriveSubsystem.get()::getEncoderPositions)
+            .withWidget("Graph")
+            .withPosition(0, 3)
+            .withSize(3, 3);
     }
 
     /**
@@ -84,9 +120,8 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         //set LED colors
         m_robotContainer.getLEDs().setColor(Constants.color.ALLYB);
-
-        //m_robotContainer.ResetPositions();
-        //m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        NAVX.get().zeroYaw();
+        TankDriveSubsystem.get().resetEncoders();
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
         TankDriveSubsystem.get().setBrake();
         // schedule the autonomous command (example)
@@ -112,7 +147,7 @@ public class Robot extends TimedRobot {
         //enable coast
         TankDriveSubsystem.get().setCoast();
         //start camera
-        CameraServer.startAutomaticCapture();
+        //CameraServer.startAutomaticCapture();
         //m_robotContainer.ResetPositions();
         // This makes sure that the autonomous stops running when
         // teleop starts running. If you want the autonomous to
@@ -143,8 +178,7 @@ public class Robot extends TimedRobot {
         TankDriveSubsystem.get().setCoast();
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
-
-        
+        System.out.println("Reset to Coast");
     }
 
     /**
