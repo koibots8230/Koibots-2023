@@ -12,7 +12,7 @@ public class IndexerSubsystem extends SubsystemBase {
   private static IndexerSubsystem m_IndexerSubsystem = new IndexerSubsystem();
   private CANSparkMax IndexerMotor;
   private AnalogInput m_breamBreak;
-  private boolean useBeamBreak = true;
+  private Boolean useBeamBreak = true;
 
   public IndexerSubsystem() {
     IndexerMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless);
@@ -32,7 +32,7 @@ public class IndexerSubsystem extends SubsystemBase {
   }
 
   public void changeUseBeamBreak() {
-    useBeamBreak = useBeamBreak ? false : true;
+    useBeamBreak = ! useBeamBreak;
   }
 
   public static IndexerSubsystem get() {
@@ -47,7 +47,6 @@ public class IndexerSubsystem extends SubsystemBase {
 
         @Override
     public void initialize() {
-      
       IndexerSubsystem.this.setIndexerSpeed(Constants.BELT_RUNNING_SPEED);
     }
 

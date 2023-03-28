@@ -108,13 +108,15 @@ public class RobotContainer {
     slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
     // Shooting
-    Trigger shootL1 = m_operatorHID.L1();
-    shootL1.whileTrue(ShooterSubsystem.get().L1Shot())
-    .whileTrue(IndexerSubsystem.get().new RunIndexer());
+    Trigger shootL1 = m_operatorHID.R1();
+    shootL1.whileTrue(new ParallelCommandGroup(
+      ShooterSubsystem.get().L1Shot(),
+      IndexerSubsystem.get().new RunIndexer()));
 
     Trigger shootL2 = m_operatorHID.R1();
-    shootL2.whileTrue(ShooterSubsystem.get().L2Shot())
-    .whileTrue(IndexerSubsystem.get().new RunIndexer());
+    shootL2.whileTrue(new ParallelCommandGroup(
+      ShooterSubsystem.get().L2Shot(),
+      IndexerSubsystem.get().new RunIndexer()));
 
     Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
     Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);
@@ -126,9 +128,7 @@ public class RobotContainer {
     clearButton.onTrue(new InstantCommand(() -> IntakePositionSubsystem.get().ClearStickies()));
 
     Trigger overrideIntake = m_operatorHID.square();
-    overrideIntake.onTrue(new InstantCommand(
-      () -> IndexerSubsystem.get().changeUseBeamBreak()
-    ));
+    overrideIntake.onTrue(new InstantCommand(() -> IndexerSubsystem.get().changeUseBeamBreak()));
   }
 
   public static RobotContainer getInstance() {
