@@ -51,7 +51,7 @@ public class Constants {
 
     put("Lower Intake", IntakePositionSubsystem.get().new FlipIntake());
     put("Pick Up Cube", new TimedCommand(new LoadCube(), (double) 1));
-    put("Auto-Balance", new AutoBalanceCommand()); 
+    put("Auto-Balance", new AutoBalanceCommand().repeatedly()); 
     put("Far Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(FAR_SPEED), SHOOT_TIME));
     put("CS to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_L1_SPEED), SHOOT_TIME));
     put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));

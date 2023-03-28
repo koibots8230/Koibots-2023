@@ -16,7 +16,7 @@ public class CommunityBalance extends SequentialCommandGroup {
       ShooterSubsystem.get().L2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(0.5)),
       TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 170),
       TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 85),
-      new AutoBalanceCommand()
+      new AutoBalanceCommand().repeatedly()
     );
   }
 }

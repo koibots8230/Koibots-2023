@@ -17,7 +17,7 @@ public class CommunityPickupBalance extends SequentialCommandGroup {
       new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.4, 20), new LoadCube()),
       TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.4, 20),
       TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 80),
-      new AutoBalanceCommand()
+      new AutoBalanceCommand().repeatedly()
     );
   }
 }
