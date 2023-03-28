@@ -12,6 +12,7 @@ public class IndexerSubsystem extends SubsystemBase {
   private static IndexerSubsystem m_IndexerSubsystem = new IndexerSubsystem();
   private CANSparkMax IndexerMotor;
   private AnalogInput m_breamBreak;
+  private boolean useBeamBreak = true;
 
   public IndexerSubsystem() {
     IndexerMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless);
@@ -24,6 +25,14 @@ public class IndexerSubsystem extends SubsystemBase {
 
   public boolean isIndexerFilled() {
     return m_breamBreak.getVoltage() > Constants.SENSOR_TRIGGERED;
+  }
+
+  public boolean getUseBeamBreak() {
+    return useBeamBreak;
+  }
+
+  public void changeUseBeamBreak() {
+    useBeamBreak = useBeamBreak ? false : true;
   }
 
   public static IndexerSubsystem get() {
@@ -44,7 +53,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     @Override
     public boolean isFinished() {
-        return m_breamBreak.getVoltage() > Constants.SENSOR_TRIGGERED;
+        return m_breamBreak.getVoltage() > Constants.SENSOR_TRIGGERED && IndexerSubsystem.this.getUseBeamBreak();
     }
 
     @Override

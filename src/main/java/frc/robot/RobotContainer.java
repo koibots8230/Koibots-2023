@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+
 import java.util.Enumeration;
 
 import com.pathplanner.lib.PathPlanner;
@@ -68,6 +69,32 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
+    // ====================================== DRIVER CONTROLS ====================================== \\
+
+    TankDriveSubsystem.get().setDefaultCommand(TankDriveSubsystem.get().new driveMotorCommand(
+      () -> -m_driverHID.getRightY(),
+      () -> -m_driverHID.getLeftY()));
+
+    // Community Shot
+    Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
+    communityShot.whileTrue(new ParallelCommandGroup(
+      IndexerSubsystem.get().new RunIndexer(),
+      ShooterSubsystem.get().CommunityShot()
+      )
+    );
+
+    Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
+    runIntakeForwardsTrigger.whileTrue(new ParallelCommandGroup(
+      IntakeSubsystem.get().new RunIntake(),
+      IndexerSubsystem.get().new RunUntilBeam()
+    )
+    );
+
+    // Reverse Intake/Midtake/Shooter
+    Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
+    runIntakeBackwardsTrigger.whileTrue(new EjectCube());
+
+    
     // ====================================== Operator Controls ====================================== \\
 
     Trigger brakeMode = m_operatorHID.povUp();
@@ -98,30 +125,10 @@ public class RobotContainer {
     Trigger clearButton = m_operatorHID.circle();
     clearButton.onTrue(new InstantCommand(() -> IntakePositionSubsystem.get().ClearStickies()));
 
-    // ====================================== DRIVER CONTROLS ====================================== \\
-
-    TankDriveSubsystem.get().setDefaultCommand(TankDriveSubsystem.get().new driveMotorCommand(
-      () -> -m_driverHID.getRightY(),
-      () -> -m_driverHID.getLeftY()));
-
-    // Community Shot
-    Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
-    communityShot.whileTrue(new ParallelCommandGroup(
-      IndexerSubsystem.get().new RunIndexer(),
-      ShooterSubsystem.get().CommunityShot()
-      )
-    );
-
-    Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new ParallelCommandGroup(
-      IntakeSubsystem.get().new RunIntake(),
-      IndexerSubsystem.get().new RunIndexer()
-    )
-    );
-
-    // Reverse Intake/Midtake/Shooter
-    Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
-    runIntakeBackwardsTrigger.whileTrue(new EjectCube());
+    Trigger overrideIntake = m_operatorHID.square();
+    overrideIntake.onTrue(new InstantCommand(
+      () -> IndexerSubsystem.get().changeUseBeamBreak()
+    ));
   }
 
   public static RobotContainer getInstance() {
