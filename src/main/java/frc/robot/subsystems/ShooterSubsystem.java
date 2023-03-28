@@ -12,7 +12,6 @@ import frc.robot.Constants;
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
 
-  // Motors/Encoders
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
 
@@ -31,7 +30,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public static ShooterSubsystem get() {
     return m_ShooterSubsystem;
   }
-
    
   public double getShooterSpeed() {
     return shooterEncoder.getVelocity();
@@ -42,9 +40,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // ================================Commands================================ \\
-
-
-
   
   public class Shoot extends CommandBase {
     double m_speed;

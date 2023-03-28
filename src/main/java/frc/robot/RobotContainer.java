@@ -1,6 +1,5 @@
 package frc.robot;
 
-import frc.robot.Utilities.TimedCommand;
 import frc.robot.autos.CommunityBalance;
 import frc.robot.autos.CommunityPickupBalance;
 import frc.robot.autos.Score2;
@@ -20,9 +19,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
 import java.util.Enumeration;
 
 import com.pathplanner.lib.PathPlanner;
@@ -51,7 +47,6 @@ public class RobotContainer {
 
     m_pathChooser = new SendableChooser<String>();
 
-    // Paths are in Constants
     Enumeration<String> PathNames = Constants.PATHS.keys();
     while (PathNames.hasMoreElements()) {
       String key = PathNames.nextElement();
@@ -77,8 +72,9 @@ public class RobotContainer {
 
     Trigger brakeMode = m_operatorHID.povUp();
     brakeMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().setBrake()));
-    brakeMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().setCoast()));
-
+    
+    Trigger coastMode = m_operatorHID.povDown();
+    coastMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().setCoast()));
 
     Trigger slowMode = m_operatorHID.triangle();
     slowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
@@ -100,12 +96,9 @@ public class RobotContainer {
     intakeDown.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(false));
 
     Trigger clearButton = m_operatorHID.circle();
-    clearButton.whileTrue(new InstantCommand(() -> IntakeSubsystem.getIntakeSubsystem().ClearStickies(), IntakeSubsystem.getIntakeSubsystem()));
+    clearButton.onTrue(new InstantCommand(() -> IntakePositionSubsystem.get().ClearStickies()));
 
     // ====================================== DRIVER CONTROLS ====================================== \\
-    // create commands
-    // 5 = left bumper
-    // 6 = right bumperm
 
     TankDriveSubsystem.get().setDefaultCommand(TankDriveSubsystem.get().new driveMotorCommand(
       () -> -m_driverHID.getRightY(),

@@ -19,7 +19,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/** Custom PathPlanner version of RamseteCommand */
+// Our modified version of PathPlanner's PathFollowing Command
 public class PathFollower extends CommandBase {
   private final Timer timer = new Timer();
   private final boolean usePID;
@@ -44,31 +44,6 @@ public class PathFollower extends CommandBase {
   private static Consumer<ChassisSpeeds> logSetpoint = null;
   private static BiConsumer<Translation2d, Rotation2d> logError = PathFollower::defaultLogError;
 
-  /**
-   * Constructs a new PathFollower that, when executed, will follow the provided trajectory. PID
-   * control and feedforward are handled internally, and outputs are scaled -12 to 12 representing
-   * units of volts.
-   *
-   * <p>Note: The controller will *not* set the outputVolts to zero upon completion of the path -
-   * this is left to the user, since it is not appropriate for paths with nonstationary endstates.
-   *
-   * @param trajectory The trajectory to follow.
-   * @param poseSupplier A function that supplies the robot pose - use one of the odometry classes
-   *     to provide this.
-   * @param controller The RAMSETE controller used to follow the trajectory.
-   * @param feedforward The feedforward to use for the drive.
-   * @param kinematics The kinematics for the robot drivetrain.
-   * @param speedsSupplier A function that supplies the speeds of the left and right sides of the
-   *     robot drive.
-   * @param leftController The PIDController for the left side of the robot drive.
-   * @param rightController The PIDController for the right side of the robot drive.
-   * @param outputVolts A function that consumes the computed left and right outputs (in volts) for
-   *     the robot drive.
-   * @param useAllianceColor Should the path states be automatically transformed based on alliance
-   *     color? In order for this to work properly, you MUST create your path on the blue side of
-   *     the field.
-   * @param requirements The subsystems to require.
-   */
   public PathFollower(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
@@ -105,28 +80,6 @@ public class PathFollower extends CommandBase {
     }
   }
 
-  /**
-   * Constructs a new PathFollower that, when executed, will follow the provided trajectory. PID
-   * control and feedforward are handled internally, and outputs are scaled -12 to 12 representing
-   * units of volts.
-   *
-   * <p>Note: The controller will *not* set the outputVolts to zero upon completion of the path -
-   * this is left to the user, since it is not appropriate for paths with nonstationary endstates.
-   *
-   * @param trajectory The trajectory to follow.
-   * @param poseSupplier A function that supplies the robot pose - use one of the odometry classes
-   *     to provide this.
-   * @param controller The RAMSETE controller used to follow the trajectory.
-   * @param feedforward The feedforward to use for the drive.
-   * @param kinematics The kinematics for the robot drivetrain.
-   * @param speedsSupplier A function that supplies the speeds of the left and right sides of the
-   *     robot drive.
-   * @param leftController The PIDController for the left side of the robot drive.
-   * @param rightController The PIDController for the right side of the robot drive.
-   * @param outputVolts A function that consumes the computed left and right outputs (in volts) for
-   *     the robot drive.
-   * @param requirements The subsystems to require.
-   */
   public PathFollower(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
@@ -152,22 +105,6 @@ public class PathFollower extends CommandBase {
         requirements);
   }
 
-  /**
-   * Constructs a new PathFollower that, when executed, will follow the provided trajectory.
-   * Performs no PID control and calculates no feedforwards; outputs are the raw wheel speeds from
-   * the RAMSETE controller, and will need to be converted into a usable form by the user.
-   *
-   * @param trajectory The trajectory to follow.
-   * @param poseSupplier A function that supplies the robot pose - use one of the odometry classes
-   *     to provide this.
-   * @param controller The RAMSETE follower used to follow the trajectory.
-   * @param kinematics The kinematics for the robot drivetrain.
-   * @param outputMetersPerSecond A function that consumes the computed left and right wheel speeds.
-   * @param useAllianceColor Should the path states be automatically transformed based on alliance
-   *     color? In order for this to work properly, you MUST create your path on the blue side of
-   *     the field.
-   * @param requirements The subsystems to require.
-   */
   public PathFollower(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
@@ -201,19 +138,6 @@ public class PathFollower extends CommandBase {
     }
   }
 
-  /**
-   * Constructs a new PathFollower that, when executed, will follow the provided trajectory.
-   * Performs no PID control and calculates no feedforwards; outputs are the raw wheel speeds from
-   * the RAMSETE controller, and will need to be converted into a usable form by the user.
-   *
-   * @param trajectory The trajectory to follow.
-   * @param poseSupplier A function that supplies the robot pose - use one of the odometry classes
-   *     to provide this.
-   * @param controller The RAMSETE follower used to follow the trajectory.
-   * @param kinematics The kinematics for the robot drivetrain.
-   * @param outputMetersPerSecond A function that consumes the computed left and right wheel speeds.
-   * @param requirements The subsystems to require.
-   */
   public PathFollower(
       PathPlannerTrajectory trajectory,
       Supplier<Pose2d> poseSupplier,
@@ -386,19 +310,6 @@ public class PathFollower extends CommandBase {
     SmartDashboard.putNumber("PathFollower/rotationErrorDegrees", rotationError.getDegrees());
   }
 
-  /**
-   * Set custom logging callbacks for this command to use instead of the default configuration of
-   * pushing values to SmartDashboard
-   *
-   * @param logActiveTrajectory Consumer that accepts a PathPlannerTrajectory representing the
-   *     active path. This will be called whenever a PathFollower starts
-   * @param logTargetPose Consumer that accepts a Pose2d representing the target pose while path
-   *     following
-   * @param logSetpoint Consumer that accepts a ChassisSpeeds object representing the setpoint
-   *     speeds
-   * @param logError BiConsumer that accepts a Translation2d and Rotation2d representing the error
-   *     while path following
-   */
   public static void setLoggingCallbacks(
       Consumer<PathPlannerTrajectory> logActiveTrajectory,
       Consumer<Pose2d> logTargetPose,

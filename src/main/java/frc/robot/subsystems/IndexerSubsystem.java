@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
@@ -17,7 +13,6 @@ public class IndexerSubsystem extends SubsystemBase {
   private CANSparkMax IndexerMotor;
   private AnalogInput m_breamBreak;
 
-  /** Creates a new IndexerSubsystem. */
   public IndexerSubsystem() {
     IndexerMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless);
     m_breamBreak = new AnalogInput(Constants.BEAM_BREAK);
