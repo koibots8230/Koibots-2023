@@ -34,7 +34,7 @@ public enum moving{
   // DO. NOT. CHANGE. THESE. UNLESS YOU KNOW WHAT YOU ARE DOING
 
 // ====================================== Auto ====================================== \\
-  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(1.5, 0.6); // TODO: Find these
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(4, 2); // TODO: Find these
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
@@ -82,7 +82,7 @@ public enum moving{
 
   public static final double DRIVE_ROTATIONS_TO_DISTANCE = 0.04873967373; // TODO: Find this
 
-  public static final double ROBOT_WIDTH_m = 0.57785;
+  public static final double ROBOT_WIDTH_m = 0.57785 + 0.025;
 
   public static final double AUTO_SPEED = 0.07;
   private static final double FAR_SPEED = 1; // TODO: unknown
@@ -100,7 +100,7 @@ public enum moving{
   // Intake/Midtake Constants
   public static final double STARS_RUNNING_SPEED = 0.30;
   public static final double BELT_RUNNING_SPEED = 0.6;
-  public static final double INTAKE_RUNNING_SPEED = 0.43;
+  public static final double INTAKE_RUNNING_SPEED = 0.5;
 
   public static final double DRIVE_SPEED_COEFFICIENT = 0.90; 
 

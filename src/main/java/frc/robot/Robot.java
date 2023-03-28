@@ -146,6 +146,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         //enable coast
         TankDriveSubsystem.get().setCoast();
+        IntakePositionSubsystem.get().setCoast();
         //start camera
         //CameraServer.startAutomaticCapture();
         //m_robotContainer.ResetPositions();
