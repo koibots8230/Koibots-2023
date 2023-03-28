@@ -135,23 +135,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
-      /*
-      return new FollowPathWithEvents(
-      new RamseteAutoBuilder(
-        TankDriveSubsystem.get()::getRobotPose,
-        TankDriveSubsystem.get()::resetOdometry,
-        new RamseteController(),
-        new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
-        Constants.PP_FEED_FORWARD,
-        TankDriveSubsystem.get()::getWheelSpeeds,
-        Constants.AUTO_PID,
-        TankDriveSubsystem.get()::setVoltage,
-        Constants.EVENTS,
-        false,
-        TankDriveSubsystem.get()
-      ).followPath(PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS))
-      , null
-      , null); */
       PathPlannerTrajectory path = PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
       TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
       return new FollowPathWithEvents(
