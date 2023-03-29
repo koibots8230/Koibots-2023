@@ -85,7 +85,7 @@ public class Constants {
 
   // Intake/Midtake Constants
   public static final double BELT_RUNNING_SPEED = 0.6;
-  public static final double INTAKE_RUNNING_SPEED = 0.75;
+  public static final double INTAKE_RUNNING_SPEED = 0.90;
   public static final double RAISE_SPEED = 0.25;
 
   // Teleop Shooting
