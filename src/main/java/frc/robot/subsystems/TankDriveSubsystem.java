@@ -59,10 +59,10 @@ public class TankDriveSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
-        if (Math.abs(NAVX.get().getRoll()) > 1) {
+        if (Math.abs(NAVX.get().getRoll()) > .75) {
             m_Odometry.update(NAVX.get().getRotation2d(),
-                    leftRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())),
-                    rightRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())));
+                    leftRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll()) * 1.15),
+                    rightRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())) * 1.15);
         } else {
             m_Odometry.update(NAVX.get().getRotation2d(),
                 leftRelativeEncoder.getPosition(),

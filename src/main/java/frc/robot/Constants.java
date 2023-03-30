@@ -90,8 +90,8 @@ public class Constants {
 
   // Teleop Shooting
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
-  public static final double L2_SHOOTER_SPEED = .7;
-  public static final double L1_SHOOTER_SPEED = .55;
+  public static final double L2_SHOOTER_SPEED = .48;
+  public static final double L1_SHOOTER_SPEED = .32;
   
   // Controller
   public static final double THUMBSTICK_DEADZONE = 0.15; // Probably don't change this

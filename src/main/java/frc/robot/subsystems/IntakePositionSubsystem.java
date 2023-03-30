@@ -67,6 +67,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
   }
 
   public void setBrake() {
+    System.out.println("Intake Up/Down Set to Brake"); 
     intakePositionMotor.setIdleMode(IdleMode.kBrake);
   }
 

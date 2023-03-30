@@ -108,7 +108,7 @@ public class RobotContainer {
     slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
     // Shooting
-    Trigger shootL1 = m_operatorHID.R1();
+    Trigger shootL1 = m_operatorHID.L1();
     shootL1.whileTrue(new ParallelCommandGroup(
       ShooterSubsystem.get().L1Shot(),
       IndexerSubsystem.get().new RunIndexer()));
