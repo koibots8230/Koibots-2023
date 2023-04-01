@@ -18,7 +18,7 @@ public class TimedCommand extends CommandBase {
   }
 
   public TimedCommand(Command command, double seconds) {
-    this(command, (int) seconds * 50);
+    this(command, (int) (seconds * 50));
   }
 
   // Called when the command is initially scheduled.
@@ -35,7 +35,7 @@ public class TimedCommand extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_repitions == 0;
+    return m_repitions <= 0;
   }
 
   @Override

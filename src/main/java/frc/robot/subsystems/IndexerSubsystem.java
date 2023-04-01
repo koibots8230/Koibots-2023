@@ -97,7 +97,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     @Override
     public void initialize() {
-      IndexerSubsystem.this.setIndexerSpeed(-Constants.BELT_RUNNING_SPEED);
+      IndexerSubsystem.this.setIndexerSpeed(Constants.BELT_REVERSE_SPEED);
     }
 
     @Override

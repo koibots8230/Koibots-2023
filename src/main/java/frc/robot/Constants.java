@@ -17,7 +17,7 @@ public class Constants {
 // ====================================== Auto ====================================== \\
 // Don't touch these unless you are activley tuning them
 
-  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(4, 2); // TODO: Find the max velocity and acceleration we can use
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(3, 1.5); // TODO: Find the max velocity and acceleration we can use
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
@@ -49,7 +49,8 @@ public class Constants {
   public static final Hashtable<String, Command> EVENTS = new Hashtable<String, Command>()
   {{
 
-    put("Lower Intake", IntakePositionSubsystem.get().new FlipIntake());
+    put("Starter Shot", new TimedCommand(ShooterSubsystem.get().L2Shot(), SHOOT_TIME));
+    put("Lower Intake", new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5));
     put("Pick Up Cube", new TimedCommand(new LoadCube(), (double) 1));
     put("Auto-Balance", new AutoBalanceCommand().repeatedly()); 
     put("Far Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(FAR_SPEED), SHOOT_TIME));
@@ -84,8 +85,10 @@ public class Constants {
   public static final double DRIVE_SPEED_COEFFICIENT = 0.90; 
 
   // Intake/Midtake Constants
-  public static final double BELT_RUNNING_SPEED = 0.6;
-  public static final double INTAKE_RUNNING_SPEED = 0.90;
+  public static final double BELT_RUNNING_SPEED = 0.85;
+  public static final double BELT_REVERSE_SPEED = -0.6;
+  public static final double INTAKE_RUNNING_SPEED = 0.85;
+  public static final double INTAKE_REVERSE_SPEED = -0.5;
   public static final double RAISE_SPEED = 0.25;
 
   // Teleop Shooting

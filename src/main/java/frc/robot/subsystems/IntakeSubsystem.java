@@ -60,7 +60,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
         @Override
         public void initialize() {
-            IntakeSubsystem.this.setIntakeSpeed(-Constants.INTAKE_RUNNING_SPEED);
+            IntakeSubsystem.this.setIntakeSpeed(Constants.INTAKE_REVERSE_SPEED);
         }
 
         @Override

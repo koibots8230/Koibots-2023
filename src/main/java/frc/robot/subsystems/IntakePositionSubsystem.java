@@ -12,7 +12,7 @@ import frc.robot.Constants;
 
 public class IntakePositionSubsystem extends SubsystemBase {
   private static IntakePositionSubsystem m_IntakePositionSubsystem = new IntakePositionSubsystem();
-  private int m_direction = -1;
+  private int m_direction = 1;
   private CANSparkMax intakePositionMotor;
   private RelativeEncoder intakePositionEncoder;
 
@@ -97,15 +97,16 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public void initialize() {
       IntakePositionSubsystem.this.switchIntakeState();
       if (up) {
-        IntakePositionSubsystem.get().setIntakePositionSpeed(.35);
+        IntakePositionSubsystem.get().setIntakePositionSpeed(.3);
       } else {
-        IntakePositionSubsystem.get().setIntakePositionSpeed(-.35);
+        IntakePositionSubsystem.get().setIntakePositionSpeed(-.3);
       }
     }
 
     @Override
     public void execute() {
         if (voltageFilter.calculate(Math.abs(IntakePositionSubsystem.get().getMotorCurrent())) > Constants.CURRENT_CAP) {
+          System.out.println("vOLTAGE LIMIT HIT");
           end = true;
         }
     }

@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.Utilities.TimedCommand;
 import frc.robot.autos.CommunityBalance;
 import frc.robot.autos.CommunityPickupBalance;
 import frc.robot.autos.Score2;
@@ -90,6 +91,8 @@ public class RobotContainer {
     )
     );
 
+    Trigger flipIntake = m_driverHID.leftBumper();
+    flipIntake.onTrue(new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5));
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new EjectCube());
