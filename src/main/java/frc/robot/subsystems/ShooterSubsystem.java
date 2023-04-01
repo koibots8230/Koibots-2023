@@ -72,4 +72,8 @@ public class ShooterSubsystem extends SubsystemBase {
   public Command L2Shot() {  
     return new Shoot(Constants.L2_SHOOTER_SPEED);
   }
+
+  public Command HybriShot() {
+    return new Shoot(Constants.HYBRID_SHOOTER_SPEED);
+  }
 }

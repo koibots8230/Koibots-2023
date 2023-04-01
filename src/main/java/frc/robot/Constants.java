@@ -92,13 +92,14 @@ public class Constants {
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
   public static final double L2_SHOOTER_SPEED = .48;
   public static final double L1_SHOOTER_SPEED = .32;
+  public static final double HYBRID_SHOOTER_SPEED = .17;
   
   // Controller
   public static final double THUMBSTICK_DEADZONE = 0.15; // Probably don't change this
   public static final double TRIGGER_DEADZONE = 0.5;
 
   // Sensors
-  public static final double SENSOR_TRIGGERED = 2.5; // Voltage at which a digital signal is considered activated
+  public static final double SENSOR_TRIGGERED = .24; // Voltage at which a digital signal is considered activated
 
   public static final double CURRENT_CAP = 60;
   public static final double FLIP_INTAKE_DISTANCE = 5;
@@ -114,7 +115,7 @@ public class Constants {
 
   // Indexer
   public static final int MIDTAKE_MOTOR = 4;
-  public static final int BEAM_BREAK = 0; // Analog Input
+  public static final int BEAM_BREAK = 1; // Analog Input
   
   // Intake
   public static final int INTAKE_MOTOR = 10;

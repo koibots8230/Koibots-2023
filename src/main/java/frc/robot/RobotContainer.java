@@ -118,6 +118,11 @@ public class RobotContainer {
       ShooterSubsystem.get().L2Shot(),
       IndexerSubsystem.get().new RunIndexer()));
 
+    Trigger hybridShot = m_operatorHID.L2();
+    hybridShot.whileTrue(new ParallelCommandGroup(
+      ShooterSubsystem.get().HybriShot(),
+      IndexerSubsystem.get().new RunIndexer()));
+
     Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
     Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);
 

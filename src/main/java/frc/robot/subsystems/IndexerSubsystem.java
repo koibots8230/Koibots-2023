@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,12 +20,19 @@ public class IndexerSubsystem extends SubsystemBase {
     m_breamBreak = new AnalogInput(Constants.BEAM_BREAK);
   }
 
+  @Override
+  public void periodic() {
+      SmartDashboard.putBoolean("Use Beam Break", this.useBeamBreak);
+      SmartDashboard.putNumber("Beam Break", m_breamBreak.getVoltage());
+      SmartDashboard.putBoolean("Beam break triggered", this.isIndexerFilled());
+  }
+
   public void setIndexerSpeed(double speed) {
     IndexerMotor.set(speed);
   }
 
   public boolean isIndexerFilled() {
-    return m_breamBreak.getVoltage() > Constants.SENSOR_TRIGGERED;
+    return m_breamBreak.getVoltage() < Constants.SENSOR_TRIGGERED;
   }
 
   public boolean getUseBeamBreak() {
@@ -52,7 +60,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     @Override
     public boolean isFinished() {
-        return m_breamBreak.getVoltage() > Constants.SENSOR_TRIGGERED && IndexerSubsystem.this.getUseBeamBreak();
+        return IndexerSubsystem.this.isIndexerFilled() && IndexerSubsystem.this.getUseBeamBreak();
     }
 
     @Override
