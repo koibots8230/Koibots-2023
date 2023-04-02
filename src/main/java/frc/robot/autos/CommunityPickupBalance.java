@@ -15,8 +15,8 @@ public class CommunityPickupBalance extends SequentialCommandGroup {
     addCommands(
       new ParallelRaceGroup(ShooterSubsystem.get().L2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(0.5)),
       TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 165),
-      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.4, 60), new LoadCube()),
-      TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.4, 50),
+      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.4, 65), new LoadCube()),
+      TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.4, 55),
       TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 60),
       new InstantCommand(() -> TankDriveSubsystem.get().setBrake()),
       new ParallelRaceGroup(ShooterSubsystem.get().L2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(.5)),
