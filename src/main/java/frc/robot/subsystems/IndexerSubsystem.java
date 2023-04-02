@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -14,25 +15,29 @@ public class IndexerSubsystem extends SubsystemBase {
   private CANSparkMax IndexerMotor;
   private AnalogInput m_breamBreak;
   private Boolean useBeamBreak = true;
+  private LinearFilter averager;
 
   public IndexerSubsystem() {
     IndexerMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless);
     m_breamBreak = new AnalogInput(Constants.BEAM_BREAK);
+    averager = LinearFilter.movingAverage(3);
   }
 
   @Override
   public void periodic() {
       SmartDashboard.putBoolean("Use Beam Break", this.useBeamBreak);
       SmartDashboard.putNumber("Beam Break", m_breamBreak.getVoltage());
-      SmartDashboard.putBoolean("Beam break triggered", this.isIndexerFilled());
+      SmartDashboard.putBoolean("Beam break triggered", m_breamBreak.getVoltage() < Constants.SENSOR_TRIGGERED);
+      SmartDashboard.putNumber("Indexer Current", averager.calculate(IndexerMotor.getOutputCurrent()));
+      SmartDashboard.putNumber("Output Current", IndexerMotor.getOutputCurrent());
   }
 
   public void setIndexerSpeed(double speed) {
     IndexerMotor.set(speed);
   }
 
-  public boolean isIndexerFilled() {
-    return m_breamBreak.getVoltage() < Constants.SENSOR_TRIGGERED;
+  public AnalogInput getBeamBreak() {
+    return m_breamBreak;
   }
 
   public boolean getUseBeamBreak() {
@@ -49,18 +54,33 @@ public class IndexerSubsystem extends SubsystemBase {
     // ================================Commands================================ \\
 
   public class RunUntilBeam extends CommandBase{
+    boolean end = false;
+    AnalogInput beamBreak;
+    double count;
+
     public RunUntilBeam() {
       addRequirements(IndexerSubsystem.this);
+      beamBreak = IndexerSubsystem.get().getBeamBreak();
     }
 
-        @Override
+    @Override
     public void initialize() {
       IndexerSubsystem.this.setIndexerSpeed(Constants.BELT_RUNNING_SPEED);
+      count = 0;
+    }
+
+    @Override
+    public void execute() {
+      if (beamBreak.getVoltage() < Constants.SENSOR_TRIGGERED) {
+        count ++;
+      } else {
+        count = 0;
+      }
     }
 
     @Override
     public boolean isFinished() {
-        return IndexerSubsystem.this.isIndexerFilled() && IndexerSubsystem.this.getUseBeamBreak();
+        return count >= 2 && IndexerSubsystem.this.getUseBeamBreak();
     }
 
     @Override

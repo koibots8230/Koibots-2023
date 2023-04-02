@@ -1,5 +1,6 @@
 package frc.robot.autos;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -13,10 +14,12 @@ public class CommunityPickupBalance extends SequentialCommandGroup {
   public CommunityPickupBalance() {
     addCommands(
       new ParallelRaceGroup(ShooterSubsystem.get().L2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(0.5)),
-      TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 160),
-      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.4, 20), new LoadCube()),
-      TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.4, 20),
-      TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 80),
+      TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 165),
+      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.4, 60), new LoadCube()),
+      TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.4, 50),
+      TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 60),
+      new InstantCommand(() -> TankDriveSubsystem.get().setBrake()),
+      new ParallelRaceGroup(ShooterSubsystem.get().L2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(.5)),
       new AutoBalanceCommand().repeatedly()
     );
   }

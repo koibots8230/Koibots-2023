@@ -19,9 +19,36 @@
         "names": [
           "Starter Shot"
         ],
-        "executionBehavior": "parallel",
-        "waitBehavior": "none",
-        "waitTime": 0
+        "executionBehavior": "sequential",
+        "waitBehavior": "before",
+        "waitTime": 0.5
+      }
+    },
+    {
+      "anchorPoint": {
+        "x": 1.79,
+        "y": 2.5
+      },
+      "prevControl": {
+        "x": 1.0666981343888617,
+        "y": 2.5
+      },
+      "nextControl": {
+        "x": 2.5133018656111386,
+        "y": 2.5
+      },
+      "holonomicAngle": 0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": true,
+      "stopEvent": {
+        "names": [
+          "Starter Shot"
+        ],
+        "executionBehavior": "sequential",
+        "waitBehavior": "before",
+        "waitTime": 0.5
       }
     },
     {

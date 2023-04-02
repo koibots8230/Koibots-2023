@@ -62,11 +62,12 @@ public class TankDriveSubsystem extends SubsystemBase{
         rightPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
         leftSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
         rightSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        /* 
         leftPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
         rightPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
         leftSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
         rightSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-
+*/
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
                 leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition());
     };
@@ -118,12 +119,14 @@ public class TankDriveSubsystem extends SubsystemBase{
     }
 
     public double[] getEncoderPositions() {
-        return (new double[] { leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition() });
+        return (new double[] { leftPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE, rightPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE });
     }
 
     // ================================Setters================================ \\
 
     public void resetOdometry(Pose2d pose) {
+        leftPrimaryRelativeEncoder.setPosition(0);
+        rightPrimaryRelativeEncoder.setPosition(0);
         m_Odometry.resetPosition(NAVX.get().getRotation2d(), leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition(), pose);
     }
 
@@ -133,6 +136,11 @@ public class TankDriveSubsystem extends SubsystemBase{
     }
 
     public void setVoltage(double leftVoltage, double rightVoltage) {
+        SmartDashboard.putNumberArray("Set Voltages", new double[] {
+            leftVoltage, rightVoltage
+        });
+        System.out.println(leftVoltage);
+        System.out.println(rightVoltage);
         primaryLeftMotor.setVoltage(leftVoltage);
         primaryRightMotor.setVoltage(rightVoltage);
     }

@@ -1,6 +1,5 @@
 package frc.robot;
 
-import frc.robot.Utilities.TimedCommand;
 import frc.robot.autos.CommunityBalance;
 import frc.robot.autos.CommunityPickupBalance;
 import frc.robot.autos.Score2;
@@ -8,7 +7,6 @@ import frc.robot.autos.ShootBalance;
 import frc.robot.autos.ShootMove;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -22,14 +20,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.PIDConstants;
 import com.pathplanner.lib.auto.RamseteAutoBuilder;
-import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
@@ -77,8 +74,8 @@ public class RobotContainer {
     // ====================================== DRIVER CONTROLS ====================================== \\
 
     TankDriveSubsystem.get().setDefaultCommand(TankDriveSubsystem.get().new driveMotorCommand(
-      m_driverHID::getRightY,
-      m_driverHID::getLeftY));
+      () -> -m_driverHID.getRightY(),
+      () -> -m_driverHID.getLeftY()));
 
     // Community Shot
     Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
@@ -95,8 +92,6 @@ public class RobotContainer {
     )
     );
 
-    Trigger flipIntake = m_driverHID.leftBumper();
-    flipIntake.onTrue(new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5));
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new EjectCube());
@@ -155,10 +150,16 @@ public class RobotContainer {
         TankDriveSubsystem.get()::resetOdometry, 
         new RamseteController(), 
         new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m), 
+        Constants.PP_FEED_FORWARD,
+        TankDriveSubsystem.get()::getWheelSpeeds,
+        new PIDConstants(.0019, 0, 0),
         TankDriveSubsystem.get()::setVoltage, 
         Constants.EVENTS, 
+        false,
         TankDriveSubsystem.get());
-      return autoBuilder.followPathGroup(path);
+      return new SequentialCommandGroup(
+        autoBuilder.followPathGroup(path), 
+        new InstantCommand(TankDriveSubsystem.get()::setBrake));
     //   TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
     //   return new FollowPathWithEvents(
     //     new PathFollower(

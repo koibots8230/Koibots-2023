@@ -17,7 +17,7 @@ public class Constants {
 // ====================================== Auto ====================================== \\
 // Don't touch these unless you are activley tuning them
 
-  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(3, 1.5); // TODO: Find the max velocity and acceleration we can use
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(2, 1.5); // TODO: Find the max velocity and acceleration we can use
 
   public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
   {{
@@ -58,7 +58,7 @@ public class Constants {
     put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));
     put("Ground to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_L1_SPEED), SHOOT_TIME));
     put("Ground to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_HYBRID_SPEED), SHOOT_TIME));
-    put("Max Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(MAX_SPEED), AUTO_SPEED));
+    put("Max Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(MAX_SPEED), SHOOT_TIME));
 
   }};
 
@@ -76,7 +76,7 @@ public class Constants {
   private static final double GROUND_TO_HYBRID_SPEED = 0.5; 
   private static final double MAX_SPEED = 1; 
 
-  private static final double SHOOT_TIME = 0.5;
+  public static final double SHOOT_TIME = 0.2;
 
 // ====================================== Teleop / Driver ====================================== \\
 
@@ -102,7 +102,7 @@ public class Constants {
   public static final double TRIGGER_DEADZONE = 0.5;
 
   // Sensors
-  public static final double SENSOR_TRIGGERED = .24; // Voltage at which a digital signal is considered activated
+  public static final double SENSOR_TRIGGERED = .225; // Voltage at which a digital signal is considered activated
 
   public static final double CURRENT_CAP = 60;
   public static final double FLIP_INTAKE_DISTANCE = 5;

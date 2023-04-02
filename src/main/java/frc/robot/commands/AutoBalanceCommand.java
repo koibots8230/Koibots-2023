@@ -27,6 +27,11 @@ public class AutoBalanceCommand extends SequentialCommandGroup {
     }
     
     @Override
+    public void initialize() {
+      System.out.println("Auto Balance Called");
+    }
+
+    @Override
     public void execute() {
       double rightDirection;
       double leftDirection;
@@ -37,9 +42,10 @@ public class AutoBalanceCommand extends SequentialCommandGroup {
         rightDirection = gyro.getRoll();
         leftDirection = gyro.getRoll();
       }
-
-      TankDriveSubsystem.get().setMotor(-Constants.AUTO_SPEED * Factor * Math.signum(rightDirection),
-          -Constants.AUTO_SPEED * Factor * Math.signum(leftDirection));
+      if (Math.abs(gyro.getRoll()) <= 2.5) {
+        TankDriveSubsystem.get().setMotor(-Constants.AUTO_SPEED * Factor * Math.signum(rightDirection),
+            -Constants.AUTO_SPEED * Factor * Math.signum(leftDirection));
+      }
     }
 
     @Override

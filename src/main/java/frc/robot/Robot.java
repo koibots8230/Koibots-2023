@@ -135,6 +135,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
+        TankDriveSubsystem.get().resetEncoders();
+    
     }
 
     @Override
