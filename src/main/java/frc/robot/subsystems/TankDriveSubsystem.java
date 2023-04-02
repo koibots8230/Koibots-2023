@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -27,8 +28,10 @@ public class TankDriveSubsystem extends SubsystemBase{
 
     DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
 
-    private RelativeEncoder leftRelativeEncoder;
-    private RelativeEncoder rightRelativeEncoder;
+    private RelativeEncoder leftPrimaryRelativeEncoder;
+    private RelativeEncoder rightPrimaryRelativeEncoder;
+    private RelativeEncoder leftSecondaryRelativeEncoder;
+    private RelativeEncoder rightSecondaryRelativeEncoder;
 
     private DifferentialDriveOdometry m_Odometry;
 
@@ -47,27 +50,47 @@ public class TankDriveSubsystem extends SubsystemBase{
         secondaryRightMotor.follow(primaryRightMotor);
         secondaryLeftMotor.follow(primaryLeftMotor);
 
-        leftRelativeEncoder = primaryLeftMotor.getEncoder();
-        rightRelativeEncoder = primaryRightMotor.getEncoder();
+        leftPrimaryRelativeEncoder = primaryLeftMotor.getEncoder();
+        rightPrimaryRelativeEncoder = primaryRightMotor.getEncoder();
+        leftSecondaryRelativeEncoder = secondaryLeftMotor.getEncoder();
+        rightSecondaryRelativeEncoder = secondaryRightMotor.getEncoder();
 
-        leftRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        rightRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        leftPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        rightPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        leftSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        rightSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        leftPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        rightPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        leftSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        rightSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
 
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
-                leftRelativeEncoder.getPosition(), rightRelativeEncoder.getPosition());
+                leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition());
     };
 
     @Override
     public void periodic() {
         if (Math.abs(NAVX.get().getRoll()) > .75) {
-            m_Odometry.update(NAVX.get().getRotation2d(),
-                    leftRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll()) * 1.15),
-                    rightRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())) * 1.15);
+            m_Odometry.update(
+                NAVX.get().getRotation2d(),
+                leftPrimaryRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll()) * 1.15),
+                rightPrimaryRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())) * 1.15);
         } else {
-            m_Odometry.update(NAVX.get().getRotation2d(),
-                leftRelativeEncoder.getPosition(),
-                rightRelativeEncoder.getPosition());
+            m_Odometry.update(
+                NAVX.get().getRotation2d(),
+                leftPrimaryRelativeEncoder.getPosition(),
+                rightPrimaryRelativeEncoder.getPosition());
         }
+
+        SmartDashboard.putNumberArray("Left Encoder Values", new double[] {
+            leftPrimaryRelativeEncoder.getPosition(), 
+            leftSecondaryRelativeEncoder.getPosition()
+        });
+
+        SmartDashboard.putNumberArray("Right Encoder Values", new double[] {
+            rightPrimaryRelativeEncoder.getPosition(), 
+            rightSecondaryRelativeEncoder.getPosition()
+        });
     }
 
     // ================================Getters================================ \\
@@ -85,22 +108,22 @@ public class TankDriveSubsystem extends SubsystemBase{
     }
 
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds(leftRelativeEncoder.getVelocity(), rightRelativeEncoder.getVelocity());
+        return new DifferentialDriveWheelSpeeds(leftPrimaryRelativeEncoder.getVelocity(), rightPrimaryRelativeEncoder.getVelocity());
     }
 
     public double[] getEncoderPositions() {
-        return (new double[] { leftRelativeEncoder.getPosition(), rightRelativeEncoder.getPosition() });
+        return (new double[] { leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition() });
     }
 
     // ================================Setters================================ \\
 
     public void resetOdometry(Pose2d pose) {
-        m_Odometry.resetPosition(NAVX.get().getRotation2d(), leftRelativeEncoder.getPosition(), rightRelativeEncoder.getPosition(), pose);
+        m_Odometry.resetPosition(NAVX.get().getRotation2d(), leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition(), pose);
     }
 
     public void resetEncoders() {
-        leftRelativeEncoder.setPosition(0);
-        rightRelativeEncoder.setPosition(0);
+        leftPrimaryRelativeEncoder.setPosition(0);
+        rightPrimaryRelativeEncoder.setPosition(0);
     }
 
     public void setVoltage(double leftVoltage, double rightVoltage) {
