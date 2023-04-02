@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
@@ -16,18 +12,19 @@ import frc.robot.Constants;
 
 public class IntakePositionSubsystem extends SubsystemBase {
   private static IntakePositionSubsystem m_IntakePositionSubsystem = new IntakePositionSubsystem();
-  private int m_direction = -1;
+  private int m_direction = 1;
   private CANSparkMax intakePositionMotor;
   private RelativeEncoder intakePositionEncoder;
 
   private boolean isUp;
 
-  /** Creates a new IntakePositionSubsystem. */
   public IntakePositionSubsystem() {
     intakePositionMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
     intakePositionEncoder = intakePositionMotor.getEncoder();
     isUp = true;
   }
+
+  // ================================Getters================================ \\
 
   public void switchIntakeState() {
     if (isUp) {
@@ -42,6 +39,21 @@ public class IntakePositionSubsystem extends SubsystemBase {
     return m_IntakePositionSubsystem;
   }
 
+  public double getEncoderPosition() {
+    return intakePositionEncoder.getPosition();
+  }
+
+  public double getMotorCurrent() {
+    return intakePositionMotor.getOutputCurrent();
+  }
+
+  public int getDirection() {
+    m_direction *= -1;
+    return m_direction;
+  }
+
+  // ================================Setters================================ \\
+
   public void setIntakePositionSpeed(double speed) {
     intakePositionMotor.set(speed);
   }
@@ -55,21 +67,13 @@ public class IntakePositionSubsystem extends SubsystemBase {
   }
 
   public void setBrake() {
+    System.out.println("Intake Up/Down Set to Brake"); 
     intakePositionMotor.setIdleMode(IdleMode.kBrake);
   }
 
-  public double getEncoderPosition() {
-    return intakePositionEncoder.getPosition();
-  }
-
-  public double getMotorCurrent() {
-    return intakePositionMotor.getOutputCurrent();
-  }
-
-  public int getDirection() {
-    m_direction *= -1;
-    return m_direction;
-  }
+  public void ClearStickies() {
+    intakePositionMotor.clearFaults();
+}
 
   @Override
   public void periodic() {
@@ -93,15 +97,16 @@ public class IntakePositionSubsystem extends SubsystemBase {
     public void initialize() {
       IntakePositionSubsystem.this.switchIntakeState();
       if (up) {
-        IntakePositionSubsystem.get().setIntakePositionSpeed(.35);
+        IntakePositionSubsystem.get().setIntakePositionSpeed(.3);
       } else {
-        IntakePositionSubsystem.get().setIntakePositionSpeed(-.35);
+        IntakePositionSubsystem.get().setIntakePositionSpeed(-.3);
       }
     }
 
     @Override
     public void execute() {
         if (voltageFilter.calculate(Math.abs(IntakePositionSubsystem.get().getMotorCurrent())) > Constants.CURRENT_CAP) {
+          System.out.println("VOLTAGE LIMIT HIT");
           end = true;
         }
     }

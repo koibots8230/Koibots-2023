@@ -1,5 +1,6 @@
 package frc.robot;
 
+import frc.robot.Utilities.TimedCommand;
 import frc.robot.autos.CommunityBalance;
 import frc.robot.autos.CommunityPickupBalance;
 import frc.robot.autos.Score2;
@@ -7,6 +8,7 @@ import frc.robot.autos.ShootBalance;
 import frc.robot.autos.ShootMove;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -23,10 +25,8 @@ import java.util.Enumeration;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.RamseteAutoBuilder;
+import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
-
-import frc.robot.subsystems.IntakeSubsystem;
 
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
@@ -50,7 +50,6 @@ public class RobotContainer {
 
     m_pathChooser = new SendableChooser<String>();
 
-    // Paths are in Constants
     Enumeration<String> PathNames = Constants.PATHS.keys();
     while (PathNames.hasMoreElements()) {
       String key = PathNames.nextElement();
@@ -72,34 +71,7 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
-    // ====================================== Operator Controls ====================================== \\
-
-    Trigger slowMode = m_operatorHID.triangle();
-    slowMode.onTrue(new InstantCommand(TankDriveSubsystem.get()::SlowDrive));
-    slowMode.onFalse(new InstantCommand(TankDriveSubsystem.get()::UnslowDrive));
-
-    // Shooting
-    Trigger shootL1 = m_operatorHID.L1();
-    shootL1.whileTrue(ShooterSubsystem.get().L1Shot())
-    .whileTrue(IndexerSubsystem.get().new RunIndexer());
-
-    Trigger shootL2 = m_operatorHID.R1();
-    shootL2.whileTrue(ShooterSubsystem.get().L2Shot())
-    .whileTrue(IndexerSubsystem.get().new RunIndexer());
-
-    Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
-    Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);
-
-    intakeUp.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(true));
-    intakeDown.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(false));
-
-    Trigger clearButton = m_operatorHID.circle();
-    clearButton.whileTrue(new InstantCommand(IntakeSubsystem.get()::ClearStickies, IntakeSubsystem.get()));
-
     // ====================================== DRIVER CONTROLS ====================================== \\
-    // create commands
-    // 5 = left bumper
-    // 6 = right bumper
 
     TankDriveSubsystem.get().setDefaultCommand(TankDriveSubsystem.get().new driveMotorCommand(
       m_driverHID::getRightY,
@@ -112,46 +84,84 @@ public class RobotContainer {
       ShooterSubsystem.get().CommunityShot()
       )
     );
-    
-    // Flip Intake
-    Trigger flipTrigger = m_driverHID.leftBumper();
-    flipTrigger.onTrue(IntakePositionSubsystem.get().new FlipIntake());
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new LoadCube());
+    runIntakeForwardsTrigger.whileTrue(new ParallelCommandGroup(
+      IntakeSubsystem.get().new RunIntake(),
+      IndexerSubsystem.get().new RunUntilBeam()
+    )
+    );
 
+    Trigger flipIntake = m_driverHID.leftBumper();
+    flipIntake.onTrue(new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5));
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new EjectCube());
+
+    
+    // ====================================== Operator Controls ====================================== \\
+
+    Trigger brakeMode = m_operatorHID.povUp();
+    brakeMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().setBrake()));
+    
+    Trigger coastMode = m_operatorHID.povDown();
+    coastMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().setCoast()));
+
+    Trigger slowMode = m_operatorHID.triangle();
+    slowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
+    slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
+
+    // Shooting
+    Trigger shootL1 = m_operatorHID.L1();
+    shootL1.whileTrue(new ParallelCommandGroup(
+      ShooterSubsystem.get().L1Shot(),
+      IndexerSubsystem.get().new RunIndexer()));
+
+    Trigger shootL2 = m_operatorHID.R1();
+    shootL2.whileTrue(new ParallelCommandGroup(
+      ShooterSubsystem.get().L2Shot(),
+      IndexerSubsystem.get().new RunIndexer()));
+
+    Trigger hybridShot = m_operatorHID.L2();
+    hybridShot.whileTrue(new ParallelCommandGroup(
+      ShooterSubsystem.get().HybriShot(),
+      IndexerSubsystem.get().new RunIndexer()));
+
+    Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
+    Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);
+
+    intakeUp.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(true));
+    intakeDown.whileTrue(IntakePositionSubsystem.get().new IntakeUpDown(false));
+
+    Trigger clearButton = m_operatorHID.circle();
+    clearButton.onTrue(new InstantCommand(() -> IntakePositionSubsystem.get().ClearStickies()));
+
+    Trigger overrideIntake = m_operatorHID.square();
+    overrideIntake.onTrue(new InstantCommand(() -> IndexerSubsystem.get().changeUseBeamBreak()));
   }
 
   public static RobotContainer getInstance() {
     return m_robotContainer;
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
     if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
       PathPlannerTrajectory path = PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
+      TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
       return new FollowPathWithEvents(
-        new RamseteAutoBuilder(
-          TankDriveSubsystem.get()::getRobotPose,
-          TankDriveSubsystem.get()::resetOdometry,
+        new PathFollower(
+          path, 
+          TankDriveSubsystem.get()::getRobotPose, 
           new RamseteController(),
-          new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
           Constants.PP_FEED_FORWARD,
+          new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
           TankDriveSubsystem.get()::getWheelSpeeds,
-          Constants.AUTO_PID,
+          new PIDController(.0019, 0, 0),
+          new PIDController(.0019, 0, 0),
           TankDriveSubsystem.get()::setVoltage,
-          Constants.EVENTS,
-          false,
           TankDriveSubsystem.get()
-        ).followPath(path),
-        path.getMarkers(),
+          ),
+        path.getMarkers(), 
         Constants.EVENTS);
     }
     return m_autoChooser.getSelected();

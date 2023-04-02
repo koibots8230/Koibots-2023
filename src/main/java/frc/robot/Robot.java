@@ -14,6 +14,7 @@ package frc.robot;
 
 import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.hal.simulation.DriverStationDataJNI;
 import edu.wpi.first.hal.HAL;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -48,6 +49,7 @@ public class Robot extends TimedRobot {
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         NAVX.get().zeroYaw();
+        TankDriveSubsystem.get().resetEncoders();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
 
         ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
@@ -114,8 +116,10 @@ public class Robot extends TimedRobot {
     */
     @Override
     public void autonomousInit() {
+        NAVX.get().zeroYaw();
+        TankDriveSubsystem.get().resetEncoders();
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-        TankDriveSubsystem.get().setBrake();
+        TankDriveSubsystem.get().setCoast();
         // schedule the autonomous command (example)
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
@@ -137,6 +141,7 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         //enable coast
         TankDriveSubsystem.get().setCoast();
+        IntakePositionSubsystem.get().setCoast();
         //start camera
         //CameraServer.startAutomaticCapture();
         // This makes sure that the autonomous stops running when
@@ -168,6 +173,7 @@ public class Robot extends TimedRobot {
         // Cancels all running commands at the start of test mode.
         CommandScheduler.getInstance().cancelAll();
         System.out.println("Reset to Coast");
+        DriverStationDataJNI.setEnabled(true);
     }
 
     /**
