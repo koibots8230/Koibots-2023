@@ -34,10 +34,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.setInverted(true);
     }
 
-    public static IntakeSubsystem getIntakeSubsystem() {
-        return m_IntakeSubsystem;
-    }
-
     public void setIntakeSpeed(double speed) {
         intakeMotor.set(speed);
     }

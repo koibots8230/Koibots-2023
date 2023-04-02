@@ -17,7 +17,7 @@ public class LoadCube extends ParallelRaceGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      IntakeSubsystem.getIntakeSubsystem().new RunIntake(),
+      IntakeSubsystem.get().new RunIntake(),
       IndexerSubsystem.get().new RunUntilBeam()
     );
   }

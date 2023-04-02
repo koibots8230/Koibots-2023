@@ -62,9 +62,9 @@ public class Constants {
 
   }};
 
-  public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.10614, 2.6082, 0.27666); // TODO: Tune these
+  public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.10614, 2.6082, 0.27666);
 
-  public static final double DRIVE_ROTATIONS_TO_DISTANCE = 0.04873967373; // TODO: Find this
+  public static final double DRIVE_ROTATIONS_TO_DISTANCE = 0.04873967373;
 
   public static final double ROBOT_WIDTH_m = 0.57785;
 

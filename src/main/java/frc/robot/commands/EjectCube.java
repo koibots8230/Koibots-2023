@@ -17,7 +17,7 @@ public class EjectCube extends ParallelCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      IntakeSubsystem.getIntakeSubsystem().new RunIntakeReverse(),
+      IntakeSubsystem.get().new RunIntakeReverse(),
       IndexerSubsystem.get().new RunIndexerReverse()
     );
   }

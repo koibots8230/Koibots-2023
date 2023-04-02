@@ -30,7 +30,7 @@ public class Score2 extends SequentialCommandGroup {
       TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 130),
       ShooterSubsystem.get().L1Shot(),
       TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 100),
-      new InstantCommand(() -> IntakePositionSubsystem.get().setCoast())
+      new InstantCommand(IntakePositionSubsystem.get()::setCoast)
     );
   }
 }
