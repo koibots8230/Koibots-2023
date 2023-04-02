@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
 import java.util.Enumeration;
 
@@ -147,7 +148,8 @@ public class RobotContainer {
     if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
       PathPlannerTrajectory path = PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
       TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
-      return new FollowPathWithEvents(
+      return new SequentialCommandGroup(
+      new FollowPathWithEvents(
         new PathFollower(
           path, 
           TankDriveSubsystem.get()::getRobotPose, 
@@ -161,7 +163,8 @@ public class RobotContainer {
           TankDriveSubsystem.get()
           ),
         path.getMarkers(), 
-        Constants.EVENTS);
+        Constants.EVENTS),
+        new InstantCommand(TankDriveSubsystem.get()::setBrake, TankDriveSubsystem.get()));
     }
     return m_autoChooser.getSelected();
   }
