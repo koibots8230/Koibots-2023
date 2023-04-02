@@ -33,6 +33,9 @@ public class TankDriveSubsystem extends SubsystemBase{
     private RelativeEncoder leftSecondaryRelativeEncoder;
     private RelativeEncoder rightSecondaryRelativeEncoder;
 
+    private double previousLeftEncoder;
+    private double previousRightEncoder;
+
     private DifferentialDriveOdometry m_Odometry;
 
     private double speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
@@ -59,10 +62,10 @@ public class TankDriveSubsystem extends SubsystemBase{
         rightPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
         leftSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
         rightSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        leftPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        rightPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        leftSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        rightSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
+        leftPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
+        rightPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
+        leftSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
+        rightSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
 
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
                 leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition());
@@ -70,16 +73,19 @@ public class TankDriveSubsystem extends SubsystemBase{
 
     @Override
     public void periodic() {
+        
         if (Math.abs(NAVX.get().getRoll()) > .75) {
             m_Odometry.update(
                 NAVX.get().getRotation2d(),
-                leftPrimaryRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll()) * 1.15),
-                rightPrimaryRelativeEncoder.getPosition() * Math.cos(Math.toRadians(NAVX.get().getRoll())) * 1.15);
+                leftPrimaryRelativeEncoder.getPosition() - previousLeftEncoder * Math.cos(Math.toRadians(NAVX.get().getRoll())) + previousLeftEncoder,
+                rightPrimaryRelativeEncoder.getPosition() - previousRightEncoder * Math.cos(Math.toRadians(NAVX.get().getRoll())) + previousRightEncoder);
         } else {
             m_Odometry.update(
                 NAVX.get().getRotation2d(),
                 leftPrimaryRelativeEncoder.getPosition(),
-                rightPrimaryRelativeEncoder.getPosition());
+                rightPrimaryRelativeEncoder.getPosition()); 
+            previousLeftEncoder = leftPrimaryRelativeEncoder.getPosition();
+            previousRightEncoder = rightPrimaryRelativeEncoder.getPosition();
         }
 
         SmartDashboard.putNumberArray("Left Encoder Values", new double[] {
