@@ -22,10 +22,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 
 import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
+import com.pathplanner.lib.auto.RamseteAutoBuilder;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
 
 public class RobotContainer {
@@ -146,25 +149,32 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
-      PathPlannerTrajectory path = PathPlanner.loadPath(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
-      TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
-      return new SequentialCommandGroup(
-      new FollowPathWithEvents(
-        new PathFollower(
-          path, 
-          TankDriveSubsystem.get()::getRobotPose, 
-          new RamseteController(),
-          Constants.PP_FEED_FORWARD,
-          new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
-          TankDriveSubsystem.get()::getWheelSpeeds,
-          new PIDController(.0019, 0, 0),
-          new PIDController(.0019, 0, 0),
-          TankDriveSubsystem.get()::setVoltage,
-          TankDriveSubsystem.get()
-          ),
-        path.getMarkers(), 
-        Constants.EVENTS),
-        new InstantCommand(TankDriveSubsystem.get()::setBrake, TankDriveSubsystem.get()));
+      List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
+      RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
+        TankDriveSubsystem.get()::getRobotPose,
+        TankDriveSubsystem.get()::resetOdometry, 
+        new RamseteController(), 
+        new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m), 
+        TankDriveSubsystem.get()::setVoltage, 
+        Constants.EVENTS, 
+        TankDriveSubsystem.get());
+      return autoBuilder.followPathGroup(path);
+    //   TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
+    //   return new FollowPathWithEvents(
+    //     new PathFollower(
+    //       path, 
+    //       TankDriveSubsystem.get()::getRobotPose, 
+    //       new RamseteController(),
+    //       Constants.PP_FEED_FORWARD,
+    //       new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
+    //       TankDriveSubsystem.get()::getWheelSpeeds,
+    //       new PIDController(.0019, 0, 0),
+    //       new PIDController(.0019, 0, 0),
+    //       TankDriveSubsystem.get()::setVoltage,
+    //       TankDriveSubsystem.get()
+    //       ),
+    //     path.getMarkers(), 
+    //     Constants.EVENTS);
     }
     return m_autoChooser.getSelected();
   }
