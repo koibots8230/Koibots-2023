@@ -106,7 +106,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
     @Override
     public void execute() {
         if (voltageFilter.calculate(Math.abs(IntakePositionSubsystem.get().getMotorCurrent())) > Constants.CURRENT_CAP) {
-          System.out.println("vOLTAGE LIMIT HIT");
+          System.out.println("VOLTAGE LIMIT HIT");
           end = true;
         }
     }
