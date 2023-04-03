@@ -40,7 +40,7 @@ public class TankDriveSubsystem extends SubsystemBase{
 
     private double speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
 
-    public TankDriveSubsystem() {
+    TankDriveSubsystem() {
 
         primaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_1, MotorType.kBrushless);
         secondaryRightMotor = new CANSparkMax(Constants.RIGHT_DRIVE_MOTOR_2, MotorType.kBrushless);

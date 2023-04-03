@@ -17,7 +17,7 @@ public class IndexerSubsystem extends SubsystemBase {
   private Boolean useBeamBreak = true;
   private LinearFilter averager;
 
-  public IndexerSubsystem() {
+  IndexerSubsystem() {
     IndexerMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless);
     m_breamBreak = new AnalogInput(Constants.BEAM_BREAK);
     averager = LinearFilter.movingAverage(3);

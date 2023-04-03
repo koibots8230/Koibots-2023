@@ -18,7 +18,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
   private boolean isUp;
 
-  public IntakePositionSubsystem() {
+  IntakePositionSubsystem() {
     intakePositionMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
     intakePositionEncoder = intakePositionMotor.getEncoder();
     isUp = true;
