@@ -70,26 +70,26 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command CommunityShot() {
-    return new Shoot(0.1);
+    return new Shoot(Constants.COMMUNITY_SHOOTER_SPEED, Constants.COMMUNITY_SHOOTER_SPEED);
   }
 
   public Command L1Shot() {
-    return new Shoot(Constants.L1_SHOOTER_SPEED);
+    return new Shoot(Constants.L1_SHOOTER_SPEED, Constants.L1_SHOOTER_SPEED*1.5);
   }
 
   public Command StationToHybridShot() {
-    return new Shoot(0.55);
+    return new Shoot(0.55, 0.55*1.5);
   }
 
   public Command AutoL2Shot() {
-    return new Shoot(Constants.AUTO_L2_SHOOTER_SPEED, Constants.AUTO_L2_SHOOTER_SPEED + 0.2);
+    return new Shoot(Constants.AUTO_L2_SHOOTER_SPEED, Constants.AUTO_L2_SHOOTER_SPEED*1.5);
   }
   
   public Command L2Shot() {  
-    return new Shoot(Constants.L2_SHOOTER_SPEED);
+    return new Shoot(Constants.L2_SHOOTER_SPEED, Constants.L2_SHOOTER_SPEED*1.5);
   }
 
   public Command HybriShot() {
-    return new Shoot(Constants.HYBRID_SHOOTER_SPEED);
+    return new Shoot(Constants.HYBRID_SHOOTER_SPEED, Constants.HYBRID_SHOOTER_SPEED*1.5);
   }
 }
