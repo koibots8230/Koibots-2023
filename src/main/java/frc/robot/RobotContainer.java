@@ -1,11 +1,6 @@
 package frc.robot;
 
-import frc.robot.autos.CommunityBalance;
-import frc.robot.autos.CommunityPickupBalance;
-import frc.robot.autos.Score2;
-import frc.robot.autos.ShootBalance;
-import frc.robot.autos.ShootMove;
-import frc.robot.autos.ThreePieceBalance;
+import frc.robot.autos.*;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj.PS4Controller;
@@ -36,6 +31,9 @@ public class RobotContainer {
     m_autoChooser.addOption("Score L1 & L2", new Score2());
     m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
     m_autoChooser.addOption("L2 and leave community", new ShootMove());
+    m_autoChooser.addOption("Just Shoot", new JustShoot());
+    m_autoChooser.addOption("2 Piece + Balance - Right", new TwoPieceBalanceRight());
+    m_autoChooser.addOption("3 Piece + Balance UNTESTED", new ThreePieceBalance());
     
     Shuffleboard.getTab("Driver")
       .add("Auto Chooser", m_autoChooser)

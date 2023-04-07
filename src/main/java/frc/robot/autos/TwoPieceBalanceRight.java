@@ -10,14 +10,14 @@ import frc.robot.commands.LoadCube;
 import frc.robot.subsystems.*;
 import com.kauailabs.navx.frc.AHRS;
 
-public class CommunityPickupBalance extends SequentialCommandGroup {
+public class TwoPieceBalanceRight extends SequentialCommandGroup {
   AHRS m_Gyro;
-  public CommunityPickupBalance() {
+  public TwoPieceBalanceRight() {
     addCommands(
       new ParallelRaceGroup(ShooterSubsystem.get().AutoL2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(0.5)),
       TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 150),
-      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.435, 65), new LoadCube()),
-      TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.435, 55),
+      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(0.43, 0.3, 65), new LoadCube()),
+      TankDriveSubsystem.get().new driveDistanceCommand(-0.43, -0.3, 55),
       TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 80),
       new InstantCommand(() -> TankDriveSubsystem.get().setBrake()),
       // new ParallelRaceGroup(ShooterSubsystem.get().CommunityShot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(.5)),

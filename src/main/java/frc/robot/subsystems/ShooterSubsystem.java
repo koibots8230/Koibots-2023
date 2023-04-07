@@ -24,7 +24,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     shooterEncoder = shooterMotorL.getEncoder();
 
-    shooterMotorR.follow(shooterMotorL, true);
+    shooterMotorR.setInverted(false);
   }
 
   public static ShooterSubsystem get() {
@@ -35,33 +35,42 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterEncoder.getVelocity();
   }
 
-  public void SetShooter(double speed) {
-    shooterMotorL.set(speed);
+  public void SetShooter(double lSpeed, double rSpeed) {
+    shooterMotorL.set(lSpeed);
+    shooterMotorR.set(rSpeed);
   }
 
   // ================================Commands================================ \\
   
   public class Shoot extends CommandBase {
-    double m_speed;
+    double leftSpeed;
+    double rightSpeed;
     
     public Shoot(double speed) {
-      this.m_speed = speed;
+      this.leftSpeed = speed;
+      this.rightSpeed = speed;
+      addRequirements(ShooterSubsystem.get());
+    }
+
+    public Shoot(double lSpeed, double rSpeed) {
+      this.leftSpeed = lSpeed;
+      this.rightSpeed = rSpeed;
       addRequirements(ShooterSubsystem.get());
     }
 
     @Override
     public void initialize() {
-      ShooterSubsystem.this.SetShooter(m_speed);
+      ShooterSubsystem.this.SetShooter(leftSpeed, rightSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-      ShooterSubsystem.this.SetShooter(0);
+      ShooterSubsystem.this.SetShooter(0, 0);
     }
   }
 
   public Command CommunityShot() {
-    return new Shoot(Constants.COMMUNITY_SHOOTER_SPEED);
+    return new Shoot(0.1);
   }
 
   public Command L1Shot() {
@@ -69,11 +78,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command StationToHybridShot() {
-    return new Shoot(0.45);
+    return new Shoot(0.55);
   }
 
   public Command AutoL2Shot() {
-    return new Shoot(Constants.AUTO_L2_SHOOTER_SPEED);
+    return new Shoot(Constants.AUTO_L2_SHOOTER_SPEED, Constants.AUTO_L2_SHOOTER_SPEED + 0.2);
   }
   
   public Command L2Shot() {  
