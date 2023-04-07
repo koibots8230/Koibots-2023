@@ -17,9 +17,10 @@ public class ThreePieceBalance extends SequentialCommandGroup {
   public ThreePieceBalance() {
     addCommands(
       new ParallelRaceGroup(ShooterSubsystem.get().AutoL2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(0.5)),
-      TankDriveSubsystem.get().new driveDistanceCommand(mainSpeed, mainSpeed, 100),
-      new ParallelCommandGroup(IntakePositionSubsystem.get().new IntakeUpDown(true), TankDriveSubsystem.get().new driveDistanceCommand(mainSpeed, mainSpeed, 10)),
-      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(mainSpeed, curveSpeed, 65), new LoadCube()),
+      TankDriveSubsystem.get().new driveDistanceCommand(mainSpeed, mainSpeed, 150),
+      new ParallelRaceGroup(
+        new ParallelCommandGroup(TankDriveSubsystem.get().new driveDistanceCommand(mainSpeed, curveSpeed, 65), IntakePositionSubsystem.get().new IntakeUpDown(true)), 
+        new LoadCube()),
       TankDriveSubsystem.get().new driveDistanceCommand(-mainSpeed, -curveSpeed, 55),
       TankDriveSubsystem.get().new driveDistanceCommand(-mainSpeed, -mainSpeed, 30),
       new ParallelRaceGroup(
