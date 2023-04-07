@@ -134,4 +134,12 @@ public class Constants {
   public static final int LEFT_DRIVE_MOTOR_1 = 15;
   public static final int LEFT_DRIVE_MOTOR_2 = 14;
 
+public static final double SHOOTER_RIGHT_P = 0;
+
+public static final double SHOOTER_RIGHT_FF = 0;
+
+public static final double SHOOTER_LEFT_P = 0;
+
+public static final double SHOOTER_LEFT_FF = 0;
+
 }

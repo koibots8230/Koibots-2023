@@ -2,8 +2,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,30 +17,48 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
+  private SparkMaxPIDController leftPID;
+  private SparkMaxPIDController rightPID;
 
-  private RelativeEncoder shooterEncoder;
+
+  private RelativeEncoder leftShooterEncoder;
+  private RelativeEncoder rightShooterEncoder;
+
 
   ShooterSubsystem() {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
     shooterMotorL.setInverted(true);
 
-    shooterEncoder = shooterMotorL.getEncoder();
+    leftShooterEncoder = shooterMotorL.getEncoder();
+    rightShooterEncoder = shooterMotorR.getEncoder();
 
     shooterMotorR.setInverted(false);
+
+    leftPID = shooterMotorL.getPIDController();
+    rightPID = shooterMotorR.getPIDController();
+
+
+    leftPID.setP(Constants.SHOOTER_LEFT_P, 0);
+    leftPID.setFF(Constants.SHOOTER_LEFT_FF, 0);
+
+    rightPID.setP(Constants.SHOOTER_RIGHT_P, 0);
+    rightPID.setFF(Constants.SHOOTER_RIGHT_FF, 0);
   }
 
   public static ShooterSubsystem get() {
     return m_ShooterSubsystem;
   }
-   
-  public double getShooterSpeed() {
-    return shooterEncoder.getVelocity();
-  }
 
   public void SetShooter(double lSpeed, double rSpeed) {
-    shooterMotorL.set(lSpeed);
-    shooterMotorR.set(rSpeed);
+    SmartDashboard.putNumber("Left Setpoint", lSpeed);
+    SmartDashboard.putNumber("Right Setpoint", rSpeed);
+
+    leftPID.setReference(lSpeed, ControlType.kVelocity, 0);
+    rightPID.setReference(rSpeed, ControlType.kVelocity, 0);
+
+    SmartDashboard.putNumber("Left Output", leftShooterEncoder.getVelocity());
+    SmartDashboard.putNumber("Left Output", rightShooterEncoder.getVelocity());
   }
 
   // ================================Commands================================ \\
