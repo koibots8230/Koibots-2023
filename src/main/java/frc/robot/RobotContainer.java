@@ -8,8 +8,6 @@ import frc.robot.autos.ShootMove;
 import frc.robot.autos.ThreePieceBalance;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
-import edu.wpi.first.math.controller.RamseteController;
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -19,15 +17,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-
-import java.util.Enumeration;
-import java.util.List;
-
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-import com.pathplanner.lib.auto.PIDConstants;
-import com.pathplanner.lib.auto.RamseteAutoBuilder;
 
 public class RobotContainer {
   private static RobotContainer m_robotContainer = new RobotContainer();
@@ -37,7 +26,6 @@ public class RobotContainer {
   private final CommandPS4Controller m_operatorHID = new CommandPS4Controller(1);
 
   // Shuffleboard
-  SendableChooser<String> m_pathChooser;
   SendableChooser<Command> m_autoChooser;
 
   private RobotContainer() {
@@ -48,24 +36,10 @@ public class RobotContainer {
     m_autoChooser.addOption("Score L1 & L2", new Score2());
     m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
     m_autoChooser.addOption("L2 and leave community", new ShootMove());
-    m_autoChooser.addOption("Three Piece - UNTESTED", new ThreePieceBalance());
-
-    m_pathChooser = new SendableChooser<String>();
-
-    Enumeration<String> PathNames = Constants.PATHS.keys();
-    while (PathNames.hasMoreElements()) {
-      String key = PathNames.nextElement();
-      m_pathChooser.addOption(key, Constants.PATHS.get(key));
-    }
     
     Shuffleboard.getTab("Driver")
       .add("Auto Chooser", m_autoChooser)
       .withPosition(0, 0)
-      .withSize(2, 2);
-
-    Shuffleboard.getTab("Driver")
-      .add("Path Chooser", m_pathChooser)
-      .withPosition(2, 0)
       .withSize(2, 2);
 
     configureButtonBindings();
@@ -149,40 +123,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    if (m_pathChooser.getSelected() != null && m_pathChooser.getSelected() != "Legacy") {
-      List<PathPlannerTrajectory> path = PathPlanner.loadPathGroup(m_pathChooser.getSelected(), Constants.AUTO_CONSTRAINTS);
-      RamseteAutoBuilder autoBuilder = new RamseteAutoBuilder(
-        TankDriveSubsystem.get()::getRobotPose,
-        TankDriveSubsystem.get()::resetOdometry, 
-        new RamseteController(), 
-        new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m), 
-        Constants.PP_FEED_FORWARD,
-        TankDriveSubsystem.get()::getWheelSpeeds,
-        new PIDConstants(.0019, 0, 0),
-        TankDriveSubsystem.get()::setVoltage, 
-        Constants.EVENTS, 
-        false,
-        TankDriveSubsystem.get());
-      return new SequentialCommandGroup(
-        autoBuilder.followPathGroup(path), 
-        new InstantCommand(TankDriveSubsystem.get()::setBrake));
-    //   TankDriveSubsystem.get().resetOdometry(path.getInitialPose());
-    //   return new FollowPathWithEvents(
-    //     new PathFollower(
-    //       path, 
-    //       TankDriveSubsystem.get()::getRobotPose, 
-    //       new RamseteController(),
-    //       Constants.PP_FEED_FORWARD,
-    //       new DifferentialDriveKinematics(Constants.ROBOT_WIDTH_m),
-    //       TankDriveSubsystem.get()::getWheelSpeeds,
-    //       new PIDController(.0019, 0, 0),
-    //       new PIDController(.0019, 0, 0),
-    //       TankDriveSubsystem.get()::setVoltage,
-    //       TankDriveSubsystem.get()
-    //       ),
-    //     path.getMarkers(), 
-    //     Constants.EVENTS);
-    }
     return m_autoChooser.getSelected();
   }
 }
