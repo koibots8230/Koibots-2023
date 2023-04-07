@@ -7,7 +7,7 @@ import com.pathplanner.lib.PathConstraints;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Utilities.TimedCommand;
-import frc.robot.commands.AutoBalanceCommand;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.LoadCube;
 import frc.robot.subsystems.IntakePositionSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -52,7 +52,7 @@ public class Constants {
     put("Starter Shot", new TimedCommand(ShooterSubsystem.get().L2Shot(), SHOOT_TIME));
     put("Lower Intake", new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5));
     put("Pick Up Cube", new TimedCommand(new LoadCube(), (double) 1));
-    put("Auto-Balance", new AutoBalanceCommand().repeatedly()); 
+    put("Auto-Balance", new AutoBalance().repeatedly()); 
     put("Far Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(FAR_SPEED), SHOOT_TIME));
     put("CS to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_L1_SPEED), SHOOT_TIME));
     put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));
@@ -78,6 +78,8 @@ public class Constants {
 
   public static final double SHOOT_TIME = 0.2;
 
+  public static final double AUTO_L2_SHOOTER_SPEED = 0.38;
+
 // ====================================== Teleop / Driver ====================================== \\
 
   // Drivetrain
@@ -87,13 +89,13 @@ public class Constants {
   // Intake/Midtake Constants
   public static final double BELT_RUNNING_SPEED = 0.85;
   public static final double BELT_REVERSE_SPEED = -0.6;
-  public static final double INTAKE_RUNNING_SPEED = 0.85;
+  public static final double INTAKE_RUNNING_SPEED = 0.88;
   public static final double INTAKE_REVERSE_SPEED = -0.5;
   public static final double RAISE_SPEED = 0.25;
 
   // Teleop Shooting
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
-  public static final double L2_SHOOTER_SPEED = .48;
+  public static final double L2_SHOOTER_SPEED = .41;
   public static final double L1_SHOOTER_SPEED = .32;
   public static final double HYBRID_SHOOTER_SPEED = .17;
   

@@ -7,7 +7,7 @@ import frc.robot.subsystems.TankDriveSubsystem;
 public class ShootMove extends SequentialCommandGroup{
     public ShootMove() {
         addCommands(
-            ShooterSubsystem.get().L2Shot(),
+            ShooterSubsystem.get().AutoL2Shot(),
             TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 85)
         ); 
     }

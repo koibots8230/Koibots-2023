@@ -5,6 +5,7 @@ import frc.robot.autos.CommunityPickupBalance;
 import frc.robot.autos.Score2;
 import frc.robot.autos.ShootBalance;
 import frc.robot.autos.ShootMove;
+import frc.robot.autos.ThreePieceBalance;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import edu.wpi.first.math.controller.RamseteController;
@@ -43,10 +44,11 @@ public class RobotContainer {
     m_autoChooser = new SendableChooser<Command>();
 
     m_autoChooser.setDefaultOption("Leave community and balance", new CommunityBalance());
-    m_autoChooser.addOption("Leave Community and Balance + Piece Pickup", new CommunityPickupBalance());
+    m_autoChooser.addOption("2 Piece + Balance", new CommunityPickupBalance());
     m_autoChooser.addOption("Score L1 & L2", new Score2());
     m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
     m_autoChooser.addOption("L2 and leave community", new ShootMove());
+    m_autoChooser.addOption("Three Piece - UNTESTED", new ThreePieceBalance());
 
     m_pathChooser = new SendableChooser<String>();
 
@@ -95,6 +97,10 @@ public class RobotContainer {
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new EjectCube());
+
+    Trigger driverSlowMode = m_driverHID.leftBumper();
+    driverSlowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
+    driverSlowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
     
     // ====================================== Operator Controls ====================================== \\

@@ -68,6 +68,13 @@ public class ShooterSubsystem extends SubsystemBase {
     return new Shoot(Constants.L1_SHOOTER_SPEED);
   }
 
+  public Command StationToHybridShot() {
+    return new Shoot(0.45);
+  }
+
+  public Command AutoL2Shot() {
+    return new Shoot(Constants.AUTO_L2_SHOOTER_SPEED);
+  }
   
   public Command L2Shot() {  
     return new Shoot(Constants.L2_SHOOTER_SPEED);

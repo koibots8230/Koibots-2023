@@ -11,7 +11,7 @@ public class Score2 extends SequentialCommandGroup {
   public Score2() {
     addCommands(
         new ParallelRaceGroup(
-          ShooterSubsystem.get().L2Shot(),
+          ShooterSubsystem.get().AutoL2Shot(),
           IndexerSubsystem.get().new RunIndexer(),
           new WaitCommand(0.5)
         ),
