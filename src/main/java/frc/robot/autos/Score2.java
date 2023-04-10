@@ -15,13 +15,13 @@ public class Score2 extends SequentialCommandGroup {
           IndexerSubsystem.get().new RunIndexer(),
           new WaitCommand(0.5)
         ),
-      TankDriveSubsystem.get().new driveDistanceCommand(0.45, 0.45, 155),
+      TankDriveSubsystem.get().new driveDistanceCommand(0.45, 0.45, 150),
 
       new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5),
       new ParallelRaceGroup(
         IndexerSubsystem.get().new RunIndexer(),
         IntakeSubsystem.get().new RunIntake(),
-        TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 15)
+        TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 20)
       ),
       TankDriveSubsystem.get().new driveDistanceCommand(-0.45, -0.45, 180),
       new InstantCommand(TankDriveSubsystem.get()::setBrake),

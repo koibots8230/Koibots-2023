@@ -70,10 +70,14 @@ public class TankDriveSubsystem extends SubsystemBase{
 */
         m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
                 leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition());
-    };
+
+    
+    }
 
     @Override
     public void periodic() {
+        SmartDashboard.putNumber("Left Side velocity", leftPrimaryRelativeEncoder.getVelocity());
+        SmartDashboard.putNumber("Right Side velocity", rightPrimaryRelativeEncoder.getVelocity());
         
         if (Math.abs(NAVX.get().getRoll()) > .75) {
             m_Odometry.update(
@@ -88,16 +92,6 @@ public class TankDriveSubsystem extends SubsystemBase{
             previousLeftEncoder = leftPrimaryRelativeEncoder.getPosition();
             previousRightEncoder = rightPrimaryRelativeEncoder.getPosition();
         }
-
-        SmartDashboard.putNumberArray("Left Encoder Values", new double[] {
-            leftPrimaryRelativeEncoder.getPosition(), 
-            leftSecondaryRelativeEncoder.getPosition()
-        });
-
-        SmartDashboard.putNumberArray("Right Encoder Values", new double[] {
-            rightPrimaryRelativeEncoder.getPosition(), 
-            rightSecondaryRelativeEncoder.getPosition()
-        });
     }
 
     // ================================Getters================================ \\
