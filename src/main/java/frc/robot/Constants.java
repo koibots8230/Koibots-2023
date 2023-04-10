@@ -1,120 +1,139 @@
 package frc.robot;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.Hashtable;
 
-import edu.wpi.first.math.geometry.Translation3d;
+import com.pathplanner.lib.PathConstraints;
+
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Utilities.TimedCommand;
+import frc.robot.commands.AutoBalance;
+import frc.robot.commands.LoadCube;
+import frc.robot.subsystems.IntakePositionSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class Constants {
-  // ===============================In-Use Values===============================
 
-  // Constants for auto
-  // DO. NOT. CHANGE. THESE. UNLESS AUTO IS ACTIVLEY BEING TESTED AND YOU KNOW
-  // WHAT YOU ARE DOING.
+// ====================================== Auto ====================================== \\
+// Don't touch these unless you are activley tuning them
 
-  public static final double AUTOBALANCE_MOVE_LIMIT = 85;
-  public static final double SHOOT_MOVE_LIMIT = 140;
+  public static final double AUTO_L2_SHOOTER_SPEED = 0.38;
 
-  public static final double SHOOT_RIGHT_SPEED = 0.25;
-  public static final double SHOOT_LEFT_SPEED = 0.25;
+// ====================================== Teleop / Driver ====================================== \\
 
-  public static final double AUTO_RIGHT_SPEED = 0.3;
-  public static final double AUTO_LEFT_SPEED = 0.3;
-
-  public static final double SHOOT_SECONDS = 0.9;
-
-  // Slowmotion, deadzone, etc:
-  public static final double SLOW_MODE_FACTOR = 0.5;
-  public static final double AUTO_SPEED = 0.07;
-  public static final double MAX_DRIVETRAIN_SPEED = .88;
+  // Drivetrain
+  public static final double MAX_DRIVETRAIN_SPEED = .93;
+  public static final double DRIVE_SPEED_COEFFICIENT = 0.90; 
 
   // Intake/Midtake Constants
-  public static final double STARS_RUNNING_SPEED = 0.30;
-  public static final double BELT_RUNNING_SPEED = 0.30;
-  public static final double INTAKE_RUNNING_SPEED = 0.43;
+  public static final double BELT_RUNNING_SPEED = 0.85;
+  public static final double BELT_REVERSE_SPEED = -0.6;
+  public static final double INTAKE_RUNNING_SPEED = 0.88;
+  public static final double INTAKE_REVERSE_SPEED = -0.5;
+  public static final double RAISE_SPEED = 0.25;
 
-  // Teleop Shooti
+  // Teleop Shooting
   public static final double COMMUNITY_SHOOTER_SPEED = .95;
-  public static final double L2_SHOOTER_SPEED = .7;
-  public static final double L1_SHOOTER_SPEED = .55;
+  public static final double L2_SHOOTER_SPEED = .43;
+  public static final double L1_SHOOTER_SPEED = .28;
+  public static final double HYBRID_SHOOTER_SPEED = .17;
+  
+  // Controller
+  public static final double THUMBSTICK_DEADZONE = 0.15; // Probably don't change this
+  public static final double TRIGGER_DEADZONE = 0.5;
 
-  public static final double DEADZONE = 0.15; // Probably don't change this
+  // Sensors
+  public static final double SENSOR_TRIGGERED = .225; // Voltage at which a digital signal is considered activated
 
-  // Hardware Ports
-  public static final int LEFT_DRIVE_MOTOR_1 = 15;
-  public static final int LEFT_DRIVE_MOTOR_2 = 14;
+  public static final double CURRENT_CAP = 60;
+  public static final double FLIP_INTAKE_DISTANCE = 5;
+  
+
+// ====================================== Hardware Ports ====================================== \\
+
+  // Shooter
+  public static final int SHOOTER_MOTOR_L = 5;
+  public static final int SHOOTER_MOTOR_R = 8;
+
+  // Indexer
+  public static final int MIDTAKE_MOTOR = 4;
+  public static final int BEAM_BREAK = 1; // Analog Input
+  
+  // Intake
+  public static final int INTAKE_MOTOR = 10;
+
+  // IntakePosition
+  public static final int RAISE_INTAKE_MOTOR = 7;
+
+  // TankDrive
   public static final int RIGHT_DRIVE_MOTOR_1 = 12;
   public static final int RIGHT_DRIVE_MOTOR_2 = 13;
+  public static final int LEFT_DRIVE_MOTOR_1 = 15;
+  public static final int LEFT_DRIVE_MOTOR_2 = 14;
 
-  public static final int INTAKE_MOTOR = 10;
-  public static final int RAISE_INTAKE_MOTOR = 11;
+  // ====================================== Unused ====================================== \\
 
-  public static final int SHOOTER_MOTOR_L = 4;
-  public static final int SHOOTER_MOTOR_R = 5;
+  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(2, 1.5); // TODO: Find the max velocity and acceleration we can use
 
-  public static final int MIDTAKE_MOTOR = 7;
-  public static final int STAR_WHEELS_MOTOR_L = 8;
-  public static final int STAR_WHEELS_MOTOR_R = 9;
+  public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
+  {{
 
-  // ===============================Unused Values===============================
+    put("Use Auto Chooser", "Legacy");
 
-  public static final double RAISE_SPEED = 0.8;
-  public static final double CURRENT_ZONE_AMPS = 1; // To be changed when we have an actual intake
-  public static final double INTAKE_UP_POSITION = 1; // To be changed when we have an actual intake
-  public static final double INTAKE_DOWN_POSITION = -1; // To be changed when we have an actual intake
-  public static final double INTAKE_CHANGE_POSITION = 20;
-  public static final double HALL_EFFECT_SENSOR_TRIGGERED = 2.5;
+    put("Blue: Left Side - 3 Pieces", "B_Left");
+    put("Blue: Left Side - 2 Pieces", "B_Left_Score2");
+    put("Blue: Right Side - 3 Pieces", "B_Right");
+    put("Blue: Right Side - 2 Pieces", "B_Right_Score2");
+    put("Blue: Center - Coopertition", "B_Center");
+    put("Blue: Center - Left piece first", "B_Center_Top_First");
+    put("Blue: Center - Right piece first", "B_Center_Bottom_First");
 
-  // for LED system
-  public static final int LED_STRIP_LENGTH = 60;// the number of LEDs on each of the LED strips.
-  // public static final int LEDPort1=0;
-  // public static final int LEDPort2=0;//neither of these are known currently,
-  // but they can be uncommented once we know the port numbers.
+    put("Test", "Test");
 
-  // Auto Shooting
-  public static final double SHOOTER_ANGLE = 45; // To be changed
-  public static final double GRAVITY = 9.8; // If you can figure out a way to change this one, that's impressive
-  public static final double SHOOTER_FROM_GROUND = 1; // To be changed
-  public static final double VELOCITY_TO_SPEED = 0; // To be changed
-  public static final double MIDDLE_HEIGHT = 23.5 * 0.0254;
-  public static final double MIDDLE_X = 24.25 * 0.0254;
+    put("Calibrate", "Circle");
 
-  public static final double Y1 = 43.125 * 0.0254;
-  public static final double Y2 = 108.5 * 0.0254;
-  public static final double Y3 = 174.625 * 0.0254;
+    put("Red: Left Side - 3 Pieces", "R_Left");
+    put("Red: Left Side - 2 Pieces", "R_Left_Score2");
+    put("Red: Right Side - 3 Pieces","R_Right");
+    put("Red: Right Side - 2 Pieces", "R_Right_Score2");
+    put("Red: Center - Coopertition", "R_Center");
+    put("Red: Center - Left piece first", "R_Center_Bottom_First");
+    put("Red: Center - Right piece first", "R_Center_Top_First");
 
-  public static final Translation3d MC1 = new Translation3d(MIDDLE_X, Y1, MIDDLE_HEIGHT);
-  public static final Translation3d MC2 = new Translation3d(MIDDLE_X, Y2, MIDDLE_HEIGHT);
-  public static final Translation3d MC3 = new Translation3d(MIDDLE_X, Y3, MIDDLE_HEIGHT);
+  }};
 
-  public static List<Translation3d> MIDDLE_SPOTS = Arrays.asList(MC1, MC2, MC3);
+  public static final Hashtable<String, Command> EVENTS = new Hashtable<String, Command>()
+  {{
 
-  public static final double HIGH_HEIGHT = 35.5 * 0.0254;
-  public static final double HIGH_X = 12.25 * 0.0254;
+    put("Starter Shot", new TimedCommand(ShooterSubsystem.get().L2Shot(), SHOOT_TIME));
+    put("Lower Intake", new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5));
+    put("Pick Up Cube", new TimedCommand(new LoadCube(), (double) 1));
+    put("Auto-Balance", new AutoBalance().repeatedly()); 
+    put("Far Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(FAR_SPEED), SHOOT_TIME));
+    put("CS to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_L1_SPEED), SHOOT_TIME));
+    put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));
+    put("Ground to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_L1_SPEED), SHOOT_TIME));
+    put("Ground to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_HYBRID_SPEED), SHOOT_TIME));
+    put("Max Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(MAX_SPEED), SHOOT_TIME));
 
-  public static final Translation3d HC1 = new Translation3d(HIGH_X, Y1, HIGH_HEIGHT);
-  public static final Translation3d HC2 = new Translation3d(HIGH_X, Y2, HIGH_HEIGHT);
-  public static final Translation3d HC3 = new Translation3d(HIGH_X, Y3, HIGH_HEIGHT);
+  }};
 
-  public static List<Translation3d> HIGH_SPOTS = Arrays.asList(HC1, HC2, HC3);
+  public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.10614, 2.6082, 0.27666); //TODO: Re-Run SysID at comp
 
-  public static final double MAX_SHOOTER_RANGE = 2;
+  public static final double DRIVE_ROTATIONS_TO_DISTANCE = 0.04873967373;
 
-  // Encoder Values
-  public static final double RIGHT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
-  public static final double LEFT_ENCODER_ROTATIONS_TO_DISTANCE = 0;
+  public static final double ROBOT_WIDTH_m = 0.57785 + 0.025;
 
-  // Path Folowing Values TO BE CHANGED
-  public static final double ks_VOLTS = 0;
-  public static final double kv_VOLT_SECONDS_PER_METER = 0;
-  public static final double ka_VOLT_SECONDS_SQUARED_PERMETER = 0;
-  public static final double kp_DRIVE_VEL = 0;
-  public static final double MAX_SPEED_METERS_PER_SECOND = 0;
-  public static final double MAX_ACCELERATION_METERS_PER_SECOND_SQUARED = 0;
+  public static final double AUTO_SPEED = 0.07;
+  private static final double FAR_SPEED = 1; // TODO: Find all the shooter speeds for auto
+  private static final double CS_TO_L1_SPEED = 0.5;
+  private static final double CS_TO_HYBRID_SPEED = 0.5; 
+  private static final double GROUND_TO_L1_SPEED = 0.5; 
+  private static final double GROUND_TO_HYBRID_SPEED = 0.5; 
+  private static final double MAX_SPEED = 1; 
 
-  // public static final double TRACK_WIDTH_METERS = 0;
-  // public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new
-  // DifferentialDriveKinematics(
-  // TRACK_WIDTH_METERS);
+  public static final double SHOOT_TIME = 0.2;
+
+  
 
 }

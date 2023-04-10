@@ -1,177 +1,100 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
 
 public class ShooterSubsystem extends SubsystemBase {
-  // Auto Shoot Variables
-  public static Pose3d Bot3d = null;
-  public static boolean VariablesDefined = false;
-  public static Translation3d Closest = new Translation3d(0, 0, 0);
-  public static double ClosestDistance = 0;
-  private int count = 0;
-  private int ShootLevel = 2;
-  private double xDistance;
-  private double yDistance;
-  private double distance;
-  private Translation2d Spot = new Translation2d(0, 0);
+  private static ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
 
-  // Motors/Encoders
   private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
-  private RelativeEncoder shooterEncoder;
 
-  public ShooterSubsystem() {
+  private RelativeEncoder leftShooterEncoder;
+  private RelativeEncoder rightShootEncoder;
+
+  ShooterSubsystem() {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
-    shooterEncoder = shooterMotorL.getEncoder();
+    shooterMotorL.setInverted(true);
 
-    shooterMotorL.setIdleMode(IdleMode.kBrake);
-    shooterMotorR.setIdleMode(IdleMode.kBrake);
+    leftShooterEncoder = shooterMotorL.getEncoder();
+    rightShootEncoder = shooterMotorR.getEncoder();
+
+    shooterMotorR.setInverted(false);
   }
 
-  private List<Translation3d> getCubeList(int Level) {
-    if (Level == 2) {
-      return Constants.MIDDLE_SPOTS;
-    } else if (Level == 3) {
-      return Constants.HIGH_SPOTS;
-    }
-
-    return null;
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Left Speed", leftShooterEncoder.getVelocity());
+    SmartDashboard.putNumber("Right Speed", rightShootEncoder.getVelocity());
   }
 
-  public Pose3d getNearestTarget(Translation3d Robot_Pose, int Level) {
+  public static ShooterSubsystem get() {
+    return m_ShooterSubsystem;
+  }
+
+  public void SetShooter(double lSpeed, double rSpeed) {
+    shooterMotorL.set(lSpeed);
+    shooterMotorR.set(rSpeed);
+  }
+
+  // ================================Commands================================ \\
+  
+  public class Shoot extends CommandBase {
+    double leftSpeed;
+    double rightSpeed;
     
-    Translation3d Closest = new Translation3d(0, 0, 0);
-    double closestDistance = 0;
-    double Distance;
-    
-    for (int a = 0; a < 3; a++) {
-      Distance = Robot_Pose.getDistance(getCubeList(Level).get(a));
-      if (Distance > closestDistance) {
-        closestDistance = Distance;
-        Closest = getCubeList(Level).get(a);
-      }
+    public Shoot(double speed) {
+      this.leftSpeed = speed;
+      this.rightSpeed = speed;
+      addRequirements(ShooterSubsystem.get());
     }
 
-    if (ClosestDistance > Constants.MAX_SHOOTER_RANGE) {
-      return new Pose3d(0, 0, 0, new Rotation3d());
-    }
-    return new Pose3d(Closest, new Rotation3d());
-  }
-
-  public double getShooterSpeed() {
-    return shooterEncoder.getVelocity();
-  }
-  
-  public void SetShooter(double Speed) {
-    shooterMotorR.set(-Speed);
-    shooterMotorL.set(Speed);
-  }
-  
-  public Pose3d g54jetPose() {
-    return Bot3d;
-  }
-
-  public class CommunityShotCommand extends CommandBase {
-    private ShooterSubsystem shooter;
-
-    public CommunityShotCommand(ShooterSubsystem m_ShooterSubsystem) {
-      addRequirements(m_ShooterSubsystem);
-      shooter = m_ShooterSubsystem;
+    public Shoot(double lSpeed, double rSpeed) {
+      this.leftSpeed = lSpeed;
+      this.rightSpeed = rSpeed;
+      addRequirements(ShooterSubsystem.get());
     }
 
     @Override
     public void initialize() {
-      shooter.SetShooter(Constants.COMMUNITY_SHOOTER_SPEED);
+      ShooterSubsystem.this.SetShooter(leftSpeed, rightSpeed);
     }
 
     @Override
     public void end(boolean interrupted) {
-      shooter.SetShooter(0);
+      ShooterSubsystem.this.SetShooter(0, 0);
     }
+  }
+
+  public Command CommunityShot() {
+    return new Shoot(Constants.COMMUNITY_SHOOTER_SPEED);
+  }
+
+  public Command L1Shot() {
+    return new Shoot(Constants.L1_SHOOTER_SPEED);
+  }
+
+  public Command StationToHybridShot() {
+    return new Shoot(0.6);
+  }
+
+  public Command AutoL2Shot() {
+    return new Shoot(Constants.AUTO_L2_SHOOTER_SPEED);
   }
   
-  public class LevelShootCommand extends CommandBase {
-    private ShooterSubsystem shooter;
-    private int shootLevel;
-
-    public LevelShootCommand(ShooterSubsystem m_ShooterSubsystem, Integer m_shootLevel) {
-        addRequirements(m_ShooterSubsystem);
-        shooter = m_ShooterSubsystem;
-        shootLevel = m_shootLevel;
-    }
-
-    public void initialize() {
-      if (shootLevel == 2) {
-        shooter.SetShooter(Constants.L1_SHOOTER_SPEED);
-      } else if (shootLevel == 3) {
-        shooter.SetShooter(Constants.L2_SHOOTER_SPEED);
-      }
-    }
-
-    public void end(boolean interrupted) {
-      shooter.SetShooter(0);
-    }
+  public Command L2Shot() {  
+    return new Shoot(Constants.L2_SHOOTER_SPEED);
   }
-   
-  public class ShootTimeCommand extends CommandBase {
-    private ShooterSubsystem shooter;
-    private Timer shootTimer;
-    private double shootLimit;
-    private boolean hasFinished;
-    private double shootSpeed;
 
-    public ShootTimeCommand(ShooterSubsystem subsystem, double time) {
-      this(subsystem, time, 0.6);
-    }
-
-    public ShootTimeCommand(ShooterSubsystem m_ShooterSubsystem, double ShootTime, double speed) {
-        addRequirements(m_ShooterSubsystem);
-        shooter = m_ShooterSubsystem;
-        shootTimer = new Timer();
-        shootLimit = ShootTime;
-        hasFinished = false;
-       shootSpeed = speed;
-    }
-
-    @Override
-    public void initialize() {
-      shootTimer.start();
-      shooter.SetShooter(shootSpeed);
-    }
-
-    @Override
-    public void execute() {
-      // Check for time
-      if (shootTimer.get() >= shootLimit) {
-        hasFinished = true;
-      }
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-      shooter.SetShooter(0);
-    }
-
-    @Override 
-    public boolean isFinished() {
-      return hasFinished;
-    }
+  public Command HybriShot() {
+    return new Shoot(Constants.HYBRID_SHOOTER_SPEED);
   }
 }
