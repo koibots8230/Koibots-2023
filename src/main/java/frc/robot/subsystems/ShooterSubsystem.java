@@ -11,13 +11,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private static ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
+  private static final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
 
-  private CANSparkMax shooterMotorL;
-  private CANSparkMax shooterMotorR;
+  private final CANSparkMax shooterMotorL;
+  private final CANSparkMax shooterMotorR;
 
-  private RelativeEncoder leftShooterEncoder;
-  private RelativeEncoder rightShootEncoder;
+  private final RelativeEncoder leftShooterEncoder;
+  private final RelativeEncoder rightShootEncoder;
 
   ShooterSubsystem() {
     shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
@@ -37,7 +37,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public static ShooterSubsystem get() {
-    return m_ShooterSubsystem;
+    return shooterSubsystem;
   }
 
   public void SetShooter(double lSpeed, double rSpeed) {
@@ -54,12 +54,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public Shoot(double speed) {
       this.leftSpeed = speed;
       this.rightSpeed = speed;
-      addRequirements(ShooterSubsystem.get());
-    }
-
-    public Shoot(double lSpeed, double rSpeed) {
-      this.leftSpeed = lSpeed;
-      this.rightSpeed = rSpeed;
       addRequirements(ShooterSubsystem.get());
     }
 
@@ -94,7 +88,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return new Shoot(Constants.L2_SHOOTER_SPEED);
   }
 
-  public Command HybriShot() {
+  public Command HybridShot() {
     return new Shoot(Constants.HYBRID_SHOOTER_SPEED);
   }
 }

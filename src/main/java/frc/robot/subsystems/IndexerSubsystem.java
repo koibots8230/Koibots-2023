@@ -11,33 +11,33 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class IndexerSubsystem extends SubsystemBase {
-  private static IndexerSubsystem m_IndexerSubsystem = new IndexerSubsystem();
-  private CANSparkMax IndexerMotor;
-  private AnalogInput m_breamBreak;
+  private static final IndexerSubsystem indexerSubsystem = new IndexerSubsystem();
+  private final CANSparkMax indexerMotor;
+  private final AnalogInput breamBreak;
   private Boolean useBeamBreak = true;
-  private LinearFilter averager;
+  private final LinearFilter indexerAverageCurrent;
 
   IndexerSubsystem() {
-    IndexerMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless);
-    m_breamBreak = new AnalogInput(Constants.BEAM_BREAK);
-    averager = LinearFilter.movingAverage(3);
+    indexerMotor = new CANSparkMax(Constants.MIDTAKE_MOTOR, MotorType.kBrushless);
+    breamBreak = new AnalogInput(Constants.BEAM_BREAK);
+    indexerAverageCurrent = LinearFilter.movingAverage(3);
   }
 
   @Override
   public void periodic() {
       SmartDashboard.putBoolean("Use Beam Break", this.useBeamBreak);
-      SmartDashboard.putNumber("Beam Break", m_breamBreak.getVoltage());
-      SmartDashboard.putBoolean("Beam break triggered", m_breamBreak.getVoltage() < Constants.SENSOR_TRIGGERED);
-      SmartDashboard.putNumber("Indexer Current", averager.calculate(IndexerMotor.getOutputCurrent()));
-      SmartDashboard.putNumber("Output Current", IndexerMotor.getOutputCurrent());
+      SmartDashboard.putNumber("Beam Break", breamBreak.getVoltage());
+      SmartDashboard.putBoolean("Beam break triggered", breamBreak.getVoltage() < Constants.SENSOR_TRIGGERED);
+      SmartDashboard.putNumber("Indexer Current", indexerAverageCurrent.calculate(indexerMotor.getOutputCurrent()));
+      SmartDashboard.putNumber("Output Current", indexerMotor.getOutputCurrent());
   }
 
   public void setIndexerSpeed(double speed) {
-    IndexerMotor.set(speed);
+    indexerMotor.set(speed);
   }
 
   public AnalogInput getBeamBreak() {
-    return m_breamBreak;
+    return breamBreak;
   }
 
   public boolean getUseBeamBreak() {
@@ -49,12 +49,11 @@ public class IndexerSubsystem extends SubsystemBase {
   }
 
   public static IndexerSubsystem get() {
-    return m_IndexerSubsystem;
+    return indexerSubsystem;
   }
     // ================================Commands================================ \\
 
   public class RunUntilBeam extends CommandBase{
-    boolean end = false;
     AnalogInput beamBreak;
     double count;
 
@@ -100,11 +99,6 @@ public class IndexerSubsystem extends SubsystemBase {
     }
 
     @Override
-    public boolean isFinished() {
-        return false;
-    }
-
-    @Override
     public void end(boolean interrupted) {
         IndexerSubsystem.this.setIndexerSpeed(0);
     }
@@ -118,11 +112,6 @@ public class IndexerSubsystem extends SubsystemBase {
     @Override
     public void initialize() {
       IndexerSubsystem.this.setIndexerSpeed(Constants.BELT_REVERSE_SPEED);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 
     @Override

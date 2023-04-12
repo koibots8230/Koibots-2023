@@ -6,11 +6,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalance;
 import frc.robot.subsystems.*;
-import com.kauailabs.navx.frc.AHRS;
 
 public class CommunityBalance extends SequentialCommandGroup {
 
-  AHRS m_Gyro;
   public CommunityBalance() {
     addCommands(
       new ParallelRaceGroup(

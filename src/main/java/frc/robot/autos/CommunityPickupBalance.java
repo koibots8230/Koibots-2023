@@ -6,11 +6,12 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutoBalanceThenShoot;
 import frc.robot.commands.LoadCube;
-import frc.robot.subsystems.*;
-import com.kauailabs.navx.frc.AHRS;
+import frc.robot.subsystems.IndexerSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.TankDriveSubsystem;
 
 public class CommunityPickupBalance extends SequentialCommandGroup {
-  AHRS m_Gyro;
+
   public CommunityPickupBalance() {
     addCommands(
       new ParallelRaceGroup(ShooterSubsystem.get().AutoL2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(0.5)),

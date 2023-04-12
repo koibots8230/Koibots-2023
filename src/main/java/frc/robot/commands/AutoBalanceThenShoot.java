@@ -12,10 +12,9 @@ import frc.robot.Constants;
 import frc.robot.Utilities.NAVX;
 
 public class AutoBalanceThenShoot extends CommandBase {
-  private NAVX gyro;
+  private final NAVX gyro = NAVX.get();
 
   public AutoBalanceThenShoot() {
-    gyro = NAVX.get();
     addRequirements(TankDriveSubsystem.get());
   }
 
@@ -49,9 +48,6 @@ public class AutoBalanceThenShoot extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (Math.abs(gyro.getRoll()) <= 2.5) {
-      return true;
-    }
-    return false;
+    return Math.abs(gyro.getRoll()) <= 2.5;
   }
 }

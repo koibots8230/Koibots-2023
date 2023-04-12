@@ -4,12 +4,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class PauseCommand extends CommandBase {
-    Command commandToRun;
+    Command command;
     int iterations;
 
-    public PauseCommand(Command command, int count) {
-        commandToRun = command;
-        iterations = count;
+    public PauseCommand(Command command, int iterations) {
+        this.command = command;
+        this.iterations = iterations;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class PauseCommand extends CommandBase {
 
     @Override
     public void end (boolean interrupted) {
-        commandToRun.schedule();
+        this.command.schedule();
     }
 
     @Override

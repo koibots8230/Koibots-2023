@@ -1,9 +1,7 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -19,24 +17,20 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 public class TankDriveSubsystem extends SubsystemBase{
-    private static TankDriveSubsystem m_TankDriveSubsystem = new TankDriveSubsystem();
+    private static final TankDriveSubsystem tankDriveSubsystem = new TankDriveSubsystem();
 
-    private CANSparkMax primaryRightMotor;
-    private CANSparkMax secondaryRightMotor;
-    private CANSparkMax primaryLeftMotor;
-    private CANSparkMax secondaryLeftMotor;
+    private final CANSparkMax primaryRightMotor;
+    private final CANSparkMax secondaryRightMotor;
+    private final CANSparkMax primaryLeftMotor;
+    private final CANSparkMax secondaryLeftMotor;
 
-    DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
-
-    private RelativeEncoder leftPrimaryRelativeEncoder;
-    private RelativeEncoder rightPrimaryRelativeEncoder;
-    private RelativeEncoder leftSecondaryRelativeEncoder;
-    private RelativeEncoder rightSecondaryRelativeEncoder;
+    private final RelativeEncoder leftPrimaryRelativeEncoder;
+    private final RelativeEncoder rightPrimaryRelativeEncoder;
 
     private double previousLeftEncoder;
     private double previousRightEncoder;
 
-    private DifferentialDriveOdometry m_Odometry;
+    private final DifferentialDriveOdometry odometry;
 
     private double speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
 
@@ -55,23 +49,13 @@ public class TankDriveSubsystem extends SubsystemBase{
 
         leftPrimaryRelativeEncoder = primaryLeftMotor.getEncoder();
         rightPrimaryRelativeEncoder = primaryRightMotor.getEncoder();
-        leftSecondaryRelativeEncoder = secondaryLeftMotor.getEncoder();
-        rightSecondaryRelativeEncoder = secondaryRightMotor.getEncoder();
 
         leftPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
         rightPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        leftSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        rightSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        /* 
-        leftPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-        rightPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-        leftSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-        rightSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-*/
-        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
+
+        odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
                 leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition());
 
-    
     }
 
     @Override
@@ -80,12 +64,12 @@ public class TankDriveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Right Side velocity", rightPrimaryRelativeEncoder.getVelocity());
         
         if (Math.abs(NAVX.get().getRoll()) > .75) {
-            m_Odometry.update(
+            odometry.update(
                 NAVX.get().getRotation2d(),
                 leftPrimaryRelativeEncoder.getPosition() - previousLeftEncoder * Math.cos(Math.toRadians(NAVX.get().getRoll())) + previousLeftEncoder,
                 rightPrimaryRelativeEncoder.getPosition() - previousRightEncoder * Math.cos(Math.toRadians(NAVX.get().getRoll())) + previousRightEncoder);
         } else {
-            m_Odometry.update(
+            odometry.update(
                 NAVX.get().getRotation2d(),
                 leftPrimaryRelativeEncoder.getPosition(),
                 rightPrimaryRelativeEncoder.getPosition()); 
@@ -101,16 +85,9 @@ public class TankDriveSubsystem extends SubsystemBase{
     }
 
     public static TankDriveSubsystem get() {
-        return m_TankDriveSubsystem;
+        return tankDriveSubsystem;
     }
 
-    public Pose2d getRobotPose() {
-        return m_Odometry.getPoseMeters();
-    }
-
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds(leftPrimaryRelativeEncoder.getVelocity(), rightPrimaryRelativeEncoder.getVelocity());
-    }
 
     public double[] getEncoderPositions() {
         return (new double[] { leftPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE, rightPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE });
@@ -118,25 +95,9 @@ public class TankDriveSubsystem extends SubsystemBase{
 
     // ================================Setters================================ \\
 
-    public void resetOdometry(Pose2d pose) {
-        leftPrimaryRelativeEncoder.setPosition(0);
-        rightPrimaryRelativeEncoder.setPosition(0);
-        m_Odometry.resetPosition(NAVX.get().getRotation2d(), leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition(), pose);
-    }
-
     public void resetEncoders() {
         leftPrimaryRelativeEncoder.setPosition(0);
         rightPrimaryRelativeEncoder.setPosition(0);
-    }
-
-    public void setVoltage(double leftVoltage, double rightVoltage) {
-        SmartDashboard.putNumberArray("Set Voltages", new double[] {
-            leftVoltage, rightVoltage
-        });
-        System.out.println(leftVoltage);
-        System.out.println(rightVoltage);
-        primaryLeftMotor.setVoltage(leftVoltage);
-        primaryRightMotor.setVoltage(rightVoltage);
     }
 
     public void setMotor(double leftSpeed, double rightSpeed) {
@@ -144,11 +105,11 @@ public class TankDriveSubsystem extends SubsystemBase{
         primaryRightMotor.set(rightSpeed);
     }
 
-    public void SlowDrive() {
+    public void startSlowMode() {
         speedCoefficient = .33;
     }
 
-    public void UnslowDrive() {
+    public void stopSlowMode() {
         speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
     }
 
@@ -169,25 +130,20 @@ public class TankDriveSubsystem extends SubsystemBase{
     // ================================Commands================================ \\
 
     public class driveMotorCommand extends CommandBase {
-        private DoubleSupplier m_rightSpeed;
-        private DoubleSupplier m_leftSpeed;
+        private final DoubleSupplier rightSpeed;
+        private final DoubleSupplier leftSpeed;
 
         public driveMotorCommand(DoubleSupplier rightSpeed, DoubleSupplier leftSpeed) {
-            m_rightSpeed = rightSpeed;
-            m_leftSpeed = leftSpeed;
+            this.rightSpeed = rightSpeed;
+            this.leftSpeed = leftSpeed;
             addRequirements(TankDriveSubsystem.this);
-        }
-
-        @Override
-        public void initialize() {
-
         }
 
         @Override
         public void execute() {
             TankDriveSubsystem.this.setMotor(
-                    adjustForDeadzone(m_leftSpeed.getAsDouble()) * speedCoefficient,
-                    adjustForDeadzone(m_rightSpeed.getAsDouble()) * speedCoefficient);
+                    adjustForDeadzone(leftSpeed.getAsDouble()) * speedCoefficient,
+                    adjustForDeadzone(rightSpeed.getAsDouble()) * speedCoefficient);
         }
 
         private double adjustForDeadzone(double in) {
@@ -200,32 +156,33 @@ public class TankDriveSubsystem extends SubsystemBase{
     }
 
     public class driveDistanceCommand extends CommandBase {
-        private double m_rightSpeed;
-        private double m_leftSpeed;
-        private double[] m_initialPositions;
+        private final double rightSpeed;
+        private final double leftSpeed;
+        private final double encoderLimit;
+        private double[] initialPositions;
         private boolean hasReachedEnd = false;
-        private double m_encoderLimit;
+
 
         public driveDistanceCommand(double leftSpeed, double rightSpeed, double encoder_limit) {
-            m_encoderLimit = encoder_limit;
-            m_leftSpeed = leftSpeed;
-            m_rightSpeed = rightSpeed;
+            encoderLimit = encoder_limit;
+            this.leftSpeed = leftSpeed;
+            this.rightSpeed = rightSpeed;
             addRequirements(TankDriveSubsystem.this);
         }
         
         @Override
         public void initialize() {
-            m_initialPositions = TankDriveSubsystem.this.getEncoderPositions();
-            TankDriveSubsystem.this.setMotor(m_leftSpeed, m_rightSpeed);
+            initialPositions = TankDriveSubsystem.this.getEncoderPositions();
+            TankDriveSubsystem.this.setMotor(leftSpeed, rightSpeed);
         }
 
         @Override
         public void execute() {
             double[] current_positions = TankDriveSubsystem.this.getEncoderPositions();
-            double l_dif = (current_positions[0] - m_initialPositions[0]);
-            double r_dif = (current_positions[1] - m_initialPositions[1]); 
+            double l_dif = (current_positions[0] - initialPositions[0]);
+            double r_dif = (current_positions[1] - initialPositions[1]);
 
-            if (Math.abs(l_dif + r_dif) >= m_encoderLimit) {
+            if (Math.abs(l_dif + r_dif) >= encoderLimit) {
                 hasReachedEnd = true;
             }
         }

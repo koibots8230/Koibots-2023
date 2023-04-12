@@ -9,12 +9,12 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 public class TimedCommand extends CommandBase {
   /** Creates a new TimedCommand. */
-  Command m_Command;
-  int m_repitions;
+  Command command;
+  int repetitions;
 
   public TimedCommand(Command command, int repititions) {
-    this.m_Command = command;
-    this.m_repitions = repititions;
+    this.command = command;
+    this.repetitions = repititions;
   }
 
   public TimedCommand(Command command, double seconds) {
@@ -24,22 +24,22 @@ public class TimedCommand extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_Command.schedule();
+    command.schedule();
   }
 
   @Override
   public void execute() {
-    m_repitions--;
+    this.repetitions--;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_repitions <= 0;
+    return this.repetitions <= 0;
   }
 
   @Override
   public void end(boolean interrupted) {
-      m_Command.cancel();
+      command.cancel();
   }
 }

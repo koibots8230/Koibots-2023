@@ -1,21 +1,9 @@
 package frc.robot;
 
-import java.util.Hashtable;
-
-import com.pathplanner.lib.PathConstraints;
-
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Utilities.TimedCommand;
-import frc.robot.commands.AutoBalance;
-import frc.robot.commands.LoadCube;
-import frc.robot.subsystems.IntakePositionSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
-
 public class Constants {
 
 // ====================================== Auto ====================================== \\
-// Don't touch these unless you are activley tuning them
+// Don't touch these unless you are actively tuning them
 
   public static final double AUTO_L2_SHOOTER_SPEED = 0.38;
 
@@ -73,67 +61,9 @@ public class Constants {
 
   // ====================================== Unused ====================================== \\
 
-  public static final PathConstraints AUTO_CONSTRAINTS = new PathConstraints(2, 1.5); // TODO: Find the max velocity and acceleration we can use
-
-  public static final Hashtable<String, String> PATHS = new Hashtable<String, String>() 
-  {{
-
-    put("Use Auto Chooser", "Legacy");
-
-    put("Blue: Left Side - 3 Pieces", "B_Left");
-    put("Blue: Left Side - 2 Pieces", "B_Left_Score2");
-    put("Blue: Right Side - 3 Pieces", "B_Right");
-    put("Blue: Right Side - 2 Pieces", "B_Right_Score2");
-    put("Blue: Center - Coopertition", "B_Center");
-    put("Blue: Center - Left piece first", "B_Center_Top_First");
-    put("Blue: Center - Right piece first", "B_Center_Bottom_First");
-
-    put("Test", "Test");
-
-    put("Calibrate", "Circle");
-
-    put("Red: Left Side - 3 Pieces", "R_Left");
-    put("Red: Left Side - 2 Pieces", "R_Left_Score2");
-    put("Red: Right Side - 3 Pieces","R_Right");
-    put("Red: Right Side - 2 Pieces", "R_Right_Score2");
-    put("Red: Center - Coopertition", "R_Center");
-    put("Red: Center - Left piece first", "R_Center_Bottom_First");
-    put("Red: Center - Right piece first", "R_Center_Top_First");
-
-  }};
-
-  public static final Hashtable<String, Command> EVENTS = new Hashtable<String, Command>()
-  {{
-
-    put("Starter Shot", new TimedCommand(ShooterSubsystem.get().L2Shot(), SHOOT_TIME));
-    put("Lower Intake", new TimedCommand(IntakePositionSubsystem.get().new IntakeUpDown(true), 0.5));
-    put("Pick Up Cube", new TimedCommand(new LoadCube(), (double) 1));
-    put("Auto-Balance", new AutoBalance().repeatedly()); 
-    put("Far Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(FAR_SPEED), SHOOT_TIME));
-    put("CS to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_L1_SPEED), SHOOT_TIME));
-    put("CS to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(CS_TO_HYBRID_SPEED), SHOOT_TIME));
-    put("Ground to L1", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_L1_SPEED), SHOOT_TIME));
-    put("Ground to Hybrid", new TimedCommand(ShooterSubsystem.get().new Shoot(GROUND_TO_HYBRID_SPEED), SHOOT_TIME));
-    put("Max Shot", new TimedCommand(ShooterSubsystem.get().new Shoot(MAX_SPEED), SHOOT_TIME));
-
-  }};
-
-  public static final SimpleMotorFeedforward PP_FEED_FORWARD = new SimpleMotorFeedforward(0.10614, 2.6082, 0.27666); //TODO: Re-Run SysID at comp
-
   public static final double DRIVE_ROTATIONS_TO_DISTANCE = 0.04873967373;
 
-  public static final double ROBOT_WIDTH_m = 0.57785 + 0.025;
-
   public static final double AUTO_SPEED = 0.07;
-  private static final double FAR_SPEED = 1; // TODO: Find all the shooter speeds for auto
-  private static final double CS_TO_L1_SPEED = 0.5;
-  private static final double CS_TO_HYBRID_SPEED = 0.5; 
-  private static final double GROUND_TO_L1_SPEED = 0.5; 
-  private static final double GROUND_TO_HYBRID_SPEED = 0.5; 
-  private static final double MAX_SPEED = 1; 
-
-  public static final double SHOOT_TIME = 0.2;
-
   
 
 }

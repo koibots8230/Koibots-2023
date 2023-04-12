@@ -11,19 +11,18 @@ import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
 
 public class IntakeSubsystem extends SubsystemBase {
-    private static IntakeSubsystem m_IntakeSubsystem = new IntakeSubsystem();
-
+    private static final IntakeSubsystem intakeSubsystem = new IntakeSubsystem();
     private final CANSparkMax intakeMotor;
-    private LinearFilter averager;
+    private final LinearFilter intakeAverageCurrent;
 
     public static IntakeSubsystem get() {
-        return m_IntakeSubsystem;
+        return intakeSubsystem;
     }
 
     public IntakeSubsystem() {
-        intakeMotor = new CANSparkMax(10, MotorType.kBrushless);
+        intakeMotor = new CANSparkMax(Constants.INTAKE_MOTOR, MotorType.kBrushless);
         intakeMotor.setInverted(true);
-        averager = LinearFilter.movingAverage(3);
+        intakeAverageCurrent = LinearFilter.movingAverage(3);
     }
 
     public void setIntakeSpeed(double speed) {
@@ -33,7 +32,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Intake Current", averager.calculate(intakeMotor.getOutputCurrent()));
+        SmartDashboard.putNumber("Intake Current", intakeAverageCurrent.calculate(intakeMotor.getOutputCurrent()));
     }
 
     // ================================Commands================================
@@ -46,11 +45,6 @@ public class IntakeSubsystem extends SubsystemBase {
         @Override
         public void initialize() {
             IntakeSubsystem.this.setIntakeSpeed(Constants.INTAKE_RUNNING_SPEED);
-        }
-
-        @Override
-        public boolean isFinished() {
-            return false;
         }
 
         @Override
@@ -67,11 +61,6 @@ public class IntakeSubsystem extends SubsystemBase {
         @Override
         public void initialize() {
             IntakeSubsystem.this.setIntakeSpeed(Constants.INTAKE_REVERSE_SPEED);
-        }
-
-        @Override
-        public boolean isFinished() {
-            return false;
         }
 
         @Override
