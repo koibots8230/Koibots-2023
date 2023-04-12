@@ -48,8 +48,8 @@ public class ShooterSubsystem extends SubsystemBase {
   // ================================Commands================================ \\
   
   public class Shoot extends CommandBase {
-    double leftSpeed;
-    double rightSpeed;
+    final double leftSpeed;
+    final double rightSpeed;
     
     public Shoot(double speed) {
       this.leftSpeed = speed;

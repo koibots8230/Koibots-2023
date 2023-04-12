@@ -3,8 +3,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.TankDriveSubsystem;
 import frc.robot.Constants;
-import frc.robot.Utilities.NAVX;
-import frc.robot.Utilities.PauseCommand;
+import frc.robot.utilities.NAVX;
+import frc.robot.utilities.PauseCommand;
 
 public class AutoBalance extends CommandBase {
   private final NAVX gyro = NAVX.get();

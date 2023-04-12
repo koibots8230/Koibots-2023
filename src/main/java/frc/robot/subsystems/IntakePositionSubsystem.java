@@ -66,9 +66,9 @@ public class IntakePositionSubsystem extends SubsystemBase {
   // ================================Commands================================ \\
 
   public class IntakeUpDown extends CommandBase {
-    boolean up;
+    final boolean up;
     boolean end = false;
-    LinearFilter voltageFilter;
+    final LinearFilter voltageFilter;
 
     public IntakeUpDown(boolean _up) {
       up = _up;

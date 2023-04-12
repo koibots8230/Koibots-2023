@@ -21,7 +21,7 @@ public class RobotContainer {
   private final CommandPS4Controller operatorHID = new CommandPS4Controller(1);
 
   // Shuffleboard
-  SendableChooser<Command> autoChooser;
+  final SendableChooser<Command> autoChooser;
 
   private RobotContainer() {
     autoChooser = new SendableChooser<>();

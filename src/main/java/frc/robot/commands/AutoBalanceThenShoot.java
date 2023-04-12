@@ -9,7 +9,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.TankDriveSubsystem;
 import frc.robot.Constants;
-import frc.robot.Utilities.NAVX;
+import frc.robot.utilities.NAVX;
 
 public class AutoBalanceThenShoot extends CommandBase {
   private final NAVX gyro = NAVX.get();

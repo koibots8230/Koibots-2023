@@ -54,7 +54,7 @@ public class IndexerSubsystem extends SubsystemBase {
     // ================================Commands================================ \\
 
   public class RunUntilBeam extends CommandBase{
-    AnalogInput beamBreak;
+    final AnalogInput beamBreak;
     double count;
 
     public RunUntilBeam() {

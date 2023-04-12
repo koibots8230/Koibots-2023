@@ -11,8 +11,8 @@ import frc.robot.subsystems.*;
 
 
 public class ThreePieceBalance extends SequentialCommandGroup {
-  double mainSpeed = 0.35;
-  double curveSpeed = 0.48;
+  final double mainSpeed = 0.35;
+  final double curveSpeed = 0.48;
   public ThreePieceBalance() {
     addCommands(
       new ParallelRaceGroup(ShooterSubsystem.get().AutoL2Shot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(0.5)),
