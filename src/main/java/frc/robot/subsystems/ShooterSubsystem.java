@@ -13,26 +13,24 @@ import frc.robot.Constants;
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem m_ShooterSubsystem = new ShooterSubsystem();
 
-  private CANSparkMax shooterMotorL;
+  //private CANSparkMax shooterMotorL;
   private CANSparkMax shooterMotorR;
 
-  private RelativeEncoder leftShooterEncoder;
+  //private RelativeEncoder leftShooterEncoder;
   private RelativeEncoder rightShootEncoder;
 
   ShooterSubsystem() {
-    shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
+    //shooterMotorL = new CANSparkMax(Constants.SHOOTER_MOTOR_L, MotorType.kBrushless);
     shooterMotorR = new CANSparkMax(Constants.SHOOTER_MOTOR_R, MotorType.kBrushless);
-    shooterMotorL.setInverted(true);
 
-    leftShooterEncoder = shooterMotorL.getEncoder();
+    //leftShooterEncoder = shooterMotorL.getEncoder();
     rightShootEncoder = shooterMotorR.getEncoder();
 
-    shooterMotorR.setInverted(false);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Left Speed", leftShooterEncoder.getVelocity());
+    //SmartDashboard.putNumber("Left Speed", leftShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Right Speed", rightShootEncoder.getVelocity());
   }
 
@@ -41,7 +39,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public void SetShooter(double lSpeed, double rSpeed) {
-    shooterMotorL.set(lSpeed);
+    //shooterMotorL.set(lSpeed);
     shooterMotorR.set(rSpeed);
   }
 

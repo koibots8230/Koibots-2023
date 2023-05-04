@@ -22,8 +22,8 @@ public class Constants {
 // ====================================== Teleop / Driver ====================================== \\
 
   // Drivetrain
-  public static final double MAX_DRIVETRAIN_SPEED = .93;
-  public static final double DRIVE_SPEED_COEFFICIENT = 0.90; 
+  public static final double MAX_DRIVETRAIN_SPEED = .2;  
+  public static final double DRIVE_SPEED_COEFFICIENT = 1; 
 
   // Intake/Midtake Constants
   public static final double BELT_RUNNING_SPEED = 0.85;

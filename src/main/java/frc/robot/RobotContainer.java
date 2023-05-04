@@ -52,27 +52,28 @@ public class RobotContainer {
       () -> -m_driverHID.getLeftY()));
 
     // Community Shot
-    Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
-    communityShot.whileTrue(new ParallelCommandGroup(
-      IndexerSubsystem.get().new RunIndexer(),
-      ShooterSubsystem.get().CommunityShot()
-      )
-    );
+    // Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
+    // communityShot.whileTrue(new ParallelCommandGroup(
+    //   IndexerSubsystem.get().new RunIndexer(),
+    //   ShooterSubsystem.get().CommunityShot()
+    //   )
+    // );
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new ParallelCommandGroup(
       IntakeSubsystem.get().new RunIntake(),
       IndexerSubsystem.get().new RunUntilBeam()
+      //ShooterSubsystem.get().L2Shot()
     )
     );
 
-    // Reverse Intake/Midtake/Shooter
+    //Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new EjectCube());
 
-    Trigger driverSlowMode = m_driverHID.leftBumper();
-    driverSlowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
-    driverSlowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
+    // Trigger driverSlowMode = m_driverHID.leftBumper();
+    // driverSlowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
+    // driverSlowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
     
     // ====================================== Operator Controls ====================================== \\
