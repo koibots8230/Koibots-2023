@@ -51,7 +51,6 @@ public class RobotContainer {
       () -> -m_driverHID.getRightY(),
       () -> -m_driverHID.getLeftY()));
 
-    // Community Shot
     Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
     communityShot.whileTrue(new ParallelCommandGroup(
       IndexerSubsystem.get().new RunIndexer(),
@@ -66,7 +65,6 @@ public class RobotContainer {
     )
     );
 
-    // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
     runIntakeBackwardsTrigger.whileTrue(new EjectCube());
 
@@ -87,7 +85,6 @@ public class RobotContainer {
     slowMode.onTrue(new InstantCommand(() -> TankDriveSubsystem.get().SlowDrive()));
     slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
-    // Shooting
     Trigger shootL1 = m_operatorHID.L1();
     shootL1.whileTrue(new ParallelCommandGroup(
       ShooterSubsystem.get().L1Shot(),

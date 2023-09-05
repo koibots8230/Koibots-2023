@@ -30,7 +30,6 @@ public class IntakeSubsystem extends SubsystemBase {
         intakeMotor.set(speed);
     }
 
-
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Intake Current", averager.calculate(intakeMotor.getOutputCurrent()));
