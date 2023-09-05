@@ -1,14 +1,9 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Utilities.NAVX;
 
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -26,17 +21,10 @@ public class TankDriveSubsystem extends SubsystemBase{
     private CANSparkMax primaryLeftMotor;
     private CANSparkMax secondaryLeftMotor;
 
-    DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds();
-
     private RelativeEncoder leftPrimaryRelativeEncoder;
     private RelativeEncoder rightPrimaryRelativeEncoder;
     private RelativeEncoder leftSecondaryRelativeEncoder;
     private RelativeEncoder rightSecondaryRelativeEncoder;
-
-    private double previousLeftEncoder;
-    private double previousRightEncoder;
-
-    private DifferentialDriveOdometry m_Odometry;
 
     private double speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
 
@@ -67,11 +55,7 @@ public class TankDriveSubsystem extends SubsystemBase{
         rightPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
         leftSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
         rightSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-*/
-        m_Odometry = new DifferentialDriveOdometry(new Rotation2d(Math.toRadians(NAVX.get().getAngle())),
-                leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition());
-
-    
+        */    
     }
 
     @Override
@@ -79,19 +63,6 @@ public class TankDriveSubsystem extends SubsystemBase{
         SmartDashboard.putNumber("Left Side velocity", leftPrimaryRelativeEncoder.getVelocity());
         SmartDashboard.putNumber("Right Side velocity", rightPrimaryRelativeEncoder.getVelocity());
         
-        if (Math.abs(NAVX.get().getRoll()) > .75) {
-            m_Odometry.update(
-                NAVX.get().getRotation2d(),
-                leftPrimaryRelativeEncoder.getPosition() - previousLeftEncoder * Math.cos(Math.toRadians(NAVX.get().getRoll())) + previousLeftEncoder,
-                rightPrimaryRelativeEncoder.getPosition() - previousRightEncoder * Math.cos(Math.toRadians(NAVX.get().getRoll())) + previousRightEncoder);
-        } else {
-            m_Odometry.update(
-                NAVX.get().getRotation2d(),
-                leftPrimaryRelativeEncoder.getPosition(),
-                rightPrimaryRelativeEncoder.getPosition()); 
-            previousLeftEncoder = leftPrimaryRelativeEncoder.getPosition();
-            previousRightEncoder = rightPrimaryRelativeEncoder.getPosition();
-        }
     }
 
     // ================================Getters================================ \\
@@ -104,39 +75,15 @@ public class TankDriveSubsystem extends SubsystemBase{
         return m_TankDriveSubsystem;
     }
 
-    public Pose2d getRobotPose() {
-        return m_Odometry.getPoseMeters();
-    }
-
-    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-        return new DifferentialDriveWheelSpeeds(leftPrimaryRelativeEncoder.getVelocity(), rightPrimaryRelativeEncoder.getVelocity());
-    }
-
     public double[] getEncoderPositions() {
         return (new double[] { leftPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE, rightPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE });
     }
 
     // ================================Setters================================ \\
 
-    public void resetOdometry(Pose2d pose) {
-        leftPrimaryRelativeEncoder.setPosition(0);
-        rightPrimaryRelativeEncoder.setPosition(0);
-        m_Odometry.resetPosition(NAVX.get().getRotation2d(), leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition(), pose);
-    }
-
     public void resetEncoders() {
         leftPrimaryRelativeEncoder.setPosition(0);
         rightPrimaryRelativeEncoder.setPosition(0);
-    }
-
-    public void setVoltage(double leftVoltage, double rightVoltage) {
-        SmartDashboard.putNumberArray("Set Voltages", new double[] {
-            leftVoltage, rightVoltage
-        });
-        System.out.println(leftVoltage);
-        System.out.println(rightVoltage);
-        primaryLeftMotor.setVoltage(leftVoltage);
-        primaryRightMotor.setVoltage(rightVoltage);
     }
 
     public void setMotor(double leftSpeed, double rightSpeed) {
@@ -176,11 +123,6 @@ public class TankDriveSubsystem extends SubsystemBase{
             m_rightSpeed = rightSpeed;
             m_leftSpeed = leftSpeed;
             addRequirements(TankDriveSubsystem.this);
-        }
-
-        @Override
-        public void initialize() {
-
         }
 
         @Override
