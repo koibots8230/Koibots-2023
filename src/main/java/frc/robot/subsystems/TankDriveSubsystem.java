@@ -23,9 +23,6 @@ public class TankDriveSubsystem extends SubsystemBase{
 
     private RelativeEncoder leftPrimaryRelativeEncoder;
     private RelativeEncoder rightPrimaryRelativeEncoder;
-    private RelativeEncoder leftSecondaryRelativeEncoder;
-    private RelativeEncoder rightSecondaryRelativeEncoder;
-
     private double speedCoefficient = Constants.DRIVE_SPEED_COEFFICIENT;
 
     TankDriveSubsystem() {
@@ -43,32 +40,18 @@ public class TankDriveSubsystem extends SubsystemBase{
 
         leftPrimaryRelativeEncoder = primaryLeftMotor.getEncoder();
         rightPrimaryRelativeEncoder = primaryRightMotor.getEncoder();
-        leftSecondaryRelativeEncoder = secondaryLeftMotor.getEncoder();
-        rightSecondaryRelativeEncoder = secondaryRightMotor.getEncoder();
-
-        leftPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        rightPrimaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        leftSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        rightSecondaryRelativeEncoder.setPositionConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE);
-        /* 
-        leftPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-        rightPrimaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-        leftSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-        rightSecondaryRelativeEncoder.setVelocityConversionFactor(Constants.DRIVE_ROTATIONS_TO_DISTANCE / 60);
-        */    
     }
 
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Left Side velocity", leftPrimaryRelativeEncoder.getVelocity());
         SmartDashboard.putNumber("Right Side velocity", rightPrimaryRelativeEncoder.getVelocity());
-        
     }
 
     // ================================Getters================================ \\
 
     public double[] getVoltages() {
-        return new double[] { primaryLeftMotor.getAppliedOutput(), primaryRightMotor.getAppliedOutput()};
+        return new double[] {primaryLeftMotor.getAppliedOutput(), primaryRightMotor.getAppliedOutput()};
     }
 
     public static TankDriveSubsystem get() {
@@ -76,7 +59,7 @@ public class TankDriveSubsystem extends SubsystemBase{
     }
 
     public double[] getEncoderPositions() {
-        return (new double[] { leftPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE, rightPrimaryRelativeEncoder.getPosition() / Constants.DRIVE_ROTATIONS_TO_DISTANCE });
+        return (new double[] {leftPrimaryRelativeEncoder.getPosition(), rightPrimaryRelativeEncoder.getPosition()});
     }
 
     // ================================Setters================================ \\

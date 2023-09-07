@@ -56,7 +56,7 @@ public class IndexerSubsystem extends SubsystemBase {
   public class RunUntilBeam extends CommandBase{
     boolean end = false;
     AnalogInput beamBreak;
-    double count;
+    double triggered;
 
     public RunUntilBeam() {
       addRequirements(IndexerSubsystem.this);
@@ -66,21 +66,21 @@ public class IndexerSubsystem extends SubsystemBase {
     @Override
     public void initialize() {
       IndexerSubsystem.this.setIndexerSpeed(Constants.BELT_RUNNING_SPEED);
-      count = 0;
+      triggered = 0;
     }
 
     @Override
     public void execute() {
       if (beamBreak.getVoltage() < Constants.SENSOR_TRIGGERED) {
-        count ++;
+        triggered ++;
       } else {
-        count = 0;
+        triggered = 0;
       }
     }
 
     @Override
     public boolean isFinished() {
-        return count >= 2 && IndexerSubsystem.this.getUseBeamBreak();
+        return triggered >= 2 && IndexerSubsystem.this.getUseBeamBreak();
     }
 
     @Override

@@ -52,17 +52,13 @@ public class RobotContainer {
       () -> -m_driverHID.getLeftY()));
 
     Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
-    communityShot.whileTrue(new ParallelCommandGroup(
-      IndexerSubsystem.get().new RunIndexer(),
-      ShooterSubsystem.get().CommunityShot()
-      )
+    communityShot.whileTrue(new Shoot(Constants.COMMUNITY_SHOOTER_SPEED)
     );
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
     runIntakeForwardsTrigger.whileTrue(new ParallelCommandGroup(
       IntakeSubsystem.get().new RunIntake(),
-      IndexerSubsystem.get().new RunUntilBeam()
-    )
+      IndexerSubsystem.get().new RunUntilBeam())
     );
 
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
@@ -86,19 +82,13 @@ public class RobotContainer {
     slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
     Trigger shootL1 = m_operatorHID.L1();
-    shootL1.whileTrue(new ParallelCommandGroup(
-      ShooterSubsystem.get().L1Shot(),
-      IndexerSubsystem.get().new RunIndexer()));
+    shootL1.whileTrue(new Shoot(Constants.L1_SHOOTER_SPEED));
 
     Trigger shootL2 = m_operatorHID.R1();
-    shootL2.whileTrue(new ParallelCommandGroup(
-      ShooterSubsystem.get().L2Shot(),
-      IndexerSubsystem.get().new RunIndexer()));
+    shootL2.whileTrue(new Shoot(Constants.L2_SHOOTER_SPEED));
 
     Trigger hybridShot = m_operatorHID.L2();
-    hybridShot.whileTrue(new ParallelCommandGroup(
-      ShooterSubsystem.get().HybriShot(),
-      IndexerSubsystem.get().new RunIndexer()));
+    hybridShot.whileTrue(new Shoot(Constants.HYBRID_SHOOTER_SPEED));
 
     Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
     Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);

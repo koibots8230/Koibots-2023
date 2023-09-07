@@ -5,7 +5,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -72,29 +71,5 @@ public class ShooterSubsystem extends SubsystemBase {
     public void end(boolean interrupted) {
       ShooterSubsystem.this.SetShooter(0, 0);
     }
-  }
-
-  public Command CommunityShot() {
-    return new Shoot(Constants.COMMUNITY_SHOOTER_SPEED);
-  }
-
-  public Command L1Shot() {
-    return new Shoot(Constants.L1_SHOOTER_SPEED);
-  }
-
-  public Command StationToHybridShot() {
-    return new Shoot(0.6);
-  }
-
-  public Command AutoL2Shot() {
-    return new Shoot(Constants.AUTO_L2_SHOOTER_SPEED);
-  }
-  
-  public Command L2Shot() {  
-    return new Shoot(Constants.L2_SHOOTER_SPEED);
-  }
-
-  public Command HybriShot() {
-    return new Shoot(Constants.HYBRID_SHOOTER_SPEED);
   }
 }

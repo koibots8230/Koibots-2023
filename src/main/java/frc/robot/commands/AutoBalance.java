@@ -15,17 +15,10 @@ public class AutoBalance extends CommandBase {
   }
 
   @Override
-  public void initialize() {
-    System.out.println("Auto Balance Called");
-  }
-
-  @Override
   public void execute() {
-
     TankDriveSubsystem.get().setMotor(  
       Constants.AUTO_SPEED * Math.signum(gyro.getRoll()),
       Constants.AUTO_SPEED * Math.signum(gyro.getRoll()));
-    
   }
 
   @Override

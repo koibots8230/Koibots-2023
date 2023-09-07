@@ -89,8 +89,8 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         NAVX.get().zeroYaw();
         TankDriveSubsystem.get().resetEncoders();
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
         TankDriveSubsystem.get().setCoast();
+        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
         if (m_autonomousCommand != null) {
             m_autonomousCommand.schedule();
         }
