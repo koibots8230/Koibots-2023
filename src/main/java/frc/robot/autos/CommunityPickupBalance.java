@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.Utilities.TimedCommand;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootCube;
 import frc.robot.commands.AutoBalanceThenShoot;
 import frc.robot.commands.LoadCube;
 import frc.robot.subsystems.*;
@@ -15,7 +15,7 @@ public class CommunityPickupBalance extends SequentialCommandGroup {
   AHRS m_Gyro;
   public CommunityPickupBalance() {
     addCommands(
-      new TimedCommand(new Shoot(Constants.AUTO_L2_SHOOTER_SPEED), 0.5),
+      new TimedCommand(new ShootCube(Constants.AUTO_L2_SHOOTER_SPEED), 0.5),
       new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.435, 65), new LoadCube()),
       TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.435, 55),
       TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 80),

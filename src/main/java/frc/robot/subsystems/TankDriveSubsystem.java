@@ -127,12 +127,12 @@ public class TankDriveSubsystem extends SubsystemBase{
     public class driveDistanceCommand extends CommandBase {
         private double m_rightSpeed;
         private double m_leftSpeed;
-        private double[] m_initialPositions;
+        private double[] initialPositions;
         private boolean hasReachedEnd = false;
         private double m_encoderLimit;
 
-        public driveDistanceCommand(double leftSpeed, double rightSpeed, double encoder_limit) {
-            m_encoderLimit = encoder_limit;
+        public driveDistanceCommand(double leftSpeed, double rightSpeed, double encoderLimit) {
+            m_encoderLimit = encoderLimit;
             m_leftSpeed = leftSpeed;
             m_rightSpeed = rightSpeed;
             addRequirements(TankDriveSubsystem.this);
@@ -140,17 +140,17 @@ public class TankDriveSubsystem extends SubsystemBase{
         
         @Override
         public void initialize() {
-            m_initialPositions = TankDriveSubsystem.this.getEncoderPositions();
+            initialPositions = TankDriveSubsystem.this.getEncoderPositions();
             TankDriveSubsystem.this.setMotor(m_leftSpeed, m_rightSpeed);
         }
 
         @Override
         public void execute() {
             double[] current_positions = TankDriveSubsystem.this.getEncoderPositions();
-            double l_dif = (current_positions[0] - m_initialPositions[0]);
-            double r_dif = (current_positions[1] - m_initialPositions[1]); 
+            double leftDistance = (current_positions[0] - initialPositions[0]);
+            double rightDistance = (current_positions[1] - initialPositions[1]); 
 
-            if (Math.abs(l_dif + r_dif) >= m_encoderLimit) {
+            if (Math.abs(leftDistance + rightDistance) >= m_encoderLimit) {
                 hasReachedEnd = true;
             }
         }

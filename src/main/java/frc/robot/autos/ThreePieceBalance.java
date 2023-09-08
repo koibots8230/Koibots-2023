@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.AutoBalanceThenShoot;
 import frc.robot.commands.LoadCube;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.ShootCube;
 import frc.robot.subsystems.*;
 
 
@@ -17,7 +17,7 @@ public class ThreePieceBalance extends SequentialCommandGroup {
   double curveSpeed = 0.48;
   public ThreePieceBalance() {
     addCommands(
-      new ParallelRaceGroup(new Shoot(Constants.AUTO_L2_SHOOTER_SPEED), new WaitCommand(0.5)),
+      new ParallelRaceGroup(new ShootCube(Constants.AUTO_L2_SHOOTER_SPEED), new WaitCommand(0.5)),
       TankDriveSubsystem.get().new driveDistanceCommand(mainSpeed, mainSpeed, 150),
 
       new ParallelRaceGroup(
@@ -28,7 +28,7 @@ public class ThreePieceBalance extends SequentialCommandGroup {
       TankDriveSubsystem.get().new driveDistanceCommand(-mainSpeed, -mainSpeed, 30),
       new ParallelRaceGroup(
         TankDriveSubsystem.get().new driveDistanceCommand(-mainSpeed, -mainSpeed, 20),
-        new Shoot(Constants.COMMUNITY_SHOOTER_SPEED),
+        new ShootCube(Constants.COMMUNITY_SHOOTER_SPEED),
         IntakeSubsystem.get().new RunIntake()),
       TankDriveSubsystem.get().new driveDistanceCommand(mainSpeed, mainSpeed, 40),
 

@@ -26,14 +26,14 @@ public class RobotContainer {
   private RobotContainer() {
     m_autoChooser = new SendableChooser<Command>();
 
-    m_autoChooser.setDefaultOption("Leave community and balance", new CommunityBalance());
+    m_autoChooser.setDefaultOption("Leave community + balance", new CommunityBalance());
     m_autoChooser.addOption("2 Piece + Balance", new CommunityPickupBalance());
     m_autoChooser.addOption("Score L1 & L2", new Score2());
     m_autoChooser.addOption("Balance without leaving community", new ShootBalance());
     m_autoChooser.addOption("L2 and leave community", new ShootMove());
     m_autoChooser.addOption("Just Shoot", new JustShoot());
     m_autoChooser.addOption("2 Piece + Balance - Right", new TwoPieceBalanceRight());
-    m_autoChooser.addOption("3 Piece + Balance UNTESTED", new ThreePieceBalance());
+    m_autoChooser.addOption("3 Piece + Balance UNTESTED", new ThreePieceBalance()); //TODO: Test this before CC?
     
     Shuffleboard.getTab("Driver")
       .add("Auto Chooser", m_autoChooser)
@@ -52,7 +52,7 @@ public class RobotContainer {
       () -> -m_driverHID.getLeftY()));
 
     Trigger communityShot = m_driverHID.leftTrigger(Constants.TRIGGER_DEADZONE);
-    communityShot.whileTrue(new Shoot(Constants.COMMUNITY_SHOOTER_SPEED)
+    communityShot.whileTrue(new ShootCube(Constants.COMMUNITY_SHOOTER_SPEED)
     );
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
@@ -82,13 +82,13 @@ public class RobotContainer {
     slowMode.onFalse(new InstantCommand(() -> TankDriveSubsystem.get().UnslowDrive()));
 
     Trigger shootL1 = m_operatorHID.L1();
-    shootL1.whileTrue(new Shoot(Constants.L1_SHOOTER_SPEED));
+    shootL1.whileTrue(new ShootCube(Constants.L1_SHOOTER_SPEED));
 
     Trigger shootL2 = m_operatorHID.R1();
-    shootL2.whileTrue(new Shoot(Constants.L2_SHOOTER_SPEED));
+    shootL2.whileTrue(new ShootCube(Constants.L2_SHOOTER_SPEED));
 
     Trigger hybridShot = m_operatorHID.L2();
-    hybridShot.whileTrue(new Shoot(Constants.HYBRID_SHOOTER_SPEED));
+    hybridShot.whileTrue(new ShootCube(Constants.HYBRID_SHOOTER_SPEED));
 
     Trigger intakeUp = m_operatorHID.axisGreaterThan(PS4Controller.Axis.kLeftY.value, Constants.TRIGGER_DEADZONE);
     Trigger intakeDown = m_operatorHID.axisLessThan(PS4Controller.Axis.kLeftY.value, -Constants.TRIGGER_DEADZONE);

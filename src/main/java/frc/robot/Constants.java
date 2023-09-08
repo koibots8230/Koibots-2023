@@ -31,7 +31,7 @@ public class Constants {
 
   
   // Controller
-  public static final double THUMBSTICK_DEADZONE = 0.15; // Probably don't change this
+  public static final double THUMBSTICK_DEADZONE = 0.15;
   public static final double TRIGGER_DEADZONE = 0.5;
 
   // Sensors

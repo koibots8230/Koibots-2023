@@ -18,7 +18,7 @@ public class IntakePositionSubsystem extends SubsystemBase {
 
   private boolean isUp;
 
-  IntakePositionSubsystem() {
+  public IntakePositionSubsystem() {
     intakePositionMotor = new CANSparkMax(Constants.RAISE_INTAKE_MOTOR, MotorType.kBrushless);
     intakePositionEncoder = intakePositionMotor.getEncoder();
     isUp = true;
@@ -67,18 +67,12 @@ public class IntakePositionSubsystem extends SubsystemBase {
   }
 
   public void setBrake() {
-    System.out.println("Intake Up/Down Set to Brake"); 
     intakePositionMotor.setIdleMode(IdleMode.kBrake);
   }
 
   public void ClearStickies() {
     intakePositionMotor.clearFaults();
 }
-
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
 
   // ================================Commands================================ \\
 
@@ -106,7 +100,6 @@ public class IntakePositionSubsystem extends SubsystemBase {
     @Override
     public void execute() {
         if (voltageFilter.calculate(Math.abs(IntakePositionSubsystem.get().getMotorCurrent())) > Constants.CURRENT_CAP) {
-          System.out.println("VOLTAGE LIMIT HIT");
           end = true;
         }
     }

@@ -30,7 +30,7 @@ public class AutoBalanceThenShoot extends CommandBase {
     new SequentialCommandGroup(
       new WaitCommand(.5),
       new ParallelRaceGroup(
-          new Shoot(Constants.STATION_TO_HYBRID_SHOOTER_SPEED),
+          new ShootCube(Constants.STATION_TO_HYBRID_SHOOTER_SPEED),
           IntakeSubsystem.get().new RunIntake(),
           new WaitCommand(0.5)),
       new AutoBalance()

@@ -39,9 +39,9 @@ public class ShooterSubsystem extends SubsystemBase {
     return m_ShooterSubsystem;
   }
 
-  public void SetShooter(double lSpeed, double rSpeed) {
-    shooterMotorL.set(lSpeed);
-    shooterMotorR.set(rSpeed);
+  public void SetShooter(double leftSpeed, double rightSpeed) {
+    shooterMotorL.set(leftSpeed);
+    shooterMotorR.set(rightSpeed);
   }
 
   // ================================Commands================================ \\
@@ -56,9 +56,9 @@ public class ShooterSubsystem extends SubsystemBase {
       addRequirements(ShooterSubsystem.get());
     }
 
-    public Shoot(double lSpeed, double rSpeed) {
-      this.leftSpeed = lSpeed;
-      this.rightSpeed = rSpeed;
+    public Shoot(double leftSpeed, double rightSpeed) {
+      this.leftSpeed = leftSpeed;
+      this.rightSpeed = rightSpeed;
       addRequirements(ShooterSubsystem.get());
     }
 

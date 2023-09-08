@@ -71,7 +71,7 @@ public class IndexerSubsystem extends SubsystemBase {
 
     @Override
     public void execute() {
-      if (beamBreak.getVoltage() < Constants.SENSOR_TRIGGERED) {
+      if (beamBreak.getVoltage() < Constants.SENSOR_TRIGGERED) { //TODO: Is this meant to be a less than?
         triggered ++;
       } else {
         triggered = 0;
