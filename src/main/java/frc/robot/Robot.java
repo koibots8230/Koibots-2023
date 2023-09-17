@@ -4,14 +4,18 @@ import edu.wpi.first.hal.FRCNetComm.tInstances;
 import edu.wpi.first.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.hal.simulation.DriverStationDataJNI;
 import edu.wpi.first.hal.HAL;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.Utilities.NAVX;
-import frc.robot.subsystems.IntakePositionSubsystem;
-import frc.robot.subsystems.TankDriveSubsystem;
+import frc.robot.subsystems.intake.Intake;
+import frc.robot.utilities.NAVX;
+import frc.robot.subsystems.drive.Drive;
+import org.littletonrobotics.junction.LogFileUtil;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,10 +24,10 @@ import frc.robot.subsystems.TankDriveSubsystem;
  * creating this project, you must also update the build.properties file in 
  * the project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
 
-    private Command m_autonomousCommand;
-    private RobotContainer m_robotContainer;
+    private Command autonomousCommand;
+    private RobotContainer robotContainer;
 
     /**
      * This function is run when the robot is first started up and should be
@@ -32,53 +36,30 @@ public class Robot extends TimedRobot {
     @Override
     @SuppressWarnings("resource")
     public void robotInit() {
+        Logger.getInstance().recordMetadata("Cuttlefish", "Colosseum Clash");
 
-        m_robotContainer = RobotContainer.getInstance();
+        if (isReal()) {
+            Logger.getInstance().addDataReceiver(new WPILOGWriter("/media/sda1/")); // Log to a USB stick
+            Logger.getInstance().addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+            new PowerDistribution(1, PowerDistribution.ModuleType.kRev); // Enables power distribution logging
+        } else {
+            setUseTiming(false); // Run as fast as possible
+            String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+            Logger.getInstance().setReplaySource(new WPILOGReader(logPath)); // Read replay log
+            Logger.getInstance().addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+        }
+
+        robotContainer = RobotContainer.getInstance();
         // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
         // autonomous chooser on the dashboard.
         NAVX.get().zeroYaw();
-        TankDriveSubsystem.get().resetEncoders();
+        Drive.get().resetEncoders();
         HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_RobotBuilder);
-
-        ShuffleboardTab debugTab = Shuffleboard.getTab("Debug");
-
-        debugTab
-            .addDoubleArray("Drive Voltages", TankDriveSubsystem.get()::getVoltages)
-            .withWidget("Graph")
-            .withPosition(0, 0)
-            .withSize(3, 3);
-
-        debugTab
-            .addDouble("Yaw", NAVX.get()::getAngle)
-            .withPosition(3, 0)
-            .withSize(3, 3);
-        
-        debugTab
-            .addDouble("Pitch", NAVX.get()::getRoll)
-            .withWidget("Gyro")
-            .withPosition(6, 0)
-            .withSize(3, 3);
-
-        debugTab
-            .addDouble("Roll", NAVX.get()::getPitch)
-            .withWidget("Gyro")
-            .withPosition(9, 0)
-            .withSize(3, 3);
-
-        debugTab
-            .addDoubleArray("Encoders", TankDriveSubsystem.get()::getEncoderPositions)
-            .withWidget("Graph")
-            .withPosition(0, 3)
-            .withSize(3, 3);
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
-    }
-
-    @Override
-    public void disabledInit() {
     }
 
     @Override
@@ -88,11 +69,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         NAVX.get().zeroYaw();
-        TankDriveSubsystem.get().resetEncoders();
-        TankDriveSubsystem.get().setCoast();
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.schedule();
+        Drive.get().resetEncoders();
+        Drive.get().setCoast();
+        autonomousCommand = robotContainer.getAutonomousCommand();
+        if (autonomousCommand != null) {
+            autonomousCommand.schedule();
         }
     }
 
@@ -102,16 +83,16 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousExit() {
-        TankDriveSubsystem.get().resetEncoders();
+        Drive.get().resetEncoders();
     
     }
 
     @Override
     public void teleopInit() {
-        TankDriveSubsystem.get().setCoast();
-        IntakePositionSubsystem.get().setCoast();
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.cancel();
+        Drive.get().setCoast();
+        Intake.get().setIntakePositionCoast();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
     }
 
@@ -121,14 +102,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopExit() {
-        TankDriveSubsystem.get().setBrake();
-        IntakePositionSubsystem.get().setBrake();
+        Drive.get().setBrake();
+        Intake.get().setIntakePositionBrake();
     }
 
     @Override
     public void testInit() {
-        IntakePositionSubsystem.get().setCoast();
-        TankDriveSubsystem.get().setCoast();
+        Intake.get().setIntakePositionBrake();
+        Drive.get().setCoast();
         CommandScheduler.getInstance().cancelAll();
         System.out.println("Reset to Coast");
         DriverStationDataJNI.setEnabled(true);

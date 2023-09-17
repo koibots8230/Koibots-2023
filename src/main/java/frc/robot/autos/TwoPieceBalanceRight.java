@@ -8,19 +8,17 @@ import frc.robot.Constants;
 import frc.robot.commands.AutoBalanceThenShoot;
 import frc.robot.commands.LoadCube;
 import frc.robot.commands.ShootCube;
-import frc.robot.subsystems.*;
-import com.kauailabs.navx.frc.AHRS;
+import frc.robot.subsystems.drive.Drive;
 
 public class TwoPieceBalanceRight extends SequentialCommandGroup {
-  AHRS m_Gyro;
   public TwoPieceBalanceRight() {
     addCommands(
       new ParallelRaceGroup(new ShootCube(Constants.AUTO_L2_SHOOTER_SPEED), new WaitCommand(0.5)),
-      TankDriveSubsystem.get().new driveDistanceCommand(0.3, 0.3, 150),
-      new ParallelRaceGroup(TankDriveSubsystem.get().new driveDistanceCommand(0.43, 0.3, 65), new LoadCube()),
-      TankDriveSubsystem.get().new driveDistanceCommand(-0.43, -0.3, 55),
-      TankDriveSubsystem.get().new driveDistanceCommand(-0.3, -0.3, 80),
-      new InstantCommand(() -> TankDriveSubsystem.get().setBrake()),
+      Drive.get().new driveDistanceCommand(0.3, 0.3, 150),
+      new ParallelRaceGroup(Drive.get().new driveDistanceCommand(0.43, 0.3, 65), new LoadCube()),
+      Drive.get().new driveDistanceCommand(-0.43, -0.3, 55),
+      Drive.get().new driveDistanceCommand(-0.3, -0.3, 80),
+      new InstantCommand(() -> Drive.get().setBrake()),
       // new ParallelRaceGroup(ShooterSubsystem.get().CommunityShot(), IndexerSubsystem.get().new RunIndexer(), new WaitCommand(.5)),
       new AutoBalanceThenShoot()
     );

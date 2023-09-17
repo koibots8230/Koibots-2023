@@ -1,37 +1,41 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.TankDriveSubsystem;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.robot.Constants;
-import frc.robot.Utilities.NAVX;
+import frc.robot.utilities.NAVX;
+import frc.robot.subsystems.drive.Drive;
+import frc.robot.subsystems.intake.Intake;
 
 public class AutoBalanceThenShoot extends CommandBase {
-  private NAVX gyro;
+  private final NAVX gyro;
 
   public AutoBalanceThenShoot() {
     gyro = NAVX.get();
-    addRequirements(TankDriveSubsystem.get());
+    addRequirements(Drive.get());
   }
 
   @Override
   public void execute() {
-    TankDriveSubsystem.get().setMotor(
-        Constants.AUTO_SPEED * Math.signum(gyro.getRoll()),
-        Constants.AUTO_SPEED * Math.signum(gyro.getRoll()));
+    Drive.get().setWheelSpeeds(
+            new DifferentialDrive.WheelSpeeds(
+           Constants.AUTO_SPEED * Math.signum(gyro.getRoll()),
+          Constants.AUTO_SPEED * Math.signum(gyro.getRoll())
+            )
+    );
   }
 
   @Override
   public void end(boolean interrupted) {
-    TankDriveSubsystem.get().setMotor(0, 0);
+    Drive.get().stop();
     new SequentialCommandGroup(
       new WaitCommand(.5),
       new ParallelRaceGroup(
           new ShootCube(Constants.STATION_TO_HYBRID_SHOOTER_SPEED),
-          IntakeSubsystem.get().new RunIntake(),
+          new StartEndCommand(
+                  Intake.get()::run,
+                  Intake.get()::stop,
+                  Intake.get()),
           new WaitCommand(0.5)),
       new AutoBalance()
       ).schedule();
@@ -39,9 +43,6 @@ public class AutoBalanceThenShoot extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    if (Math.abs(gyro.getRoll()) <= 2.5) {
-      return true;
-    }
-    return false;
+      return Math.abs(gyro.getRoll()) <= 2.5;
   }
 }

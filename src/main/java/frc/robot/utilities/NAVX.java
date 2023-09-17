@@ -1,4 +1,4 @@
-package frc.robot.Utilities;
+package frc.robot.utilities;
 
 import com.kauailabs.navx.frc.AHRS;
 
@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class NAVX extends AHRS{
-    private static NAVX gyro = new NAVX();
+    private static final NAVX gyro = new NAVX();
 
     NAVX() {
         super(SPI.Port.kMXP);

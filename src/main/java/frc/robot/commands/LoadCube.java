@@ -1,15 +1,20 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.subsystems.IndexerSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import frc.robot.subsystems.indexer.Indexer;
+import frc.robot.subsystems.intake.Intake;
 
 public class LoadCube extends ParallelRaceGroup {
 
   public LoadCube() {
     addCommands(
-      IntakeSubsystem.get().new RunIntake(),
-      IndexerSubsystem.get().new RunUntilBeam()
+      new StartEndCommand(
+              Intake.get()::run,
+              Intake.get()::stop,
+              Intake.get()
+      ),
+      Indexer.get().new RunUntilBeam()
     );
   }
 }
