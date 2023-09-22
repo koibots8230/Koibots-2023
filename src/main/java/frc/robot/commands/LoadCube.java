@@ -9,7 +9,7 @@ public class LoadCube extends ParallelRaceGroup {
   public LoadCube() {
     addCommands(
       IntakeSubsystem.get().new RunIntake(),
-      IndexerSubsystem.get().new RunUntilBeam()
+      IndexerSubsystem.get().new RunIndexer()
     );
   }
 }
