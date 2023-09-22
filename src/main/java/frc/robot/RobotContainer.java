@@ -60,11 +60,7 @@ public class RobotContainer {
     );
 
     Trigger runIntakeForwardsTrigger = m_driverHID.rightTrigger(Constants.TRIGGER_DEADZONE);
-    runIntakeForwardsTrigger.whileTrue(new ParallelCommandGroup(
-      IntakeSubsystem.get().new RunIntake(),
-      IndexerSubsystem.get().new RunUntilBeam()
-    )
-    );
+    runIntakeForwardsTrigger.whileTrue(new LoadCube());
 
     // Reverse Intake/Midtake/Shooter
     Trigger runIntakeBackwardsTrigger = m_driverHID.rightBumper();
